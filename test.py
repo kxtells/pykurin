@@ -18,10 +18,14 @@ pygame.init()
 
 size = width, height = 800, 600
 
+#DEBUG
+COLLISION=True
+
 #some colors definitions
 black = 0, 0, 0
 yellow = 255, 255, 0
 green = 0,255,0
+white = 255,255,255
 
 
 clock = pygame.time.Clock ()
@@ -46,7 +50,7 @@ status = cStatus(imgsetlives)
 
 
 #First Base Load
-status.level = cLevel("levels/lvl1.prop")
+status.level = cLevel("levels/lvl000001.prop")
 stick = cPal(status.level.startx,status.level.starty,0);
 
 #General arrays with Sprites
@@ -72,13 +76,28 @@ gover_menu_texts = 'Try again' , 'Return to level Select' , 'Exit game'
 gover_menu = cMenu(gover_menu_texts,0,yellow,green)
 
 
+#Debug Options
+def key_debug_actions(event):
+#the global var collision may be modified
+        global COLLISION
+
+        if event.key == pygame.K_F1:
+                if COLLISION: COLLISION = False
+                else: COLLISION = True
+                
 #Main Key Handler
 def key_handler(event):
+        
+        
         if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN: stick.move_down();
                 elif event.key == pygame.K_UP: stick.move_up();
                 elif event.key == pygame.K_LEFT: stick.move_left();
                 elif event.key == pygame.K_RIGHT: stick.move_right();
+
+                #Debug Handlers
+                key_debug_actions(event)
+        
         elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_DOWN: stick.move_up();
                 elif event.key == pygame.K_UP: stick.move_down();
@@ -129,8 +148,8 @@ def event_handler(event):
 
 
 def load_level(level_num):
-        print "levels/lvl"+str(level_num)+".prop"
-        status.level = cLevel("levels/lvl"+str(level_num)+".prop")
+        print "levels/lvl"+str(level_num).zfill(6)+".prop"
+        status.level = cLevel("levels/lvl"+str(level_num).zfill(6)+".prop")
         stick.__init__(status.level.startx,status.level.starty,0);
         
         status.reset_lives()
@@ -188,6 +207,9 @@ def debug_onscreen(colides):
         window.blit(stickcollides, (0, 40))
         window.blit(fps, (0, 60))
 
+        if COLLISION == False:
+                colisionOnOff   = myfont.render("COLLISION OFF",1,yellow)
+                window.blit(colisionOnOff, (400, 0))
 
 
 #A fancy rotozoom for the stick death
@@ -195,12 +217,12 @@ def fancy_stick_death_animation():
         scale = 1
         while scale < 10:
                 
-                window.fill(black)
+                window.fill(white)
                 update_scene()
                 stick.fancy_rotation_death(5,scale)
                 scale+=0.1
                 pygame.display.update()
-                clock.tick(60)
+                clock.tick(30)
                 
 
 #updates all the needed images/sprites
@@ -219,7 +241,7 @@ def update_scene():
 
 def game_over_screen():
         
-        window.fill(black)
+        window.fill(white)
         stick.fancy_rotation_death(0,10)
         update_scene()
         stick.rotate(1)
@@ -227,7 +249,7 @@ def game_over_screen():
 
 
 def level_selection_screen():
-        window.fill(black)
+        window.fill(white)
         level_select_menu()
 
 #
@@ -285,7 +307,7 @@ def game_over_menu():
 # Draws everything of the playing level screen
 #
 def playing_screen():
-        window.fill(black)
+        window.fill(white)
         update_scene()
         stick.rotate(5)
         stick.movement()
@@ -298,9 +320,12 @@ def main():
                 
                 #Playing Level
                 if status.GAME_STAT == 0:
-                        colision,cx,cy = status.level.stick_collides(stick);
+
+                        #Debug Purposes
+                        if COLLISION:
+                                colision,cx,cy = status.level.stick_collides(stick);
+                                if colision: colision_handler(cx,cy)
                         
-                        if colision: colision_handler(cx,cy)
         
                         playing_screen()                        
         
@@ -316,7 +341,7 @@ def main():
                 
                 
                 pygame.display.update()
-                clock.tick(60) 
+                clock.tick(30) 
 
 
 if __name__ == '__main__': main()  

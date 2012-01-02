@@ -20,7 +20,7 @@ class cStatus:
 		#
 		# Level Information
 		#
-		self.level = cLevel("levels/lvl1.prop") #loads the default level
+		self.level = cLevel("levels/lvl000001.prop") #loads the default level
 		self.current_level = 1
 		
 		#

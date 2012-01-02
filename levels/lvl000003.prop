@@ -1,0 +1,6 @@
+[options]
+name: 3- Round and Fancy
+collision: levels/lvl3col.png
+background: levels/lvl3.png
+startx: 56
+starty: 35
