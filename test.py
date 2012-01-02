@@ -1,3 +1,10 @@
+#######################
+# Main pykurin entrance
+# @author: Jordi Castells Sala
+#
+#
+#######################
+
 import sys, pygame
 import functions as BF
 from cPal import cPal
@@ -17,15 +24,17 @@ yellow = 255, 255, 0
 green = 0,255,0
 
 
-clock = pygame . time . Clock ()
+clock = pygame.time.Clock ()
 window = pygame.display.set_mode(size)
 
 
 #First Base Load
 level = cLevel("levels/lvl2.prop")
 stick = cPal(level.startx,level.starty,0);
-level_list = cLevelList("levels")
 
+#####
+# SPRITE LOADING
+#####
 #HitWall sprite
 imgset = BF.load_and_slice_sprite(32,32,'explosion.png');
 tsprite = cAnimSprite(imgset)
@@ -41,19 +50,23 @@ BASIC_SPRITES.append(level)
 BASIC_SPRITES.append(stick)
 ANIM_SPRITES.append(tsprite)
 
+
+#####
+# STATUS CREATION
+#####
 #Status load
 status = cStatus(imgsetlives)
 
 
-#
-# Levels Menu
-#
+#####
+# MENUS CREATION
+#####
+
+# Level Selection Menu
+level_list = cLevelList("levels")
 levels_menu = cMenu(level_list.get_levelnames(),0,yellow,green)
 
-
-#
 #Game Over Menu
-#
 gover_menu_texts = 'Try again' , 'Exit game'
 gover_menu = cMenu(gover_menu_texts,0,yellow,green)
 
@@ -164,10 +177,12 @@ def debug_onscreen(colides):
         title           = myfont.render("Debug", 1, yellow)
         stickpos        = myfont.render("Stick:"+str(stick.rect.center), 1, yellow)
         stickcollides   = myfont.render("collides:"+str(colides), 1, yellow)
+        fps             = myfont.render("FPS:"+str(clock.get_fps()),1,yellow)
         # put the label object on the screen at point x=100, y=100
         window.blit(title, (0, 0))
         window.blit(stickpos, (0, 20))
         window.blit(stickcollides, (0, 40))
+        window.blit(fps, (0, 60))
 
 
 
