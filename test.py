@@ -65,9 +65,10 @@ ANIM_SPRITES.append(tsprite)
 # Level Selection Menu
 level_list = cLevelList("levels")
 levels_menu = cMenu(level_list.get_levelnames(),0,yellow,green)
+levels_menu.set_background("backgrounds/levelsel.png")
 
 #Game Over Menu
-gover_menu_texts = 'Try again' , 'Exit game'
+gover_menu_texts = 'Try again' , 'Return to level Select' , 'Exit game'
 gover_menu = cMenu(gover_menu_texts,0,yellow,green)
 
 
@@ -91,7 +92,7 @@ def key_menu_handler(event,menu):
 	if event.type == pygame.KEYDOWN:
 		if event.key == pygame.K_DOWN: menu.menu_down();
 		elif event.key == pygame.K_UP: menu.menu_up();
-		elif event.key == pygame.K_RETURN: load_level(1);
+		elif event.key == pygame.K_RETURN: game_over_menu_selection();
 
 #Level Menu Handler
 def key_level_menu_handler(event,menu):
@@ -141,14 +142,16 @@ def game_over_menu_selection():
         if gover_menu.current == 0:
                 load_level(status.current_level)
 
-
-        #Exit Application
+        #Return to Level Select Menu
         elif gover_menu.current == 1:
+        	status.GAME_STAT = 2
+	
+	#Exit Application
+        elif gover_menu.current == 2:
                 pygame.quit()
                 sys.exit()
 
 def level_menu_selection():
-        print "aa"
         status.GAME_STAT = 0
 
 #Collision game handling
@@ -197,7 +200,7 @@ def fancy_stick_death_animation():
                 stick.fancy_rotation_death(5,scale)
                 scale+=0.1
                 pygame.display.update()
-                clock.tick(100)
+                clock.tick(60)
                 
 
 #updates all the needed images/sprites
@@ -237,11 +240,18 @@ def level_select_menu():
                 This menu moves all the entries up and down leaving
                 the selected one always centered
         '''
+
+	if levels_menu.background != None:
+        	window.blit(levels_menu.background,levels_menu.background.get_rect())
+
         # pick a font you have and set its size
         myfont = pygame.font.SysFont("Arial", 30)
         
+	#center - (number of lower levels)
+	
+	y = 300 - (levels_menu.current * 50)
         x = 200
-        y = 200
+        #y = 200
         color = yellow
 
         for index,me in enumerate(levels_menu.options):
@@ -306,7 +316,7 @@ def main():
                 
                 
                 pygame.display.update()
-                clock.tick(100) 
+                clock.tick(60) 
 
 
 if __name__ == '__main__': main()  
