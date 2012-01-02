@@ -1,4 +1,5 @@
 import pygame
+from cLevel import cLevel
 
 class cStatus:
 	"""All the status information to show to the player"""
@@ -16,6 +17,17 @@ class cStatus:
 		#	2 - Level Selection
 		self.GAME_STAT = 2
 	
+		#
+		# Level Information
+		#
+		self.level = cLevel("levels/lvl1.prop") #loads the default level
+		self.current_level = 1
+		
+		#
+		# Stick Information
+		#
+
+
 	def decrease_lives(self):
 		""" 
 			decreases the number of lives left

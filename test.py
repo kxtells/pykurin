@@ -27,11 +27,6 @@ green = 0,255,0
 clock = pygame.time.Clock ()
 window = pygame.display.set_mode(size)
 
-
-#First Base Load
-level = cLevel("levels/lvl2.prop")
-stick = cPal(level.startx,level.starty,0);
-
 #####
 # SPRITE LOADING
 #####
@@ -42,20 +37,25 @@ tsprite = cAnimSprite(imgset)
 #Lives sprite
 imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
 
-#General arrays with Sprites
-BASIC_SPRITES=[]
-ANIM_SPRITES=[]
-
-BASIC_SPRITES.append(level)
-BASIC_SPRITES.append(stick)
-ANIM_SPRITES.append(tsprite)
-
 
 #####
 # STATUS CREATION
 #####
 #Status load
 status = cStatus(imgsetlives)
+
+
+#First Base Load
+status.level = cLevel("levels/lvl1.prop")
+stick = cPal(status.level.startx,status.level.starty,0);
+
+#General arrays with Sprites
+BASIC_SPRITES=[]
+ANIM_SPRITES=[]
+
+BASIC_SPRITES.append(status.level)
+BASIC_SPRITES.append(stick)
+ANIM_SPRITES.append(tsprite)
 
 
 #####
@@ -73,33 +73,32 @@ gover_menu = cMenu(gover_menu_texts,0,yellow,green)
 
 #Main Key Handler
 def key_handler(event):
-        if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN: stick.move_down();
-                elif event.key == pygame.K_UP: stick.move_up();
-                elif event.key == pygame.K_LEFT: stick.move_left();
-                elif event.key == pygame.K_RIGHT: stick.move_right();
-        #Inverse to stop the movement
-                elif event.type == pygame.KEYUP:
-                                if event.key == pygame.K_DOWN: stick.move_up();
-                elif event.key == pygame.K_UP: stick.move_down();
-                elif event.key == pygame.K_LEFT: stick.move_right();
-                elif event.key == pygame.K_RIGHT: stick.move_left();
+	if event.type == pygame.KEYDOWN:
+		if event.key == pygame.K_DOWN: stick.move_down();
+		elif event.key == pygame.K_UP: stick.move_up();
+		elif event.key == pygame.K_LEFT: stick.move_left();
+		elif event.key == pygame.K_RIGHT: stick.move_right();
+	elif event.type == pygame.KEYUP:
+		if event.key == pygame.K_DOWN: stick.move_up();
+		elif event.key == pygame.K_UP: stick.move_down();
+		elif event.key == pygame.K_LEFT: stick.move_right();
+		elif event.key == pygame.K_RIGHT: stick.move_left();
 
         #print event
 
 #Game Over Menu Handler
 def key_menu_handler(event,menu):
-        if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN: menu.menu_down();
-                elif event.key == pygame.K_UP: menu.menu_up();
-                elif event.key == pygame.K_RETURN: game_over_menu_selection()
+	if event.type == pygame.KEYDOWN:
+		if event.key == pygame.K_DOWN: menu.menu_down();
+		elif event.key == pygame.K_UP: menu.menu_up();
+		elif event.key == pygame.K_RETURN: load_level(1);
 
 #Level Menu Handler
 def key_level_menu_handler(event,menu):
-        if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN: menu.menu_down();
-                elif event.key == pygame.K_UP: menu.menu_up();
-                elif event.key == pygame.K_RETURN: level_menu_selection();
+	if event.type == pygame.KEYDOWN:
+		if event.key == pygame.K_DOWN: menu.menu_down();
+		elif event.key == pygame.K_UP: menu.menu_up();
+		elif event.key == pygame.K_RETURN: load_level(levels_menu.current+1)
 
 #
 # MAIN ENTRANCE FOR 
@@ -107,39 +106,40 @@ def key_level_menu_handler(event,menu):
 #
 #
 def event_handler(event):
-        """ 
-                Different handlers for different events in different status
-                0 - Gaming screen
-                1 - Game Over screen
-        """
-        if event.type == pygame.QUIT: pygame.quit();sys.exit()
-        
-        #Gaming
-        if status.GAME_STAT == 0:
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_handler(event)
-        
-        #Game Over Screen
-        elif status.GAME_STAT == 1:
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,gover_menu)
+	""" 
+		Different handlers for different events in different status
+		0 - Gaming screen
+		1 - Game Over screen
+	"""
+	if event.type == pygame.QUIT: pygame.quit();sys.exit()
+	
+	#Gaming
+	if status.GAME_STAT == 0:
+		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_handler(event)
+	
+	#Game Over Screen
+	elif status.GAME_STAT == 1:
+		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,gover_menu)
 
-        #Game Over Screen
-        elif status.GAME_STAT == 2:
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_level_menu_handler(event,levels_menu)
+	#Game Over Screen
+	elif status.GAME_STAT == 2:
+		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_level_menu_handler(event,levels_menu)
 
 
 
 def load_level(level_num):
-        level = cLevel("levels/lvl2.prop")
-        stick.__init__(level.startx,level.starty,0);
-        status.reset_lives()
+        print "levels/lvl"+str(level_num)+".prop"
+	status.level = cLevel("levels/lvl"+str(level_num)+".prop")
+        stick.__init__(status.level.startx,status.level.starty,0);
         
+	status.reset_lives()
         status.GAME_STAT = 0
-
+	status.current_level = level_num
 
 def game_over_menu_selection():
         #Try again. Reload everything and return to game mode
         if gover_menu.current == 0:
-                load_level(1)
+                load_level(status.current_level)
 
 
         #Exit Application
@@ -178,7 +178,8 @@ def debug_onscreen(colides):
         stickpos        = myfont.render("Stick:"+str(stick.rect.center), 1, yellow)
         stickcollides   = myfont.render("collides:"+str(colides), 1, yellow)
         fps             = myfont.render("FPS:"+str(clock.get_fps()),1,yellow)
-        # put the label object on the screen at point x=100, y=100
+        
+	# put the label object on the screen at point x=100, y=100
         window.blit(title, (0, 0))
         window.blit(stickpos, (0, 20))
         window.blit(stickcollides, (0, 40))
@@ -201,8 +202,9 @@ def fancy_stick_death_animation():
 
 #updates all the needed images/sprites
 def update_scene():
-        for o in BASIC_SPRITES:
-                window.blit(o.image,o.rect)
+        #for o in BASIC_SPRITES:
+        window.blit(status.level.image,status.level.rect)
+        window.blit(stick.image,stick.rect)
         
         for s in ANIM_SPRITES:
                 if s.draw:
@@ -286,9 +288,7 @@ def main():
                 
                 #Playing Level
                 if status.GAME_STAT == 0:
-                        playing_screen()
-                        
-                        colision,cx,cy = level.stick_collides(stick);
+                        colision,cx,cy = status.level.stick_collides(stick);
                 
                         if colision: colision_handler(cx,cy)
         
