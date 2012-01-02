@@ -1,5 +1,5 @@
 [options]
-name: Testing Level, so easy that sucks
+name: 1- Testing Level, so easy that sucks
 collision: levels/lvl1col.png
 background: levels/lvl1.png
 startx: 50
