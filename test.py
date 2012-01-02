@@ -233,7 +233,7 @@ def level_selection_screen():
 #
 # Draw the level selection Screen
 #
-# @TODO MAKE IT WORK
+# @TODO THE LEVELS MUST BE ORDERED
 def level_select_menu():
         '''
                 level_select_menu:
