@@ -1,6 +1,0 @@
-[options]
-name: Dummy Level, does not work
-collision: levels/lvl1col.png
-background: levels/lvl1.png
-startx: 50
-starty: 60
