@@ -12,20 +12,18 @@ class cLevel:
 		self.starty 	=  int(parser.get('options','starty'))
 		self.imgcol 	=  pygame.image.load(parser.get('options','collision'));
 		self.image 	=  pygame.image.load(parser.get('options','background'));
+		self.mask       =  pygame.mask.from_surface(self.imgcol);
 		self.rect	=  self.image.get_rect();
+                
 
 	def stick_collides(self,stick):
 		arr_px_stick            = pygame.surfarray.array_alpha(stick.image);
                 arr_px_background       = pygame.surfarray.array_alpha(self.imgcol.subsurface(stick.rect));
+                tmask = pygame.mask.from_surface(self.imgcol.subsurface(stick.rect))
 
-		width = stick.rect.width
-		height = stick.rect.height
-	
-		for i in range(width):
-    			for j in range(height):
-				val = arr_px_stick[i][j]
-				bgval = arr_px_background[i][j]
-				if val==255 and bgval==255:
-					return 1,i+stick.rect.x,j+stick.rect.y
+                col = stick.mask.overlap(tmask,(0,0))
+                
+                if col == None: return 0,0,0
+                else: return 1,col[0]+stick.rect.x,col[1]+stick.rect.y
 		
 		return 0,i,j

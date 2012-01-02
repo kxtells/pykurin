@@ -10,6 +10,7 @@ class cPal:
 		
 		self.image 	= pygame.image.load("stick.png")
 		self.baseImage 	= pygame.image.load("stick.png")
+                self.mask       = pygame.mask.from_surface(self.image);
 		
 		self.rect = self.image.get_rect();
 		
@@ -43,6 +44,7 @@ class cPal:
 
         	self.image = pygame.transform.rotate(self.baseImage, self.rot)
         	self.rect = self.image.get_rect(center=self.rect.center)
+        	self.mask = pygame.mask.from_surface(self.image)
 
 	"""Moving functions"""
 	def move_left(self): 	self.movx -= cPal.__MOV_SPEED;
