@@ -1,5 +1,6 @@
 import pygame
 from cLevel import cLevel
+import time
 
 class cStatus:
 	"""All the status information to show to the player"""
@@ -27,6 +28,10 @@ class cStatus:
 		# Stick Information
 		#
 
+                #
+                # Elapsed Time Information
+                #
+                self.start_time = time.time()
 
 	def decrease_lives(self):
 		""" 
@@ -49,3 +54,9 @@ class cStatus:
 	def reset_lives(self):
 		self.lives = 3
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
+
+	def get_elapsed_time(self):
+                return time.time() - self.start_time
+
+        def reset_timer(self):
+                self.start_time = time.time()

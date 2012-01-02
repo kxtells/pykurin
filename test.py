@@ -155,6 +155,7 @@ def load_level(level_num):
         status.reset_lives()
         status.GAME_STAT = 0
         status.current_level = level_num
+        status.reset_timer()
 
 def game_over_menu_selection():
         #Try again. Reload everything and return to game mode
@@ -193,6 +194,11 @@ def colision_handler(cx,cy):
 
 #Debug information
 def debug_onscreen(colides):
+        #TIMING
+        seconds         = int(status.get_elapsed_time())
+        millis          = str(seconds - status.get_elapsed_time()).partition(".")[2]
+        timestr         = str(seconds)+":"+millis[0:3]
+
         # pick a font you have and set its size
         myfont = pygame.font.SysFont("Arial", 14)
         # apply it to text on a label
@@ -200,12 +206,15 @@ def debug_onscreen(colides):
         stickpos        = myfont.render("Stick:"+str(stick.rect.center), 1, yellow)
         stickcollides   = myfont.render("collides:"+str(colides), 1, yellow)
         fps             = myfont.render("FPS:"+str(clock.get_fps()),1,yellow)
+
+        elapsed_time    = myfont.render("TIME:"+timestr,1,yellow)
         
         # put the label object on the screen at point x=100, y=100
         window.blit(title, (0, 0))
         window.blit(stickpos, (0, 20))
         window.blit(stickcollides, (0, 40))
         window.blit(fps, (0, 60))
+        window.blit(elapsed_time, (0, 80))
 
         if COLLISION == False:
                 colisionOnOff   = myfont.render("COLLISION OFF",1,yellow)
@@ -309,7 +318,7 @@ def game_over_menu():
 def playing_screen():
         window.fill(white)
         update_scene()
-        stick.rotate(5)
+        stick.rotate(3)
         stick.movement()
 
 
@@ -326,7 +335,6 @@ def main():
                                 colision,cx,cy = status.level.stick_collides(stick);
                                 if colision: colision_handler(cx,cy)
                         
-        
                         playing_screen()                        
         
                         debug_onscreen(colision)
