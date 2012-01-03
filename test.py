@@ -39,6 +39,10 @@ window = pygame.display.set_mode(size)
 imgset = BF.load_and_slice_sprite(32,32,'explosion.png');
 tsprite = cAnimSprite(imgset)
 
+#Goal Text
+imgset = BF.load_and_slice_sprite(300,99,'goal_text.png');
+gtext_sprite = cAnimSprite(imgset)
+gtext_sprite.move(800,300)
 
 #Lives sprite
 imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
@@ -240,10 +244,15 @@ def debug_onscreen(colides):
                 deathOnOff      = myfont.render("DEATH OFF",1,yellow)
                 window.blit(deathOnOff, (400, 20))
 
-                
+
+#Updates all the needed images/sprites for goal Screen
+def update_scene_goal():
+        window.blit(gtext_sprite.image,gtext_sprite.rect)
+        gtext_sprite.update(pygame.time.get_ticks())
 
 #updates all the needed images/sprites
 def update_scene():
+        window.fill(white)
         #for o in BASIC_SPRITES:
         window.blit(status.level.image,status.level.rect)
 
@@ -265,7 +274,6 @@ def update_scene():
 def fancy_stick_death_animation():
         scale = 1
         while scale < 10:
-                
                 update_scene()
                 stick.fancy_rotation_death(5,scale)
                 scale+=0.1
@@ -292,6 +300,8 @@ def goal_screen():
                 3 - Show a screen with the results
                 4 - Give options: Repeat or Next level
         """
+        update_scene()
+        stick.rotate(25)
 
         if status.SUBSTAT == 0:
                 #Move Stick to Goal center
@@ -302,13 +312,23 @@ def goal_screen():
                         stick.movement()
                 else:
                         stick.enable_disable_movement()
-                status.SUBSTAT = 1
+                        status.SUBSTAT = 1
 
         elif status.SUBSTAT == 1:
-                #Flip Screen Status
+                #Goal Running there
+                gtext_sprite.incr_move(-10,0)
+                update_scene_goal()
+                if gtext_sprite.out_of_screen():
+                        status.SUBSTAT = 2
+                        gtext_sprite.move(800,300) #return to begining
+
+        elif status.SUBSTAT == 2:
+                status.SUBSTAT = 0      #reset to original
+                status.current_level += 1
+                load_level(status.current_level) #Load Next level
                 
-        update_scene()
-        stick.rotate()
+                
+
         
 #
 # Draw the level selection Screen
