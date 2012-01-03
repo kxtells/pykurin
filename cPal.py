@@ -148,8 +148,8 @@ class cPal:
                         ox,oy is the position to reach
                 """
                 
-                if (self.rect.x <= ox+10 and self.rect.x >= ox-10) \
-                   and (self.rect.y <= oy+10 and self.rect.y >= oy-10):
+                if (self.rect.x <= ox+5 and self.rect.x >= ox-5) \
+                   and (self.rect.y <= oy+5 and self.rect.y >= oy-5):
                         return True
                 
                 if self.rect.x > ox:
