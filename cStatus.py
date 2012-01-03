@@ -33,6 +33,11 @@ class cStatus:
                 #
                 self.start_time = time.time()
 
+                #
+                # Listen KeyStrokes
+                #
+                self.LISTEN_KEYS = True
+
 	def decrease_lives(self):
 		""" 
 			decreases the number of lives left
@@ -60,3 +65,10 @@ class cStatus:
 
         def reset_timer(self):
                 self.start_time = time.time()
+
+        def enable_disable_keyboard(self):
+                if self.LISTEN_KEYS: self.LISTEN_KEYS = False
+                else: self.LISTEN_KEYS = True
+
+        def is_keyboard_enabled(self):
+                return self.LISTEN_KEYS

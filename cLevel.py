@@ -17,8 +17,10 @@ class cLevel:
                 
 
 	def stick_collides(self,stick):
-		arr_px_stick            = pygame.surfarray.array_alpha(stick.image);
-                arr_px_background       = pygame.surfarray.array_alpha(self.imgcol.subsurface(stick.rect));
+                """
+                        Check if a given stick collides with one of the
+                        level walls
+                """
                 tmask = pygame.mask.from_surface(self.imgcol.subsurface(stick.rect))
 
                 col = stick.mask.overlap(tmask,(0,0))

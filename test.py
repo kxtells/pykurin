@@ -19,7 +19,8 @@ pygame.init()
 size = width, height = 800, 600
 
 #DEBUG
-COLLISION=True
+DEBUG_COLLISION=True
+DEBUG_DEATH=True
 
 #some colors definitions
 black = 0, 0, 0
@@ -79,15 +80,20 @@ gover_menu = cMenu(gover_menu_texts,0,yellow,green)
 #Debug Options
 def key_debug_actions(event):
 #the global var collision may be modified
-        global COLLISION
+        global DEBUG_COLLISION
+        global DEBUG_DEATH
 
         if event.key == pygame.K_F1:
-                if COLLISION: COLLISION = False
-                else: COLLISION = True
+                if DEBUG_COLLISION: DEBUG_COLLISION = False
+                else: DEBUG_COLLISION = True
+        elif event.key == pygame.K_F2:
+                if DEBUG_DEATH: DEBUG_DEATH = False
+                else: DEBUG_DEATH = True
                 
 #Main Key Handler
 def key_handler(event):
-        
+        #Do not listen keystrokes
+        if not status.is_keyboard_enabled(): return
         
         if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN: stick.move_down();
@@ -175,14 +181,22 @@ def level_menu_selection():
         status.GAME_STAT = 0
 
 #Collision game handling
-# - show collision sprite
-# - Move stick back a little bit giving time to react
 def colision_handler(cx,cy):
+        """
+                All actions triggered by a colision
+                 - collision sprite
+                 - Change stick rotation direction for a time
+                 - Make the stick jump back
+        """   
+        status.enable_disable_keyboard() #disable Keyboard
         tsprite.move(cx,cy)
         tsprite.draw = True
+        stick.jump_back(cx,cy)
         stick.flip_rotation_tmp()
-        
-        if status.decrease_lives(): fancy_stick_death_animation()
+        status.enable_disable_keyboard() #Enable keyboard
+
+        if DEBUG_DEATH:
+                if status.decrease_lives(): fancy_stick_death_animation()
 
 
 
@@ -209,16 +223,19 @@ def debug_onscreen(colides):
 
         elapsed_time    = myfont.render("TIME:"+timestr,1,yellow)
         
-        # put the label object on the screen at point x=100, y=100
+        # put the label objects on the screen
         window.blit(title, (0, 0))
         window.blit(stickpos, (0, 20))
         window.blit(stickcollides, (0, 40))
         window.blit(fps, (0, 60))
         window.blit(elapsed_time, (0, 80))
 
-        if COLLISION == False:
+        if DEBUG_COLLISION == False:
                 colisionOnOff   = myfont.render("COLLISION OFF",1,yellow)
                 window.blit(colisionOnOff, (400, 0))
+        if DEBUG_DEATH == False:
+                deathOnOff      = myfont.render("DEATH OFF",1,yellow)
+                window.blit(deathOnOff, (400, 20))
 
 
 #A fancy rotozoom for the stick death
@@ -318,7 +335,7 @@ def game_over_menu():
 def playing_screen():
         window.fill(white)
         update_scene()
-        stick.rotate(3)
+        stick.rotate()
         stick.movement()
 
 
@@ -331,7 +348,7 @@ def main():
                 if status.GAME_STAT == 0:
 
                         #Debug Purposes
-                        if COLLISION:
+                        if DEBUG_COLLISION:
                                 colision,cx,cy = status.level.stick_collides(stick);
                                 if colision: colision_handler(cx,cy)
                         
