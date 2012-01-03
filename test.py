@@ -95,9 +95,9 @@ def key_debug_actions(event):
                 if DEBUG_DEATH: DEBUG_DEATH = False
                 else: DEBUG_DEATH = True
                 
-#Main Key Handler
+#Main Key Handler For the Game
 def key_handler(event):
-        #Do not listen keystrokes
+        #Do not listen keystrokes is keyboard is disabled
         if not status.is_keyboard_enabled(): return
         
         if event.type == pygame.KEYDOWN:
@@ -105,6 +105,7 @@ def key_handler(event):
                 elif event.key == pygame.K_UP: stick.move_up();
                 elif event.key == pygame.K_LEFT: stick.move_left();
                 elif event.key == pygame.K_RIGHT: stick.move_right();
+                elif event.key == pygame.K_LCTRL: stick.turbo_on();
 
                 #Debug Handlers
                 key_debug_actions(event)
@@ -114,6 +115,7 @@ def key_handler(event):
                 elif event.key == pygame.K_UP: stick.move_down();
                 elif event.key == pygame.K_LEFT: stick.move_right();
                 elif event.key == pygame.K_RIGHT: stick.move_left();
+                elif event.key == pygame.K_LCTRL: stick.turbo_off();
 
         #print event
 

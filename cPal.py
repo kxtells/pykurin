@@ -164,3 +164,9 @@ class cPal:
 
 
                 return False
+
+        def turbo_on(self):
+                print "Turbo On"
+
+        def turbo_off(self):
+                print "Turbo Off"
