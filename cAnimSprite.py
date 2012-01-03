@@ -23,7 +23,6 @@ class cAnimSprite(pygame.sprite.Sprite):
 		self.update(pygame.time.get_ticks())
 
 	def update(self,time):
-
 		if time - self._last_update > self._delay:
 			self._frame+=1
 			if self._frame >= len(self._images): self._frame = 0;self.draw = False

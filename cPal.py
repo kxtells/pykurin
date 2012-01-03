@@ -2,10 +2,11 @@ import pygame
 
 class cPal:
         """The 'stick' class.. the player"""
-        __MOV_SPEED = 5;
+        __MOV_SPEED = 3;
         __ROT_SPEED = 3;
         __BACK_TICKS = 12;
         __JUMP_LENGTH = 5;
+        __TURBO_SPEED = 6;
         
         def __init__(self,x,y,rot):
                 
@@ -19,6 +20,7 @@ class cPal:
                 self.movy = 0;
 
                 self.rot = rot;
+                self.clockwise = False
                 
                 #backwards move
                 self.tbackwards = False
@@ -113,21 +115,26 @@ class cPal:
                 syc = self.rect.height/2
 
 
-                if sx < sxc and sy < syc :      #Q1
-                        jx = cPal.__JUMP_LENGTH
-                        jy = cPal.__JUMP_LENGTH
-                elif sx < sxc and sy > syc:     #Q2
-                        jx = cPal.__JUMP_LENGTH
-                        jy = -cPal.__JUMP_LENGTH
-                elif sx > sxc and sy < syc:     #Q3
-                        jx = -cPal.__JUMP_LENGTH
-                        jy = cPal.__JUMP_LENGTH
-                else:                           #Q4
-                        jx = -cPal.__JUMP_LENGTH
-                        ju = -cPal.__JUMP_LENGTH
+                if self.clockwise:
+                        print "ClockWise"
+                else:
+                        if sx < sxc and sy < syc :      #Q1
+                                jx = cPal.__JUMP_LENGTH
+                                jy = cPal.__JUMP_LENGTH
+                        elif sx < sxc and sy > syc:     #Q2
+                                jx = cPal.__JUMP_LENGTH
+                                jy = -cPal.__JUMP_LENGTH
+                        elif sx > sxc and sy < syc:     #Q3
+                                jx = cPal.__JUMP_LENGTH
+                                jy = cPal.__JUMP_LENGTH
+                        else:                           #Q4
+                                jx = cPal.__JUMP_LENGTH
+                                ju = -cPal.__JUMP_LENGTH
+                        
 
                 self.rect = self.rect.move(jx,jy);
 
+        #Movement to reproduce when death
         def fancy_rotation_death(self,amount,scale):
                 self.rot += amount
 
@@ -135,3 +142,25 @@ class cPal:
 
                 self.image = pygame.transform.rotozoom(self.baseImage, self.rot,scale)
                 self.rect = self.image.get_rect(center=self.rect.center)
+
+        def move_towards_position(self,ox,oy):
+                """
+                        ox,oy is the position to reach
+                """
+                
+                if (self.rect.x <= ox+10 and self.rect.x >= ox-10) \
+                   and (self.rect.y <= oy+10 and self.rect.y >= oy-10):
+                        return True
+                
+                if self.rect.x > ox:
+                        self.movx = -1
+                else:
+                        self.movx = 1
+
+                if self.rect.y > oy:
+                        self.movy = -1
+                else:
+                        self.movy = 1
+
+
+                return False

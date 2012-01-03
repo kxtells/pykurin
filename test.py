@@ -39,6 +39,7 @@ window = pygame.display.set_mode(size)
 imgset = BF.load_and_slice_sprite(32,32,'explosion.png');
 tsprite = cAnimSprite(imgset)
 
+
 #Lives sprite
 imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
 
@@ -136,6 +137,7 @@ def event_handler(event):
                 Different handlers for different events in different status
                 0 - Gaming screen
                 1 - Game Over screen
+                2 - Level Selection Screen
         """
         if event.type == pygame.QUIT: pygame.quit();sys.exit()
         
@@ -153,8 +155,8 @@ def event_handler(event):
 
 
 
+#Load a Specific Level
 def load_level(level_num):
-        print "levels/lvl"+str(level_num).zfill(6)+".prop"
         status.level = cLevel("levels/lvl"+str(level_num).zfill(6)+".prop")
         stick.__init__(status.level.startx,status.level.starty,0);
         
@@ -163,6 +165,7 @@ def load_level(level_num):
         status.current_level = level_num
         status.reset_timer()
 
+#
 def game_over_menu_selection():
         #Try again. Reload everything and return to game mode
         if gover_menu.current == 0:
@@ -237,37 +240,40 @@ def debug_onscreen(colides):
                 deathOnOff      = myfont.render("DEATH OFF",1,yellow)
                 window.blit(deathOnOff, (400, 20))
 
-
-#A fancy rotozoom for the stick death
-def fancy_stick_death_animation():
-        scale = 1
-        while scale < 10:
-                
-                window.fill(white)
-                update_scene()
-                stick.fancy_rotation_death(5,scale)
-                scale+=0.1
-                pygame.display.update()
-                clock.tick(30)
                 
 
 #updates all the needed images/sprites
 def update_scene():
         #for o in BASIC_SPRITES:
         window.blit(status.level.image,status.level.rect)
-        window.blit(stick.image,stick.rect)
+
+        window.blit(status.level.goal_sprite.image,status.level.goal_sprite.rect)
+        status.level.goal_sprite.update(pygame.time.get_ticks())
         
         for s in ANIM_SPRITES:
                 if s.draw:
                         window.blit(s.image,s.rect)
                         s.update(pygame.time.get_ticks())
+
+        window.blit(stick.image,stick.rect)
         
         #LifeBar status
         window.blit(status.lifebar_image,status.lifebar_rect)
 
-def game_over_screen():
-        
-        window.fill(white)
+
+#A fancy rotozoom for the stick death
+def fancy_stick_death_animation():
+        scale = 1
+        while scale < 10:
+                
+                update_scene()
+                stick.fancy_rotation_death(5,scale)
+                scale+=0.1
+                pygame.display.update()
+                clock.tick(30)
+
+#Game Over Screen
+def game_over_screen():     
         stick.fancy_rotation_death(0,10)
         update_scene()
         stick.rotate(1)
@@ -275,9 +281,35 @@ def game_over_screen():
 
 
 def level_selection_screen():
-        window.fill(white)
         level_select_menu()
 
+
+def goal_screen():
+        """
+                Various things to do here:
+                1 - Move the stick to the center of the goal
+                2 - Do a fancy flip Screen animation
+                3 - Show a screen with the results
+                4 - Give options: Repeat or Next level
+        """
+
+        if status.SUBSTAT == 0:
+                #Move Stick to Goal center
+                ox = status.level.goal_sprite.rect.x;
+                oy = status.level.goal_sprite.rect.y;
+
+                if not stick.move_towards_position(ox,oy):
+                        stick.movement()
+                else:
+                        stick.enable_disable_movement()
+                status.SUBSTAT = 1
+
+        elif status.SUBSTAT == 1:
+                #Flip Screen Status
+                
+        update_scene()
+        stick.rotate()
+        
 #
 # Draw the level selection Screen
 #
@@ -299,7 +331,6 @@ def level_select_menu():
         
         y = 300 - (levels_menu.current * 50)
         x = 200
-        #y = 200
         color = yellow
 
         for index,me in enumerate(levels_menu.options):
@@ -333,7 +364,6 @@ def game_over_menu():
 # Draws everything of the playing level screen
 #
 def playing_screen():
-        window.fill(white)
         update_scene()
         stick.rotate()
         stick.movement()
@@ -343,7 +373,8 @@ def main():
         #Main Game Function
         while 1:
                 for event in pygame.event.get(): event_handler(event)
-                
+                window.fill(white)
+
                 #Playing Level
                 if status.GAME_STAT == 0:
 
@@ -353,8 +384,10 @@ def main():
                                 if colision: colision_handler(cx,cy)
                         
                         playing_screen()                        
-        
                         debug_onscreen(colision)
+
+                        if status.level.stick_in_goal(stick): status.GAME_STAT = 3
+                                
                 
                 #Game Over
                 elif status.GAME_STAT == 1: 
@@ -363,6 +396,9 @@ def main():
                 #Level Selection
                 elif status.GAME_STAT == 2:
                         level_selection_screen()
+
+                elif status.GAME_STAT == 3:
+                        goal_screen()
                 
                 
                 pygame.display.update()

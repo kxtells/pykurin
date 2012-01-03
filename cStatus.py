@@ -16,7 +16,17 @@ class cStatus:
 		#	0 - Playing with the stick on a level
 		#	1 - Game over on a level
 		#	2 - Level Selection
+		#       3 - Goal SCREEN
 		self.GAME_STAT = 2
+
+                # Substatus is used on different screens to move to different sub status
+                # (for example, goal screen has 3 status:
+                #       - Move to center
+                #       - Show screen with results
+                #       - Show Options
+                #
+                # This has to be managed by outer functions
+		self.SUBSTAT = 0
 	
 		#
 		# Level Information
