@@ -4,3 +4,5 @@ collision: levels/lvl3col.png
 background: levels/lvl3.png
 startx: 56
 starty: 35
+endx: 670
+endy: 170
