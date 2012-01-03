@@ -29,6 +29,29 @@ class cAnimSprite(pygame.sprite.Sprite):
 			self.image = self._images[self._frame]
 			self._last_update = time
 
+        #Change the sprite position
 	def move(self,x,y):
 		self.rect.x = x-self.rect.width/2
 		self.rect.y = y-self.rect.height/2
+
+        #Incremental move by amount
+	def incr_move(self,incrx,incry):
+                self.rect.x += incrx
+                self.rect.y += incry
+
+        def out_of_screen(self,width=800,height=600):
+                """
+                        Checks if the sprite is out of the screen
+                """
+                x = self.rect.x
+                y = self.rect.y
+                w = self.rect.width
+                h = self.rect.height
+                
+                if x + w < 0 or \
+                   y + h< 0 or \
+                   x > width or \
+                   y > height:
+                           return True
+
+                return False
