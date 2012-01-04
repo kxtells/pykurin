@@ -330,12 +330,9 @@ def goal_screen():
                 load_level(status.current_level) #Load Next level
                 
                 
-
-        
 #
 # Draw the level selection Screen
 #
-# @TODO THE LEVELS MUST BE ORDERED
 def level_select_menu():
         '''
                 level_select_menu:
