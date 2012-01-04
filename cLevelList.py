@@ -10,6 +10,10 @@ class cLevelList:
 		
 		for infile in glob.glob( os.path.join(path, '*.prop') ):
 			self.levelfiles.append(infile)
+		
+		self.levelfiles.sort()
+		
+		for infile in self.levelfiles:
 			self.levelnames.append(self.get_level_name_from_file(infile))
 
 		print self.levelfiles
