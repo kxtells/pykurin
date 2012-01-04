@@ -1,8 +1,8 @@
 [options]
-name: 4- Dummy Level, does not work
-collision: levels/lvl1col.png
-background: levels/lvl1.png
-startx: 50
-starty: 60
-endx: 146
-endy: 444
+name: 4- Gimp Maze
+collision: levels/lvl4col.png
+background: levels/lvl4.png
+startx: 150
+starty: 70
+endx: 660
+endy: 500
