@@ -6,7 +6,7 @@ class cPal:
         __ROT_SPEED = 3;
         __BACK_TICKS = 12;
         __JUMP_LENGTH = 5;
-        __TURBO_SPEED = 6;
+        __TURBO_MULTIPLIER = 2;
         
         def __init__(self,x,y,rot):
                 
@@ -30,6 +30,7 @@ class cPal:
 
                 #Movement Flag
                 self.fmove = True
+		self.turbo = False
 
         
         #Rotate function. Called continuously
@@ -38,18 +39,40 @@ class cPal:
                         rotate an image while keeping its center in the specified
                         amount attribute in degrees.
 
-                        self.tbackwards defines a temporal rotation
+                        self.tbackwards defines a temporal inverse rotation
                 """
-                
-                if self.tbackwards:             #Check if temporal backwards rotation is set
-                        self.rot -= amount + 2  #When rotating back has to be faster
+		if self.clockwise: self.clockwise_rotation(amount)
+		else: self.counterclockwise_rotation(amount)
+		
+	def clockwise_rotation(self,amount):
+                if self.tbackwards:             	#Check if temporal backwards rotation is set
+                        self.rot -= amount + 2  	#When rotating back has to be faster
+                        self.tbackwards_ticks -= 1
+                else:
+                        self.rot -= amount
+
+                if self.tbackwards_ticks == 0:
+                        self.tbackwards = False
+                        self.tbackwards_ticks = self.__BACK_TICKS
+			self.flip_rotation()
+
+                if self.rot <= 0: self.rot = 360;
+
+                self.image = pygame.transform.rotate(self.baseImage, self.rot)
+                self.rect = self.image.get_rect(center=self.rect.center)
+                self.mask = pygame.mask.from_surface(self.image)
+
+	def counterclockwise_rotation(self,amount):
+                if self.tbackwards:             	#Check if temporal backwards rotation is set
+                        self.rot += amount + 2  	#When rotating back has to be faster
                         self.tbackwards_ticks -= 1
                 else:
                         self.rot += amount
 
                 if self.tbackwards_ticks == 0:
                         self.tbackwards = False
-                        #self.tbackwards_ticks = self.__BACK_TICKS
+                        self.tbackwards_ticks = self.__BACK_TICKS
+			self.flip_rotation()
 
                 if self.rot >= 360: self.rot = 0;
 
@@ -73,7 +96,8 @@ class cPal:
         def movement(self):
                 """Move the Stick Rectangle"""
                 if self.fmove:
-                        self.rect = self.rect.move(self.movx,self.movy);
+			if self.turbo: self.rect = self.rect.move(self.movx*cPal.__TURBO_MULTIPLIER,self.movy*cPal.__TURBO_MULTIPLIER);
+                     	else: self.rect = self.rect.move(self.movx,self.movy);
 
         def enable_disable_movement(self):
                 """sets the movement flag"""
@@ -88,10 +112,22 @@ class cPal:
                         Flips the rotation temporally for a specified number
                         of frames
                 """
-                if self.tbackwards: self.tbackwards = False
+		if self.clockwise: self.clockwise = False
+                else: self.clockwise = True
+		
+		if self.tbackwards: self.tbackwards = False
                 else: self.tbackwards = True
 
+
                 self.tbackwards_ticks = nframes
+		#self.tbackwards = True
+
+	def flip_rotation(self):
+                """
+			Flips the rotation
+		"""
+		if self.clockwise: self.clockwise = False
+                else: self.clockwise = True
 
         def jump_back(self,cx,cy):
                 """
@@ -105,7 +141,7 @@ class cPal:
                         Q2|Q4
                         
                 """
-                #JUMP directions
+		#JUMP directions
                 jx = 0
                 jy = 0
                 #Check colision position of stick (which quadrant)
@@ -114,15 +150,25 @@ class cPal:
                 sxc = self.rect.width/2
                 syc = self.rect.height/2
 
-
                 if self.clockwise:
-                        print "ClockWise"
+                        if sx < sxc and sy < syc :     #Q1
+                                jx = 0
+                                jy = +cPal.__JUMP_LENGTH
+                        elif sx < sxc and sy > syc:     #Q2
+                                jx = cPal.__JUMP_LENGTH
+                                jy = -cPal.__JUMP_LENGTH
+                        elif sx > sxc and sy < syc:     #Q3
+                                jx = cPal.__JUMP_LENGTH
+                                jy = cPal.__JUMP_LENGTH
+                        else:                           #Q4
+                                jx = 0
+                                jy = -cPal.__JUMP_LENGTH
                 else:
                         if sx < sxc and sy < syc :      #Q1
                                 jx = cPal.__JUMP_LENGTH
-                                jy = cPal.__JUMP_LENGTH
+                                jy = 0
                         elif sx < sxc and sy > syc:     #Q2
-                                jx = cPal.__JUMP_LENGTH
+                                jx = 0
                                 jy = -cPal.__JUMP_LENGTH
                         elif sx > sxc and sy < syc:     #Q3
                                 jx = cPal.__JUMP_LENGTH
@@ -131,7 +177,6 @@ class cPal:
                                 jx = cPal.__JUMP_LENGTH
                                 ju = -cPal.__JUMP_LENGTH
                         
-
                 self.rect = self.rect.move(jx,jy);
 
         #Movement to reproduce when death
@@ -166,7 +211,7 @@ class cPal:
                 return False
 
         def turbo_on(self):
-                print "Turbo On"
+		self.turbo = True
 
         def turbo_off(self):
-                print "Turbo Off"
+		self.turbo = False
