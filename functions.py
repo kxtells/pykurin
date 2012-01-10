@@ -15,7 +15,7 @@ def load_and_slice_sprite(w,h,filename):
 	master_w,master_h = master_image.get_size()
 
 	for i in xrange(int(master_w/w)):
-		images.append(master_image.subsurface((i*w,0,w,h)))
+		images.append(master_image.subsurface((i*w,0,w,h)).convert_alpha())
 
 	return images
 
