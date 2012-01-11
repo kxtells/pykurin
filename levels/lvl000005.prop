@@ -7,3 +7,4 @@ startx: 150
 starty: 388
 endx: 1624
 endy: 90
+stick: sticks/ministick.png

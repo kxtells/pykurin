@@ -165,7 +165,8 @@ def event_handler(event):
 #Load a Specific Level
 def load_level(level_num):
         status.level = cLevel("levels/lvl"+str(level_num).zfill(6)+".prop")
-        stick.__init__(status.level.startx,status.level.starty,0);
+        stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
+        #stick.load_stick_image(status.level.stick)
         
         status.reset_lives()
         status.GAME_STAT = 0

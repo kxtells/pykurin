@@ -7,3 +7,4 @@ startx: 50
 starty: 60
 endx: 146
 endy: 444
+stick: sticks/stick.png

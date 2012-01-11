@@ -17,6 +17,7 @@ class cLevel:
 		self.bg 	=  pygame.image.load(parser.get('options','background2')).convert_alpha();
 		self.mask       =  pygame.mask.from_surface(self.imgcol);
 		self.rect	=  self.image.get_rect();
+		self.stick      =  parser.get('options','stick')
 
                 #Load the Goal sprite
 		goal_images     =  BF.load_and_slice_sprite(100,100,'goal.png');
