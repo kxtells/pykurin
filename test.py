@@ -26,6 +26,7 @@ DEBUG_DEATH=True
 black = 0, 0, 0
 yellow = 255, 255, 0
 green = 0,255,0
+red = 255,0,0
 white = 255,255,255
 
 
@@ -225,12 +226,12 @@ def debug_onscreen(colides):
         # pick a font you have and set its size
         myfont = pygame.font.SysFont("Arial", 14)
         # apply it to text on a label
-        title           = myfont.render("Debug", 1, yellow)
-        stickpos        = myfont.render("Stick:"+str(stick.rect.center), 1, yellow)
-        stickcollides   = myfont.render("collides:"+str(colides), 1, yellow)
-        fps             = myfont.render("FPS:"+str(clock.get_fps()),1,yellow)
+        title           = myfont.render("Debug", 1, red)
+        stickpos        = myfont.render("Stick:"+str(stick.rect.center), 1, red)
+        stickcollides   = myfont.render("collides:"+str(colides), 1, red)
+        fps             = myfont.render("FPS:"+str(clock.get_fps()),1,red)
 
-        elapsed_time    = myfont.render("TIME:"+timestr,1,yellow)
+        elapsed_time    = myfont.render("TIME:"+timestr,1,red)
         
         # put the label objects on the screen
         window.blit(title, (0, 0))
@@ -240,10 +241,10 @@ def debug_onscreen(colides):
         window.blit(elapsed_time, (0, 80))
 
         if DEBUG_COLLISION == False:
-                colisionOnOff   = myfont.render("COLLISION OFF",1,yellow)
+                colisionOnOff   = myfont.render("COLLISION OFF",1,red)
                 window.blit(colisionOnOff, (400, 0))
         if DEBUG_DEATH == False:
-                deathOnOff      = myfont.render("DEATH OFF",1,yellow)
+                deathOnOff      = myfont.render("DEATH OFF",1,red)
                 window.blit(deathOnOff, (400, 20))
 
 
@@ -255,18 +256,21 @@ def update_scene_goal():
 #updates all the needed images/sprites
 def update_scene():
         window.fill(white)
-        #for o in BASIC_SPRITES:
-        window.blit(status.level.image,status.level.rect)
 
-        window.blit(status.level.goal_sprite.image,status.level.goal_sprite.rect)
+        dx = -(stick.rect.center[0]-width/2)
+        dy = -(stick.rect.center[1]-height/2)
+
+        window.blit(status.level.image,status.level.rect.move(dx,dy))
+
+        window.blit(status.level.goal_sprite.image,status.level.goal_sprite.rect.move(dx,dy))
         status.level.goal_sprite.update(pygame.time.get_ticks())
         
         for s in ANIM_SPRITES:
                 if s.draw:
-                        window.blit(s.image,s.rect)
+                        window.blit(s.image,s.rect.move(dx,dy))
                         s.update(pygame.time.get_ticks())
 
-        window.blit(stick.image,stick.rect)
+        window.blit(stick.image,stick.rect.move(dx,dy))
         
         #LifeBar status
         window.blit(status.lifebar_image,status.lifebar_rect)
