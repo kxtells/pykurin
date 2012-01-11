@@ -1,8 +1,8 @@
 [options]
-name: 5- Dummy Level, does not work
-collision: levels/lvl1col.png
-background: levels/lvl1.png
-startx: 50
-starty: 60
-endx: 146
-endy: 444
+name: 5- NoteBook Style
+collision: levels/lvl5col.png
+background: levels/lvl5.png
+startx: 150
+starty: 388
+endx: 1624
+endy: 90
