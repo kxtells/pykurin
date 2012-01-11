@@ -257,6 +257,8 @@ def update_scene_goal():
 def update_scene():
         window.fill(white)
 
+        window.blit(status.level.bg,status.level.bg.get_rect())
+
         dx = -(stick.rect.center[0]-width/2)
         dy = -(stick.rect.center[1]-height/2)
 

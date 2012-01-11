@@ -2,6 +2,7 @@
 name: 8- Dummy Level, does not work
 collision: levels/lvl1col.png
 background: levels/lvl1.png
+background2: backgrounds/wood.jpg
 startx: 50
 starty: 60
 endx: 146

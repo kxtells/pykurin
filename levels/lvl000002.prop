@@ -2,6 +2,7 @@
 name: 2- Impossible to finish
 collision: levels/lvl2col.png
 background: levels/lvl2.png
+background2: backgrounds/wood.jpg
 startx: 100
 starty: 100
 endx: 620

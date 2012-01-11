@@ -14,6 +14,7 @@ class cLevel:
 		self.starty 	=  int(parser.get('options','starty'))
 		self.imgcol 	=  pygame.image.load(parser.get('options','collision')).convert_alpha();
 		self.image 	=  pygame.image.load(parser.get('options','background')).convert_alpha();
+		self.bg 	=  pygame.image.load(parser.get('options','background2')).convert_alpha();
 		self.mask       =  pygame.mask.from_surface(self.imgcol);
 		self.rect	=  self.image.get_rect();
 

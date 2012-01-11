@@ -2,6 +2,7 @@
 name: 4- Gimp Maze
 collision: levels/lvl4col.png
 background: levels/lvl4.png
+background2: backgrounds/wood.jpg
 startx: 150
 starty: 70
 endx: 660
