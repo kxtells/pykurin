@@ -2,6 +2,9 @@ import pygame
 import os
 import glob
 
+
+
+
 #Function to load a sprite set and slice it
 def load_and_slice_sprite(w,h,filename):
 	'''
@@ -18,5 +21,4 @@ def load_and_slice_sprite(w,h,filename):
 		images.append(master_image.subsurface((i*w,0,w,h)).convert_alpha())
 
 	return images
-
 

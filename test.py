@@ -7,6 +7,7 @@
 
 import sys, pygame
 import functions as BF
+import cAnimSpriteFactory
 from cPal import cPal
 from cLevel import cLevel
 from cAnimSprite import cAnimSprite
@@ -36,9 +37,10 @@ window = pygame.display.set_mode(size)
 #####
 # SPRITE LOADING
 #####
-#HitWall sprite
-imgset = BF.load_and_slice_sprite(32,32,'explosion.png');
-tsprite = cAnimSprite(imgset)
+#sprite factory
+SPRITE_FAC = cAnimSpriteFactory.cAnimSpriteFactory()
+
+tsprite = SPRITE_FAC.get_explosion_sprite()
 
 #Goal Text
 imgset = BF.load_and_slice_sprite(300,99,'goal_text.png');
@@ -195,16 +197,16 @@ def level_menu_selection():
 def colision_handler(cx,cy):
         """
                 All actions triggered by a colision
-                 - collision sprite
+                 - add a collision sprite to print
                  - Change stick rotation direction for a time
                  - Make the stick jump back
         """   
-        status.enable_disable_keyboard() #disable Keyboard
-        tsprite.move(cx,cy)
-        tsprite.draw = True
-        stick.jump_back(cx,cy)
+        
+	tsprite = SPRITE_FAC.get_explosion_sprite(cx,cy)
+	ANIM_SPRITES.append(tsprite)        
+
+	stick.jump_back(cx,cy)
         stick.flip_rotation_tmp()
-        status.enable_disable_keyboard() #Enable keyboard
 
         if DEBUG_DEATH:
                 if status.decrease_lives(): fancy_stick_death_animation()
@@ -268,12 +270,15 @@ def update_scene():
         window.blit(status.level.goal_sprite.image,status.level.goal_sprite.rect.move(dx,dy))
         status.level.goal_sprite.update(pygame.time.get_ticks())
         
-        for s in ANIM_SPRITES:
+        for i,s in enumerate(ANIM_SPRITES):
                 if s.draw:
                         window.blit(s.image,s.rect.move(dx,dy))
                         s.update(pygame.time.get_ticks())
-
-        window.blit(stick.image,stick.rect.move(dx,dy))
+		else:
+			ANIM_SPRITES.pop(i) #If draw is false, delete the reference
+			
+        
+	window.blit(stick.image,stick.rect.move(dx,dy))
         
         #LifeBar status
         window.blit(status.lifebar_image,status.lifebar_rect)
