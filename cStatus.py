@@ -4,13 +4,13 @@ import time
 
 class cStatus:
 	"""All the status information to show to the player"""
-	def __init__(self,lives_images,fps=10):
+	def __init__(self,lives_images,width,height,fps=60):
 		self.lives=3
 		self.lifebar_img_arr = lives_images
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
 		self.lifebar_rect = self.lifebar_image.get_rect()
 
-		self.lifebar_rect.x = 608
+		self.lifebar_rect.x = width - self.lifebar_rect.width
 		#Contains the game status
 		#__GAME_STAT
 		#	0 - Playing with the stick on a level

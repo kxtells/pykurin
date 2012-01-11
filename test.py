@@ -16,7 +16,7 @@ from cLevelList import cLevelList
 
 pygame.init()
 
-size = width, height = 800, 600
+size = width, height = 640, 480
 
 #DEBUG
 DEBUG_COLLISION=True
@@ -53,7 +53,7 @@ imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
 # STATUS CREATION
 #####
 #Status load
-status = cStatus(imgsetlives)
+status = cStatus(imgsetlives,width,height)
 
 
 #First Base Load
@@ -351,8 +351,9 @@ def level_select_menu():
                 window.blit(levels_menu.background,levels_menu.background.get_rect())
 
         # pick a font you have and set its size
-        myfont = pygame.font.SysFont("Arial", 30)
-        
+        myfont = pygame.font.SysFont("Arial", 25)
+
+
         #center - (number of lower levels)
         
         y = 300 - (levels_menu.current * 50)
