@@ -4,8 +4,9 @@ import time
 
 class cStatus:
 	"""All the status information to control the game"""
-	__INVINCIBLE_TIME = 0.5
+	_INVINCIBLE_TIME = 0.3
 	
+	"Games possible states"
 	_STAT_GAMING = 0
 	_STAT_GAMEOVER = 1
 	_STAT_LEVELSEL = 2
@@ -53,6 +54,8 @@ class cStatus:
                 # Elapsed Time Information
                 #
                 self.start_time = time.time()
+		self.pause_stime = time.time()
+		self.pause_time_diff = 0
 
                 #
                 # Listen KeyStrokes
@@ -82,7 +85,10 @@ class cStatus:
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
 
 	def get_elapsed_time(self):
-                return time.time() - self.start_time
+		if self.GAME_STAT == cStatus._STAT_PAUSE:
+			return time.time() - self.start_time - (time.time() - self.pause_stime)
+		else:
+			return time.time() - self.start_time - self.pause_time_diff
 
         def reset_timer(self):
                 self.start_time = time.time()
@@ -102,4 +108,20 @@ class cStatus:
 
 	def unset_invincible_by_time(self):
 		elapsed = time.time() - self.invincible_start_time
-		if elapsed >= cStatus.__INVINCIBLE_TIME: self.invincible = False
+		if elapsed >= cStatus._INVINCIBLE_TIME: self.invincible = False
+
+	
+	def pause_game(self):
+		"""
+			HouseKeeping when paused
+		"""
+		self.GAME_STAT = cStatus._STAT_PAUSE
+		self.pause_stime = time.time()
+	
+	def unpause_game(self):
+		"""
+			HouseKeeping unpausing the game
+		"""
+		self.GAME_STAT = cStatus._STAT_GAMING
+		diff = time.time() - self.pause_stime
+		self.pause_time_diff += diff

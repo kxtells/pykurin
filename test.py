@@ -134,7 +134,7 @@ def key_handler(event):
                 elif event.key == pygame.K_LCTRL: stick.turbo_on();
 
 		#Pause Button
-                elif event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.GAME_STAT = cStatus._STAT_PAUSE
+                elif event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.pause_game()
                 
 		#Debug Handlers
                 key_debug_actions(event)
@@ -160,7 +160,7 @@ def key_menu_handler(event,menu):
 #Specific Pause menu handler
 # (for giving the change to exit the menu without selecting)
 def pause_menu_events(event):
-	if event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.GAME_STAT = cStatus._STAT_GAMING
+	if event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.unpause_game()
 
 #
 # MAIN ENTRANCE FOR EVENT HANDLING 
@@ -232,7 +232,7 @@ def level_menu_selection():
 def pause_menu_selection():
         #Continue, change to game mode
         if pause_menu.current == 0:
-		status.GAME_STAT = cStatus._STAT_GAMING
+		status.unpause_game()
 
 	#Reset Level
         elif pause_menu.current == 1:
@@ -378,11 +378,16 @@ def update_gui():
 
 	nw = seconds_images[0].get_rect().width
 
+	#Bg Zeros (avoid a flickr)
+	zero = number_gen.parse_number(0)[0]
+	window.blit(pygame.transform.rotate(zero,-10),zero.get_rect().move((1+4)*nw,height-zero.get_rect().height - 15))
+	
 	#Trailing zeros
 	while len(seconds_images) < 3:
-		images = number_gen.parse_number(0)
-		seconds_images.insert(0,images[0])
+		zero = number_gen.parse_number(0)[0]
+		seconds_images.insert(0,zero)
 
+	
 	ddimg = number_gen.get_doubledots()
 	window.blit(pygame.transform.rotate(ddimg,-10),ddimg.get_rect().move(len(seconds_images)*nw,height-ddimg.get_rect().height - 15))
 	
@@ -410,6 +415,7 @@ def ingame_menu_screen(menu,rotate=True):
 	  - rotate (keeps the stick rotating) --- True in fancy gameover, False in Pause
 	"""
 	update_scene()
+	update_gui()
 	if rotate: stick.rotate(1)
 	draw_menu(menu)
 
@@ -467,7 +473,7 @@ def level_select_menu():
                 This menu moves all the entries up and down leaving
                 the selected one always centered
         '''
-	increment_px_y = 30
+	increment_px_y = 29
 
         if levels_menu.background != None:
 		sy = 0
