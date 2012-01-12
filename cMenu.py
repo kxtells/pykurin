@@ -7,7 +7,8 @@ class cMenu:
 		self.color = color
 		self.select_color = selcolor
 		self.background = None
-		
+		self.background_scroll = False
+
 		#Attributes to Bind possible functions
 		self.action_function = None
 		self.event_function = None

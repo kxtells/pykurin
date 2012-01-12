@@ -57,7 +57,7 @@ imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
 
 #######################################
 #
-# STATUS MENUS CREATION
+# STATUS CREATION
 #
 #######################################
 #Status load
@@ -83,8 +83,9 @@ ANIM_SPRITES.append(tsprite)
 #######################################
 # Level Selection Menu
 level_list = cLevelList("levels")
-levels_menu = cMenu(level_list.get_levelnames(),0,yellow,green)
-levels_menu.set_background("backgrounds/levelsel.png")
+levels_menu = cMenu(level_list.get_levelnames(),0,blue,red)
+levels_menu.set_background("backgrounds/squared_paper_title.png")
+levels_menu.background_scroll = True
 
 #Game Over Menu
 gover_menu_texts = 'Try again' , 'Return to level Select' , 'Exit game'
@@ -428,6 +429,7 @@ def goal_screen():
                 
 #
 # Draw the level selection Screen
+# @TODO: this is very specific for the level selection... but it's almost the same as the other menus, so maybe can be joined in draw menu with a flag?
 #
 def level_select_menu():
         '''
@@ -435,18 +437,19 @@ def level_select_menu():
                 This menu moves all the entries up and down leaving
                 the selected one always centered
         '''
+	increment_px_y = 30
 
         if levels_menu.background != None:
-                window.blit(levels_menu.background,levels_menu.background.get_rect())
+		sy = 0
+		if levels_menu.background_scroll == True:
+			sy = levels_menu.current * increment_px_y
+                window.blit(levels_menu.background,levels_menu.background.get_rect().move(0,-sy))
 
         # pick a font you have and set its size
         myfont = pygame.font.SysFont("Arial", 25)
 
-
-        #center - (number of lower levels)
-        
-        y = 300 - (levels_menu.current * 50)
-        x = 200
+        y = 285 - (levels_menu.current * increment_px_y)
+        x = 150
         color = yellow
 
         for index,me in enumerate(levels_menu.options):
@@ -455,7 +458,7 @@ def level_select_menu():
 
                 render_font = myfont.render(me, 1, color) 
                 window.blit(render_font, (x, y))
-                y += 50
+                y += increment_px_y
 
 #
 # Draws a menu on screen 
@@ -465,8 +468,8 @@ def draw_menu(menu):
         # pick a font you have and set its size
         myfont = pygame.font.SysFont("Arial", 20)
         
-	if gover_menu.background != None:
-                window.blit(menu.background,menu.background.get_rect())
+	if menu.background != None:
+		window.blit(menu.background,menu.background.get_rect())
         
         x = 200
         y = 165
