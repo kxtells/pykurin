@@ -27,6 +27,7 @@ DEBUG_DEATH=False
 black = 0, 0, 0
 yellow = 255, 255, 0
 green = 0,255,0
+blue = 0,0,150
 red = 255,0,0
 white = 255,255,255
 
@@ -82,8 +83,8 @@ levels_menu.set_background("backgrounds/levelsel.png")
 
 #Game Over Menu
 gover_menu_texts = 'Try again' , 'Return to level Select' , 'Exit game'
-gover_menu = cMenu(gover_menu_texts,0,yellow,green)
-
+gover_menu = cMenu(gover_menu_texts,0,blue,red)
+gover_menu.set_background("backgrounds/piece_paper.png")
 
 #Debug Options
 def key_debug_actions(event):
@@ -374,7 +375,7 @@ def level_select_menu():
 
         for index,me in enumerate(levels_menu.options):
                 if levels_menu.current == index: color = levels_menu.select_color
-                else: color = gover_menu.color
+                else: color = levels_menu.color
 
                 render_font = myfont.render(me, 1, color) 
                 window.blit(render_font, (x, y))
@@ -382,13 +383,17 @@ def level_select_menu():
 
 #
 #Draw the game over menu
+# @TODO: Maybe the gover_menu and other menus are the same, a general way to paint them would be nice
 #
 def game_over_menu():
         # pick a font you have and set its size
-        myfont = pygame.font.SysFont("Arial", 30)
+        myfont = pygame.font.SysFont("Arial", 20)
+        
+	if gover_menu.background != None:
+                window.blit(gover_menu.background,gover_menu.background.get_rect())
         
         x = 200
-        y = 200
+        y = 165
         color = yellow
 
         for index,me in enumerate(gover_menu.options):
@@ -397,7 +402,7 @@ def game_over_menu():
 
                 render_font = myfont.render(me, 1, color) 
                 window.blit(render_font, (x, y))
-                y += 50
+                y += 39
 
 #
 # Draws everything of the playing level screen
