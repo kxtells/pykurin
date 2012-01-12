@@ -35,9 +35,11 @@ white = 255,255,255
 clock = pygame.time.Clock ()
 window = pygame.display.set_mode(size)
 
-#####
-# SPRITE LOADING
-#####
+#######################################
+#
+# BASIC SPRITE LOADING
+#
+#######################################
 #sprite factory
 SPRITE_FAC = cAnimSpriteFactory.cAnimSpriteFactory()
 
@@ -53,9 +55,11 @@ gtext_sprite.move(800,300)
 imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
 
 
-#####
-# STATUS CREATION
-#####
+#######################################
+#
+# STATUS MENUS CREATION
+#
+#######################################
 #Status load
 status = cStatus(imgsetlives,width,height)
 
@@ -72,10 +76,11 @@ BASIC_SPRITES.append(stick)
 ANIM_SPRITES.append(tsprite)
 
 
-#####
-# MENUS CREATION
-#####
-
+#######################################
+#
+# GAME MENUS CREATION
+#
+#######################################
 # Level Selection Menu
 level_list = cLevelList("levels")
 levels_menu = cMenu(level_list.get_levelnames(),0,yellow,green)
@@ -86,6 +91,17 @@ gover_menu_texts = 'Try again' , 'Return to level Select' , 'Exit game'
 gover_menu = cMenu(gover_menu_texts,0,blue,red)
 gover_menu.set_background("backgrounds/piece_paper.png")
 
+#Pause Over Menu
+pause_menu_texts = 'Continue', 'Restart Level' , 'Return to level Select' , 'Exit game'
+pause_menu = cMenu(pause_menu_texts,0,blue,red)
+pause_menu.set_background("backgrounds/piece_paper.png")
+
+
+#######################################
+#
+# KEY HANDLERS
+#
+#######################################
 #Debug Options
 def key_debug_actions(event):
 #the global var collision may be modified
@@ -99,7 +115,7 @@ def key_debug_actions(event):
                 if DEBUG_DEATH: DEBUG_DEATH = False
                 else: DEBUG_DEATH = True
                 
-#Main Key Handler For the Game
+#Main Key Handler For the GAMING STATUS
 def key_handler(event):
         #Do not listen keystrokes is keyboard is disabled
         if not status.is_keyboard_enabled(): return
@@ -111,7 +127,10 @@ def key_handler(event):
                 elif event.key == pygame.K_RIGHT: stick.move_right();
                 elif event.key == pygame.K_LCTRL: stick.turbo_on();
 
-                #Debug Handlers
+		#Pause Button
+                elif event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.GAME_STAT = cStatus._STAT_PAUSE
+                
+		#Debug Handlers
                 key_debug_actions(event)
         
         elif event.type == pygame.KEYUP:
@@ -128,44 +147,51 @@ def key_menu_handler(event,menu):
         if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN: menu.menu_down();
                 elif event.key == pygame.K_UP: menu.menu_up();
-                elif event.key == pygame.K_RETURN: game_over_menu_selection();
+                elif event.key == pygame.K_RETURN: menu.action_function()
+		else:
+			if menu.event_function != None: menu.event_function(event)
 
-#Level Menu Handler
-def key_level_menu_handler(event,menu):
-        if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN: menu.menu_down();
-                elif event.key == pygame.K_UP: menu.menu_up();
-                elif event.key == pygame.K_RETURN: load_level(levels_menu.current+1)
+#Specific Pause menu handler
+# (for giving the change to exit the menu without selecting)
+def pause_menu_events(event):
+	if event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.GAME_STAT = cStatus._STAT_GAMING
 
 #
-# MAIN ENTRANCE FOR 
-#Event Handler
-#
+# MAIN ENTRANCE FOR EVENT HANDLING 
 #
 def event_handler(event):
         """ 
                 Different handlers for different events in different status
-                0 - Gaming screen
-                1 - Game Over screen
-                2 - Level Selection Screen
-        """
+        	Check cStatus class for status definitions
+	"""
         if event.type == pygame.QUIT: pygame.quit();sys.exit()
         
         #Gaming
-        if status.GAME_STAT == 0:
+        if status.GAME_STAT == cStatus._STAT_GAMING:
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_handler(event)
         
         #Game Over Screen
-        elif status.GAME_STAT == 1:
+        elif status.GAME_STAT == cStatus._STAT_GAMEOVER:
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,gover_menu)
 
-        #Game Over Screen
-        elif status.GAME_STAT == 2:
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_level_menu_handler(event,levels_menu)
+        #PAUSE Screen
+        elif status.GAME_STAT == cStatus._STAT_PAUSE:
+                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,pause_menu)
+
+	#Select level Screen
+        elif status.GAME_STAT == cStatus._STAT_LEVELSEL:
+                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,levels_menu)
 
 
 
-#Load a Specific Level
+#######################################
+#
+# SPECIFIC MENU FUNCTIONS AND BINDINGS
+#
+#######################################
+
+#Load a Specific Level (needed for level menu function)
+# @TODO : Maybe better in another place
 def load_level(level_num):
         status.level = cLevel("levels/lvl"+str(level_num).zfill(6)+".prop")
         stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
@@ -176,7 +202,7 @@ def load_level(level_num):
         status.current_level = level_num
         status.reset_timer()
 
-#
+#Game over menu selection function
 def game_over_menu_selection():
         #Try again. Reload everything and return to game mode
         if gover_menu.current == 0:
@@ -191,8 +217,45 @@ def game_over_menu_selection():
                 pygame.quit()
                 sys.exit()
 
+#Level Menu Selection Function
 def level_menu_selection():
+        load_level(levels_menu.current+1)
         status.GAME_STAT = 0
+
+#Pause Menu selection Function
+def pause_menu_selection():
+        #Continue, change to game mode
+        if pause_menu.current == 0:
+		status.GAME_STAT = cStatus._STAT_GAMING
+
+	#Reset Level
+        elif pause_menu.current == 1:
+                load_level(status.current_level)
+	
+	#Return to Level Select Menu
+        elif pause_menu.current == 2:
+                status.GAME_STAT = 2
+        
+        #Exit Application
+        elif pause_menu.current == 3:
+                pygame.quit()
+                sys.exit()
+
+#MENU BINDINGS
+gover_menu.action_function = game_over_menu_selection
+levels_menu.action_function = level_menu_selection
+pause_menu.action_function = pause_menu_selection
+pause_menu.event_function = pause_menu_events
+
+
+
+
+#######################################
+#
+# GAME HANDLERS
+#
+#######################################
+
 
 #Collision game handling
 def colision_handler(cx,cy):
@@ -266,7 +329,13 @@ def update_scene_goal():
 
 #updates all the needed images/sprites
 def update_scene():
-        window.fill(white)
+	"""
+		Blits all the sprites:
+		 - status.level , goal_sprite, ANIM_SPRITES, stick, lifebar
+
+		Also deletes sprites from ANIM_SPRITES if their draw flag is false
+	"""
+	window.fill(white)
 
         window.blit(status.level.bg,status.level.bg.get_rect())
 
@@ -302,12 +371,18 @@ def fancy_stick_death_animation():
                 pygame.display.update()
                 clock.tick(30)
 
+#InGame menu Screen
+def ingame_menu_screen(menu,rotate=True):
+	"""
+	 Paints a menu on screen while keeping the painting going behind.
+	  - menu (the menu to print)
+	  - rotate (keeps the stick rotating) --- True in fancy gameover, False in Pause
+	"""
+	update_scene()
+	if rotate: stick.rotate(1)
+	draw_menu(menu)
+
 #Game Over Screen
-def game_over_screen():     
-        stick.fancy_rotation_death(0,10)
-        update_scene()
-        stick.rotate(1)
-        game_over_menu()
 
 
 def level_selection_screen():
@@ -316,8 +391,9 @@ def level_selection_screen():
 
 def goal_screen():
         """
-                Various things to do here:
-                1 - Move the stick to the center of the goal
+                Update screen when goal. Different situations to handle, controlled
+		by status.SUBSTAT
+		1 - Move the stick to the center of the goal
                 2 - Do a fancy flip Screen animation
                 3 - Show a screen with the results
                 4 - Give options: Repeat or Next level
@@ -382,23 +458,22 @@ def level_select_menu():
                 y += 50
 
 #
-#Draw the game over menu
-# @TODO: Maybe the gover_menu and other menus are the same, a general way to paint them would be nice
+# Draws a menu on screen 
+# - menu (the menu to draw)
 #
-def game_over_menu():
+def draw_menu(menu):
         # pick a font you have and set its size
         myfont = pygame.font.SysFont("Arial", 20)
         
 	if gover_menu.background != None:
-                window.blit(gover_menu.background,gover_menu.background.get_rect())
+                window.blit(menu.background,menu.background.get_rect())
         
         x = 200
         y = 165
-        color = yellow
 
-        for index,me in enumerate(gover_menu.options):
-                if gover_menu.current == index: color = gover_menu.select_color
-                else: color = gover_menu.color
+        for index,me in enumerate(menu.options):
+                if menu.current == index: color = menu.select_color
+                else: color = menu.color
 
                 render_font = myfont.render(me, 1, color) 
                 window.blit(render_font, (x, y))
@@ -420,7 +495,7 @@ def main():
                 window.fill(white)
 
                 #Playing Level
-                if status.GAME_STAT == 0:
+		if status.GAME_STAT == cStatus._STAT_GAMING:
 
                         #Debug Purposes
                         if not DEBUG_COLLISION:
@@ -435,15 +510,21 @@ def main():
                         if status.level.stick_in_goal(stick): status.GAME_STAT = 3
                 
                 #Game Over
-                elif status.GAME_STAT == 1: 
-                        game_over_screen()
+                elif status.GAME_STAT == cStatus._STAT_GAMEOVER: 
+        		stick.fancy_rotation_death(0,10)
+			ingame_menu_screen(gover_menu)
                 
                 #Level Selection
-                elif status.GAME_STAT == 2:
+                elif status.GAME_STAT == cStatus._STAT_LEVELSEL:
                         level_selection_screen()
 
-                elif status.GAME_STAT == 3:
+		#Goal
+                elif status.GAME_STAT == cStatus._STAT_GOAL:
                         goal_screen()
+                
+		#Pause Menu
+                elif status.GAME_STAT == cStatus._STAT_PAUSE: 
+			ingame_menu_screen(pause_menu,rotate=False)
                 
                 
                 pygame.display.update()

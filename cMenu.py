@@ -7,6 +7,10 @@ class cMenu:
 		self.color = color
 		self.select_color = selcolor
 		self.background = None
+		
+		#Attributes to Bind possible functions
+		self.action_function = None
+		self.event_function = None
 
 	def menu_up(self):
 		self.current -= 1

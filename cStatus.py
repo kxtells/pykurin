@@ -6,6 +6,12 @@ class cStatus:
 	"""All the status information to control the game"""
 	__INVINCIBLE_TIME = 0.5
 	
+	_STAT_GAMING = 0
+	_STAT_GAMEOVER = 1
+	_STAT_LEVELSEL = 2
+	_STAT_GOAL = 3
+	_STAT_PAUSE = 4
+
 	def __init__(self,lives_images,width,height,fps=60):
 		self.lives=3
 		self.lifebar_img_arr = lives_images
@@ -19,7 +25,8 @@ class cStatus:
 		#	1 - Game over on a level
 		#	2 - Level Selection
 		#       3 - Goal SCREEN
-		self.GAME_STAT = 2
+		#       4 - PAUSE SCREEN
+		self.GAME_STAT = cStatus._STAT_LEVELSEL
 
                 # Substatus is used on different screens to move to different sub status
                 # (for example, goal screen has 3 status:
