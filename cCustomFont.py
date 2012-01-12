@@ -10,9 +10,9 @@ class cCustomFont:
 		images = []
 
 		for i in numstr:
-			if i == ":":
-				continue
-			else:
-				images.append(self.custom_numbers[int(i)])
+			images.append(self.custom_numbers[int(i)])
 
 		return images
+
+	def get_doubledots(self):
+		return self.custom_numbers[-1]

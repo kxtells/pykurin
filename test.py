@@ -57,7 +57,7 @@ imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
 
 
 #Custom Numbers
-imgset_numbers = BF.load_and_slice_sprite(100,100,'numbers.png');
+imgset_numbers = BF.load_and_slice_sprite(50,50,'numbers.png');
 number_gen = cCustomFont.cCustomFont(imgset_numbers)
 
 #######################################
@@ -372,15 +372,25 @@ def update_gui():
 	#TIMING
         seconds         = int(status.get_elapsed_time())
         millis          = str(seconds - status.get_elapsed_time()).partition(".")[2]
-        timestr         = str(seconds)+":"+millis[0:3]
 
 	seconds_images = number_gen.parse_number(int(seconds))
-	millis_images = number_gen.parse_number(int(millis))
+	millis_images = number_gen.parse_number(int(millis[0:2]))
 
+	nw = seconds_images[0].get_rect().width
 
+	#Trailing zeros
+	while len(seconds_images) < 3:
+		images = number_gen.parse_number(0)
+		seconds_images.insert(0,images[0])
 
+	ddimg = number_gen.get_doubledots()
+	window.blit(pygame.transform.rotate(ddimg,-10),ddimg.get_rect().move(len(seconds_images)*nw,height-ddimg.get_rect().height - 15))
+	
 	for i,s in enumerate(seconds_images):
-		window.blit(s,s.get_rect().move(i*100,0))
+		window.blit(pygame.transform.rotate(s,-10),s.get_rect().move(i*nw,height-s.get_rect().height - 15))
+
+	for i,s in enumerate(millis_images):
+		window.blit(pygame.transform.rotate(s,-10),s.get_rect().move((i+4)*nw,height-s.get_rect().height - 15))
 
 #A fancy rotozoom for the stick death
 def fancy_stick_death_animation():
