@@ -20,8 +20,8 @@ pygame.init()
 size = width, height = 640, 480
 
 #DEBUG
-DEBUG_COLLISION=True
-DEBUG_DEATH=True
+DEBUG_COLLISION=False
+DEBUG_DEATH=False
 
 #some colors definitions
 black = 0, 0, 0
@@ -40,6 +40,7 @@ window = pygame.display.set_mode(size)
 #sprite factory
 SPRITE_FAC = cAnimSpriteFactory.cAnimSpriteFactory()
 
+
 tsprite = SPRITE_FAC.get_explosion_sprite()
 
 #Goal Text
@@ -56,7 +57,6 @@ imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
 #####
 #Status load
 status = cStatus(imgsetlives,width,height)
-
 
 #First Base Load
 status.level = cLevel("levels/lvl000001.prop")
@@ -202,14 +202,20 @@ def colision_handler(cx,cy):
                  - Make the stick jump back
         """   
         
+	#Create a 'collision' animated sprite
 	tsprite = SPRITE_FAC.get_explosion_sprite(cx,cy)
 	ANIM_SPRITES.append(tsprite)        
 
+
+	#Move the Stick back from the collision place
 	stick.jump_back(cx,cy)
         stick.flip_rotation_tmp()
 
-        if DEBUG_DEATH:
-                if status.decrease_lives(): fancy_stick_death_animation()
+	#Only if not in debug mode or invincible mode
+        if not DEBUG_DEATH:
+		if not status.invincible:
+			status.set_invincible()
+                	if status.decrease_lives(): fancy_stick_death_animation()
 
 
 
@@ -232,21 +238,22 @@ def debug_onscreen(colides):
         title           = myfont.render("Debug", 1, red)
         stickpos        = myfont.render("Stick:"+str(stick.rect.center), 1, red)
         stickcollides   = myfont.render("collides:"+str(colides), 1, red)
+        stickinvincib   = myfont.render("invincib:"+str(status.invincible), 1, red)
         fps             = myfont.render("FPS:"+str(clock.get_fps()),1,red)
-
         elapsed_time    = myfont.render("TIME:"+timestr,1,red)
         
         # put the label objects on the screen
         window.blit(title, (0, 0))
         window.blit(stickpos, (0, 20))
         window.blit(stickcollides, (0, 40))
-        window.blit(fps, (0, 60))
-        window.blit(elapsed_time, (0, 80))
+        window.blit(stickinvincib, (0, 60))
+        window.blit(fps, (0, 80))
+        window.blit(elapsed_time, (0, 100))
 
-        if DEBUG_COLLISION == False:
+        if DEBUG_COLLISION == True:
                 colisionOnOff   = myfont.render("COLLISION OFF",1,red)
                 window.blit(colisionOnOff, (400, 0))
-        if DEBUG_DEATH == False:
+        if DEBUG_DEATH == True:
                 deathOnOff      = myfont.render("DEATH OFF",1,red)
                 window.blit(deathOnOff, (400, 20))
 
@@ -411,15 +418,16 @@ def main():
                 if status.GAME_STAT == 0:
 
                         #Debug Purposes
-                        if DEBUG_COLLISION:
+                        if not DEBUG_COLLISION:
                                 colision,cx,cy = status.level.stick_collides(stick);
                                 if colision: colision_handler(cx,cy)
                         
                         playing_screen()                        
                         debug_onscreen(colision)
+			#Unset invincibility when needed
+			status.unset_invincible_by_time()
 
                         if status.level.stick_in_goal(stick): status.GAME_STAT = 3
-                                
                 
                 #Game Over
                 elif status.GAME_STAT == 1: 

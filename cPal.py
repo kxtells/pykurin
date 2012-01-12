@@ -19,16 +19,17 @@ class cPal:
 		self.movx = 0;
 		self.movy = 0;
 
+		#Rotation Direction
 		self.rot = rot;
 		self.clockwise = False
 		
-		#backwards move
+		#Backwards move
 		self.tbackwards = False
 		self.tbackwards_ticks = self.__BACK_TICKS
 
 		self.rect.x,self.rect.y = x,y
 
-		#Movement Flag
+		#Movement Flags
 		self.fmove = True
 		self.turbo = False
 

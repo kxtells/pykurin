@@ -3,7 +3,9 @@ from cLevel import cLevel
 import time
 
 class cStatus:
-	"""All the status information to show to the player"""
+	"""All the status information to control the game"""
+	__INVINCIBLE_TIME = 0.75
+	
 	def __init__(self,lives_images,width,height,fps=60):
 		self.lives=3
 		self.lifebar_img_arr = lives_images
@@ -37,6 +39,8 @@ class cStatus:
 		#
 		# Stick Information
 		#
+		self.invincible = False
+		self.invincible_start_time = 0
 
                 #
                 # Elapsed Time Information
@@ -82,3 +86,13 @@ class cStatus:
 
         def is_keyboard_enabled(self):
                 return self.LISTEN_KEYS
+
+	def set_invincible(self):
+		"""Sets the invincible flag and the start invincibility time if is not already set"""
+		if self.invincible == False:
+			self.invincible = True
+			self.invincible_start_time = time.time()
+
+	def unset_invincible_by_time(self):
+		elapsed = time.time() - self.invincible_start_time
+		if elapsed >= cStatus.__INVINCIBLE_TIME: self.invincible = False
