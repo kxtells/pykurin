@@ -4,7 +4,7 @@ import time
 
 class cStatus:
 	"""All the status information to control the game"""
-	__INVINCIBLE_TIME = 0.75
+	__INVINCIBLE_TIME = 0.5
 	
 	def __init__(self,lives_images,width,height,fps=60):
 		self.lives=3
