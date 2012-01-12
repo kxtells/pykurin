@@ -8,6 +8,7 @@
 import sys, pygame
 import functions as BF
 import cAnimSpriteFactory
+import cCustomFont
 from cPal import cPal
 from cLevel import cLevel
 from cAnimSprite import cAnimSprite
@@ -54,6 +55,10 @@ gtext_sprite.move(800,300)
 #Lives sprite
 imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
 
+
+#Custom Numbers
+imgset_numbers = BF.load_and_slice_sprite(100,100,'numbers.png');
+number_gen = cCustomFont.cCustomFont(imgset_numbers)
 
 #######################################
 #
@@ -331,7 +336,7 @@ def update_scene_goal():
 #updates all the needed images/sprites
 def update_scene():
 	"""
-		Blits all the sprites:
+		Blits all the Gaming sprites:
 		 - status.level , goal_sprite, ANIM_SPRITES, stick, lifebar
 
 		Also deletes sprites from ANIM_SPRITES if their draw flag is false
@@ -358,9 +363,24 @@ def update_scene():
         
 	window.blit(stick.image,stick.rect.move(dx,dy))
         
+
+#Updates all the gui sprites
+def update_gui():
         #LifeBar status
         window.blit(status.lifebar_image,status.lifebar_rect)
+        
+	#TIMING
+        seconds         = int(status.get_elapsed_time())
+        millis          = str(seconds - status.get_elapsed_time()).partition(".")[2]
+        timestr         = str(seconds)+":"+millis[0:3]
 
+	seconds_images = number_gen.parse_number(int(seconds))
+	millis_images = number_gen.parse_number(int(millis))
+
+
+
+	for i,s in enumerate(seconds_images):
+		window.blit(s,s.get_rect().move(i*100,0))
 
 #A fancy rotozoom for the stick death
 def fancy_stick_death_animation():
@@ -487,6 +507,7 @@ def draw_menu(menu):
 #
 def playing_screen():
         update_scene()
+	update_gui()
         stick.rotate()
         stick.movement()
 
