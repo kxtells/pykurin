@@ -7,6 +7,7 @@ startx: 150
 starty: 388
 endx: 1624
 endy: 90
-stick: sticks/ministick.png
+stick: sticks/stick.png
 [bouncers]
-150:200
+1270:196
+1375:390
