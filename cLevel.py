@@ -2,6 +2,7 @@ from ConfigParser import SafeConfigParser
 import pygame
 from cAnimSprite import cAnimSprite
 import functions as BF
+import cBouncer
 
 class cLevel:
 	
@@ -18,6 +19,7 @@ class cLevel:
 		self.mask       =  pygame.mask.from_surface(self.imgcol);
 		self.rect	=  self.image.get_rect();
 		self.stick      =  parser.get('options','stick')
+		
 
                 #Load the Goal sprite
 		goal_images     =  BF.load_and_slice_sprite(100,100,'goal.png');
@@ -26,6 +28,8 @@ class cLevel:
                 gy = int(parser.get('options','endy'))
                 self.goal_sprite.move(gx,gy)
                 
+		#MONSTERS LOADING
+		self.bouncers	=  self.retrieve_bouncer_list(parser)
 
 	def stick_collides(self,stick):
                 """
@@ -46,3 +50,13 @@ class cLevel:
                     Check if the stick collides with the level goal    
                 """
                 return stick.rect.colliderect(self.goal_sprite.rect)
+
+	def retrieve_bouncer_list(self,parser):
+		bouncer_list = []
+		for b in parser.items('bouncers'):
+			bx,by = b
+			rot = 0
+			newbouncer = cBouncer.cBouncer(int(bx),int(by),rot)
+			bouncer_list.append(newbouncer)
+
+		return bouncer_list

@@ -34,7 +34,7 @@ white = 255,255,255
 
 
 clock = pygame.time.Clock ()
-window = pygame.display.set_mode(size)
+window = pygame.display.set_mode(size,pygame.DOUBLEBUF)
 
 #######################################
 #
@@ -288,6 +288,12 @@ def colision_handler(cx,cy):
                 	if status.decrease_lives(): fancy_stick_death_animation()
 
 
+def monster_colisions():
+	for i,m in enumerate(status.level.bouncers):
+		if stick.collides(m):
+			if not status.invincible:
+				m.onCollision(stick) #different monster handlers
+				status.set_invincible()
 
 #########
 #
@@ -338,6 +344,7 @@ def update_scene():
 	"""
 		Blits all the Gaming sprites:
 		 - status.level , goal_sprite, ANIM_SPRITES, stick, lifebar
+		 - Possible level monsters
 
 		Also deletes sprites from ANIM_SPRITES if their draw flag is false
 	"""
@@ -360,7 +367,10 @@ def update_scene():
 		else:
 			ANIM_SPRITES.pop(i) #If draw is false, delete the reference
 			
+	for i,m in enumerate(status.level.bouncers):
+                window.blit(m.image,m.rect.move(dx,dy))
         
+
 	window.blit(stick.image,stick.rect.move(dx,dy))
         
 
@@ -528,6 +538,7 @@ def playing_screen():
         stick.movement()
 
 
+
 def main():
         #Main Game Function
         while 1:
@@ -539,8 +550,11 @@ def main():
 
                         #Debug Purposes
                         if not DEBUG_COLLISION:
+				#Level Colision
                                 colision,cx,cy = status.level.stick_collides(stick);
                                 if colision: colision_handler(cx,cy)
+				#Monster colision
+				monster_colisions()
                         
                         playing_screen()                        
                         debug_onscreen(colision)

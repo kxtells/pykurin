@@ -137,6 +137,8 @@ class cPal:
 		if self.clockwise: self.clockwise = False
 		else: self.clockwise = True
 
+	#
+	# @TODO: This function NEEDS REVISION.. Seems that some cases don't work properly
 	def jump_back(self,cx,cy):
 		"""
 			The stick Jumps Back to avoid further colisions
@@ -223,3 +225,22 @@ class cPal:
 
 	def turbo_off(self):
 		self.turbo = False
+	
+	def collides(self,monster):
+		"""
+			Checks if the stick collides with a specific monster
+		"""
+		if self.rect.colliderect(monster.rect): 
+			#Here need to pix perfect collision
+ 			trectmonst = self.rect.clip(monster.rect).move(-monster.rect.x,-monster.rect.y)
+ 			trectstick = self.rect.clip(monster.rect).move(-self.rect.x,-self.rect.y)
+			
+			tmonstmask = pygame.mask.from_surface(monster.image.subsurface(trectmonst))
+ 			tstickmask = pygame.mask.from_surface(self.image.subsurface(trectstick))
+                	
+			col = tstickmask.overlap(tmonstmask,(0,0))
+                	if col == None: return False
+                	else: return True
+			return True
+		
+		else: return False
