@@ -292,8 +292,12 @@ def monster_colisions():
 	for i,m in enumerate(status.level.bouncers):
 		if stick.collides(m):
 			if not status.invincible:
+				m.col_anim.draw = True
+				ANIM_SPRITES.append(m.col_anim)
 				m.onCollision(stick) #different monster handlers
 				status.set_invincible()
+				tsprite = SPRITE_FAC.get_boing_sprite(m.rect.center[0],m.rect.center[1])
+				ANIM_SPRITES.append(tsprite)        
 
 #########
 #
@@ -368,7 +372,9 @@ def update_scene():
 			ANIM_SPRITES.pop(i) #If draw is false, delete the reference
 			
 	for i,m in enumerate(status.level.bouncers):
-                window.blit(m.image,m.rect.move(dx,dy))
+                if m.col_anim.draw == False: 
+			window.blit(m.anim.image,m.rect.move(dx,dy))
+			m.anim.update(pygame.time.get_ticks())
         
 
 	window.blit(stick.image,stick.rect.move(dx,dy))

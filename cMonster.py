@@ -7,6 +7,7 @@ class cMonster:
     rect = None
     baseImage = None
     mask = None
+    anim_image = None
 
     def __init__(self,x=0,y=0,rot=0):
 	    self.x = x

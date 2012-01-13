@@ -5,29 +5,35 @@
 import pygame
 
 class cAnimSprite(pygame.sprite.Sprite):
+	_start 		= pygame.time.get_ticks()
+	_last_update 	= 0
+	_frame 		= 0
+	draw 		= True
+	_images 	= None
+	_delay 		= None
+	image 		= None
+	rect 		= None
+	static		= False
 
 	def __init__(self,images,fps=10):
 		pygame.sprite.Sprite.__init__(self)
 		self._images = images
 		
 		#Track start time and update time
-		self._start = pygame.time.get_ticks()
 		self._delay = 1000/fps
-		self._last_update = 0
-		self._frame = 0
 		self.image = images[0]
 		self.rect = self.image.get_rect()
-		self.draw = True
 
 		#Update to the first image
 		self.update(pygame.time.get_ticks())
 
 	def update(self,time):
-		if time - self._last_update > self._delay:
-			self._frame+=1
-			if self._frame >= len(self._images): self._frame = 0;self.draw = False
-			self.image = self._images[self._frame]
-			self._last_update = time
+		if not self.static:
+			if time - self._last_update > self._delay:
+				self._frame+=1
+				if self._frame >= len(self._images): self._frame = 0;self.draw = False
+				self.image = self._images[self._frame]
+				self._last_update = time
 
         #Change the sprite position
 	def move(self,x,y):
@@ -39,6 +45,10 @@ class cAnimSprite(pygame.sprite.Sprite):
                 self.rect.x += incrx
                 self.rect.y += incry
 
+	def reset_anim(self):
+		self.image = images[0]
+
+	# @TODO: Check use of this function
         def out_of_screen(self,width=800,height=600):
                 """
                         Checks if the sprite is out of the screen
