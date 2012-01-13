@@ -1,0 +1,13 @@
+[options]
+name: 0- Training Curves
+collision: levels/learn2col.png
+background: levels/learn2.png
+background2: backgrounds/wood.jpg
+startx: 123
+starty: 93
+endx: 495
+endy: 750
+stick: sticks/stick.png
+[bouncers]
+356:50
+250:410
