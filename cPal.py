@@ -152,41 +152,47 @@ class cPal:
 			
 		"""
 		#JUMP directions
-		jx = 0
-		jy = 0
+		#jx = 0
+		#jy = 0
 		#Check colision position of stick (which quadrant)
-		sx = cx - self.rect.x
-		sy = cy - self.rect.y
-		sxc = self.rect.width/2
-		syc = self.rect.height/2
+		#sx = cx - self.rect.x
+		#sy = cy - self.rect.y
+		#sxc = self.rect.width/2
+		#syc = self.rect.height/2
 
-		if self.clockwise:
-			if sx < sxc and sy < syc :     #Q1
-				jx = 0
-				jy = +cPal.__JUMP_LENGTH
-			elif sx < sxc and sy > syc:     #Q2
-				jx = cPal.__JUMP_LENGTH
-				jy = -cPal.__JUMP_LENGTH
-			elif sx > sxc and sy < syc:     #Q3
-				jx = cPal.__JUMP_LENGTH
-				jy = cPal.__JUMP_LENGTH
-			else:                           #Q4
-				jx = 0
-				jy = -cPal.__JUMP_LENGTH
-		else:
-			if sx < sxc and sy < syc :      #Q1
-				jx = cPal.__JUMP_LENGTH
-				jy = 0
-			elif sx < sxc and sy > syc:     #Q2
-				jx = 0
-				jy = -cPal.__JUMP_LENGTH
-			elif sx > sxc and sy < syc:     #Q3
-				jx = cPal.__JUMP_LENGTH
-				jy = cPal.__JUMP_LENGTH
-			else:                           #Q4
-				jx = cPal.__JUMP_LENGTH
-				ju = -cPal.__JUMP_LENGTH
+		#if self.clockwise:
+		#	if sx < sxc and sy < syc :     #Q1
+		#		jx = 0
+		#		jy = +cPal.__JUMP_LENGTH
+		#	elif sx < sxc and sy > syc:     #Q2
+		#		jx = cPal.__JUMP_LENGTH
+		#		jy = -cPal.__JUMP_LENGTH
+		#	elif sx > sxc and sy < syc:     #Q3
+		#		jx = cPal.__JUMP_LENGTH
+		#		jy = cPal.__JUMP_LENGTH
+		#	else:                           #Q4
+		#		jx = 0
+		#		jy = -cPal.__JUMP_LENGTH
+		#else:
+		#	if sx < sxc and sy < syc :      #Q1
+		#		jx = cPal.__JUMP_LENGTH
+		#		jy = 0
+		#	elif sx < sxc and sy > syc:     #Q2
+		#		jx = 0
+		#		jy = -cPal.__JUMP_LENGTH
+		#	elif sx > sxc and sy < syc:     #Q3
+		#		jx = cPal.__JUMP_LENGTH
+		#		jy = cPal.__JUMP_LENGTH
+		#	else:                           #Q4
+		#		jx = -cPal.__JUMP_LENGTH
+		#		jy = -cPal.__JUMP_LENGTH
 			
+		#New easy jumpbacj
+		# @TODO: If you move counter direction when bashing a wall you can get past it
+		# The idea is that with the time penalty, even with that situation there's no 
+		# clear wining
+		jx = cPal.__JUMP_LENGTH * -(self.movx)
+		jy = cPal.__JUMP_LENGTH * -(self.movy)
 		self.rect = self.rect.move(jx,jy);
 
 	#Movement to reproduce when death
