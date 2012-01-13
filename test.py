@@ -52,6 +52,12 @@ imgset = BF.load_and_slice_sprite(300,99,'goal_text.png');
 gtext_sprite = cAnimSprite(imgset)
 gtext_sprite.move(800,300)
 
+#New Record Text
+imgset = BF.load_and_slice_sprite(230,100,'newrecord.png');
+newrecord_sprite = cAnimSprite(imgset,1)
+newrecord_sprite.move(450,150)
+print imgset
+
 #Lives sprite
 imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
 
@@ -59,6 +65,7 @@ imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
 #Custom Numbers
 imgset_numbers = BF.load_and_slice_sprite(50,50,'numbers.png');
 number_gen = cCustomFont.cCustomFont(imgset_numbers)
+
 
 #######################################
 #
@@ -102,6 +109,11 @@ pause_menu_texts = 'Continue', 'Restart Level' , 'Return to level Select' , 'Exi
 pause_menu = cMenu(pause_menu_texts,0,blue,red)
 pause_menu.set_background("backgrounds/piece_paper.png")
 
+
+#Records Menu
+records_menu_texts = 'Next Level', 'Repeat' , 'Return to level Select'
+records_menu = cMenu(records_menu_texts,0,blue,red)
+records_menu.set_background("backgrounds/records_screen.png")
 
 #######################################
 #
@@ -188,6 +200,10 @@ def event_handler(event):
         elif status.GAME_STAT == cStatus._STAT_LEVELSEL:
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,levels_menu)
 
+	#Records level Screen
+        elif status.GAME_STAT == cStatus._STAT_LEVELRECORD:
+                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,records_menu)
+
 
 
 #######################################
@@ -197,16 +213,29 @@ def event_handler(event):
 #######################################
 
 #Load a Specific Level (needed for level menu function)
-# @TODO : Maybe better in another place
+# @TODO : Maybe better in another place or python file
 def load_level(level_num):
         status.level = cLevel(level_list.levelfiles[level_num])
         stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
         #stick.load_stick_image(status.level.stick)
         
         status.reset_lives()
-        status.GAME_STAT = 0
+        status.GAME_STAT = cStatus._STAT_GAMING 
+	status.SUBSTAT = 0
         status.current_level = level_num
         status.reset_timer()
+
+#Records menu selection function
+def records_menu_selection():
+	if records_menu.current == 0:
+		status.current_level += 1
+                load_level(status.current_level)
+
+	elif records_menu.current == 1:
+                load_level(status.current_level)
+	
+	elif records_menu.current == 2:
+		status.GAME_STAT = cStatus._STAT_LEVELSEL
 
 #Game over menu selection function
 def game_over_menu_selection():
@@ -251,8 +280,9 @@ def pause_menu_selection():
 gover_menu.action_function = game_over_menu_selection
 levels_menu.action_function = level_menu_selection
 pause_menu.action_function = pause_menu_selection
-pause_menu.event_function = pause_menu_events
+records_menu.action_function = records_menu_selection
 
+pause_menu.event_function = pause_menu_events
 
 
 
@@ -342,6 +372,38 @@ def debug_onscreen(colides):
 def update_scene_goal():
         window.blit(gtext_sprite.image,gtext_sprite.rect)
         gtext_sprite.update(pygame.time.get_ticks())
+
+#@TODO: THis has to be beautiful
+def update_scene_records():
+	records = status.level.records
+	player_index = status.level.player_record_index
+
+	if player_index > -1:
+        	window.blit(newrecord_sprite.image,newrecord_sprite.rect)
+                newrecord_sprite.update(pygame.time.get_ticks())
+
+	# pick a font you have and set its size
+        myfont = pygame.font.SysFont("Arial", 30)
+	
+	for i,r in enumerate(records):
+		player = r[1]
+		time = r[0]
+		
+		seconds         = int(time)
+        	millis          = str(seconds - time).partition(".")[2]
+        	timestr         = str(seconds)+":"+millis[0:3]
+        	
+		if player_index == i:
+			bgcolor = yellow
+		else:
+			bgcolor = None
+
+		timefont	= myfont.render(timestr, 1, blue,bgcolor)
+		namefont	= myfont.render(player, 1, blue,bgcolor)
+        	
+		window.blit(namefont, (200, 50*(i+3)))
+		window.blit(timefont, (100, 50*(i+3)))
+
 
 #updates all the needed images/sprites
 def update_scene():
@@ -474,11 +536,22 @@ def goal_screen():
                         gtext_sprite.move(800,300) #return to begining
 
         elif status.SUBSTAT == 2:
-                status.SUBSTAT = 0      #reset to original
-                status.current_level += 1
-                load_level(status.current_level) #Load Next level
-                
-                
+                status.SUBSTAT = 0     #reset to original
+        	status.GAME_STAT = cStatus._STAT_LEVELRECORD
+
+def records_screen():
+	"""
+		Show the records
+	"""
+	
+	#Some Entering animation would be nice
+        #if status.SUBSTAT == 0:
+	status.SUBSTAT = 1 #Skip the first stat (saved for further animation)
+	
+	if status.SUBSTAT == 1:
+		draw_menu(records_menu,width-200,height-200)
+		update_scene_records()
+
 #
 # Draw the level selection Screen
 # @TODO: this is very specific for the level selection... but it's almost the same as the other menus, so maybe can be joined in draw menu with a flag?
@@ -516,15 +589,15 @@ def level_select_menu():
 # Draws a menu on screen 
 # - menu (the menu to draw)
 #
-def draw_menu(menu):
+def draw_menu(menu,sx=200,sy=165):
         # pick a font you have and set its size
         myfont = pygame.font.SysFont("Arial", 20)
         
 	if menu.background != None:
 		window.blit(menu.background,menu.background.get_rect())
         
-        x = 200
-        y = 165
+        x = sx
+        y = sy
 
         for index,me in enumerate(menu.options):
                 if menu.current == index: color = menu.select_color
@@ -546,8 +619,8 @@ def playing_screen():
 
 def finish_level():
         time = status.get_elapsed_time()
-	status.GAME_STAT = 3
-	BF.save_record(status.level.uuid,'kxtells',time)
+	status.GAME_STAT = cStatus._STAT_GOAL
+	records = status.level.save_record('kxtells',time)
 
 def main():
         #Main Game Function
@@ -587,6 +660,10 @@ def main():
                 elif status.GAME_STAT == cStatus._STAT_GOAL:
                         goal_screen()
                 
+		#After Goal, Level Records Screen
+                elif status.GAME_STAT == cStatus._STAT_LEVELRECORD:
+			records_screen()
+
 		#Pause Menu
                 elif status.GAME_STAT == cStatus._STAT_PAUSE: 
 			ingame_menu_screen(pause_menu,rotate=False)

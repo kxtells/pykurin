@@ -12,6 +12,7 @@ class cStatus:
 	_STAT_LEVELSEL = 2
 	_STAT_GOAL = 3
 	_STAT_PAUSE = 4
+	_STAT_LEVELRECORD = 5
 
 	def __init__(self,lives_images,width,height,fps=60):
 		self.lives=3
@@ -61,6 +62,8 @@ class cStatus:
                 # Listen KeyStrokes
                 #
                 self.LISTEN_KEYS = True
+
+
 
 	def decrease_lives(self):
 		""" 

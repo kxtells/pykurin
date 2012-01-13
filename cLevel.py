@@ -3,8 +3,10 @@ import pygame
 from cAnimSprite import cAnimSprite
 import functions as BF
 import cBouncer
+import shelve
 
 class cLevel:
+	_MAX_SAVED_RECORDS = 5
 	
 	def __init__(self,file):
 		parser = SafeConfigParser()
@@ -30,6 +32,14 @@ class cLevel:
                 
 		#MONSTERS LOADING
 		self.bouncers	=  self.retrieve_bouncer_list(parser)
+
+		#
+		# Record Storage between status
+		# Read the records once and temprary store them here
+		# By default empty, only load records when finishing level
+		#
+		self.records = []
+		self.player_record_index = -1
 
 	def stick_collides(self,stick):
                 """
@@ -60,3 +70,61 @@ class cLevel:
 			bouncer_list.append(newbouncer)
 
 		return bouncer_list
+
+	
+	def save_record(self,username,newtime):
+		"""
+			Saves the new record into the proper shelve
+			loads the records into the class attributes self.records and self.player_record_index
+			returns a tuple with the results
+		"""
+		#data pack
+		newdata = (newtime,username)
+		
+		db = shelve.open("db/"+self.uuid)
+		
+		dbrecords = []
+		#recover data if exists
+		if db.has_key("records"):
+			dbrecords = db["records"]
+	
+		#check if a data drop is needed
+		if len(dbrecords) < cLevel._MAX_SAVED_RECORDS:
+			dbrecords.append(newdata)
+		else:
+			dbrecords.sort()
+			worsttime = dbrecords[-1][0]
+			if newtime < worsttime:
+				dbrecords.pop()
+				dbrecords.append(newdata)
+		
+		dbrecords.sort()
+	
+		db["records"] = dbrecords
+	
+		user_index = -1
+		for i,val in enumerate(dbrecords):
+			if dbrecords[i][0] == newtime and dbrecords[i][1] == username:
+				user_index = i
+	
+		db.close()
+
+		self.records = dbrecords
+		self.player_record_index = user_index
+		print user_index
+		return dbrecords,user_index
+
+	def load_records(self):
+		"""
+			Return a tuple (record,name) for a level
+		"""
+		db = shelve.open("db/"+self.uuid)
+		
+		dbrecords = []
+		#recover data if exists
+		if db.has_key("records"):
+			dbrecords = db["records"]
+	
+		self.records = dbrecords
+
+		return dbrecords
