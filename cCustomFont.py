@@ -9,7 +9,7 @@ class cCustomFont:
 		numstr = str(number)
 		images = []
 		
-		if number<0: return images.append(self.custom_numbers(0))
+		if number<0: return images.append(self.custom_numbers[0])
 
 
 		for i in numstr:
