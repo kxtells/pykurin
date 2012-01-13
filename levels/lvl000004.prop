@@ -8,3 +8,4 @@ starty: 260
 endx: 1260
 endy: 1775
 stick: sticks/stick.png
+[bouncers]

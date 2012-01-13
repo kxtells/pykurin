@@ -8,6 +8,9 @@ class cCustomFont:
 	def parse_number(self,number):
 		numstr = str(number)
 		images = []
+		
+		if number<0: return images.append(self.custom_numbers(0))
+
 
 		for i in numstr:
 			images.append(self.custom_numbers[int(i)])
