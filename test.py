@@ -544,6 +544,10 @@ def playing_screen():
         stick.movement()
 
 
+def finish_level():
+        time = status.get_elapsed_time()
+	status.GAME_STAT = 3
+	BF.save_record(status.level.uuid,'kxtells',time)
 
 def main():
         #Main Game Function
@@ -567,7 +571,8 @@ def main():
 			#Unset invincibility when needed
 			status.unset_invincible_by_time()
 
-                        if status.level.stick_in_goal(stick): status.GAME_STAT = 3
+                        if status.level.stick_in_goal(stick): 
+				finish_level()
                 
                 #Game Over
                 elif status.GAME_STAT == cStatus._STAT_GAMEOVER: 

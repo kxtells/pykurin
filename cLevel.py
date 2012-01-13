@@ -10,16 +10,16 @@ class cLevel:
 		parser = SafeConfigParser()
 		parser.read(file)
 
-		self.name 	=  parser.get('options','name')
-		self.startx 	=  int(parser.get('options','startx'))
-		self.starty 	=  int(parser.get('options','starty'))
-		self.imgcol 	=  pygame.image.load(parser.get('options','collision')).convert_alpha();
-		self.image 	=  pygame.image.load(parser.get('options','background')).convert_alpha();
-		self.bg 	=  pygame.image.load(parser.get('options','background2')).convert_alpha();
-		self.mask       =  pygame.mask.from_surface(self.imgcol);
-		self.rect	=  self.image.get_rect();
-		self.stick      =  parser.get('options','stick')
-		
+		self.name 	= parser.get('options','name')
+		self.startx 	= int(parser.get('options','startx'))
+		self.starty 	= int(parser.get('options','starty'))
+		self.imgcol 	= pygame.image.load(parser.get('options','collision')).convert_alpha();
+		self.image 	= pygame.image.load(parser.get('options','background')).convert_alpha();
+		self.bg 	= pygame.image.load(parser.get('options','background2')).convert_alpha();
+		self.mask       = pygame.mask.from_surface(self.imgcol);
+		self.rect	= self.image.get_rect();
+		self.stick      = parser.get('options','stick')
+		self.uuid	= parser.get('options','uuid')
 
                 #Load the Goal sprite
 		goal_images     =  BF.load_and_slice_sprite(100,100,'goal.png');

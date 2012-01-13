@@ -8,6 +8,7 @@ starty: 93
 endx: 495
 endy: 750
 stick: sticks/stick.png
+uuid:ab329400-3e2b-11e1-b86c-0800200c9a66
 [bouncers]
 356:50
 250:410
