@@ -23,7 +23,8 @@ class cItemRecoverLives(cMonster.cMonster):
 
 		#Status sets
 		self.col_anim.draw = False
+		#Only Usable once
+    		self.delete_on_colision = True
 
-	def onCollision(self,stick):
-		print "MORELIVES"
-
+	def onCollision(self,stick,status):
+		status.reset_lives()

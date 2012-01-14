@@ -23,6 +23,6 @@ class cItemBouncer(cMonster.cMonster):
 		#Status sets
 		self.col_anim.draw = False
 
-	def onCollision(self,stick):
+	def onCollision(self,stick,status):
 		stick.flip_rotation()
 
