@@ -298,7 +298,7 @@ pause_menu.event_function = pause_menu_events
 #Collision game handling
 def colision_handler(cx,cy):
         """
-                All actions triggered by a colision
+                All actions triggered by a colision with level boundaries
                  - add a collision sprite to print
                  - Change stick rotation direction for a time
                  - Make the stick jump back
@@ -321,16 +321,28 @@ def colision_handler(cx,cy):
 
 
 def item_colisions():
-	for i,m in enumerate(status.level.items):
+	for m in status.level.items:
 		if stick.collides(m):
 			if not status.invincible:
-				m.col_anim.draw = True
-				ANIM_SPRITES.append(m.col_anim)
-				m.onCollision(stick) #different monster handlers
-				status.set_invincible()
-				tsprite = SPRITE_FAC.get_boing_sprite(m.rect.center[0],m.rect.center[1])
-				ANIM_SPRITES.append(tsprite)
-				#stick.jump_back()
+				handle_item_colision(m)
+def handle_item_colision(item):
+	"""
+		- Applies the animation on collision for the item
+		- calls the onCollision handler of item
+		- sets invincibility to stick
+
+		- If applicable, generates a text sprite (Boing, Crash etc)
+		- If applicable deletes the item (one colision items)
+	"""
+	item.col_anim.draw = True
+	ANIM_SPRITES.append(item.col_anim)
+	item.onCollision(stick,status) #different item handlers
+	status.set_invincible()
+	tsprite = SPRITE_FAC.get_boing_sprite(item.rect.center[0],item.rect.center[1])
+	ANIM_SPRITES.append(tsprite)
+	
+	if m.delete_on_colision:
+		status.level.items.remove(item)
 
 #########
 #
