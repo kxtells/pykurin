@@ -124,18 +124,17 @@ class cLevel:
 
 	def retrieve_basher_list(self,parser):
 		basher_list = []
-		#try:
-		for b in parser.items('bashers'):
-			scoord,ecoord = b
-			sx = scoord.partition(',')[0]
-			sy = scoord.partition(',')[2]
-			ex = ecoord.partition(',')[0]
-			ey = ecoord.partition(',')[2]
-			newbasher = cMonsterBasher.cMonsterBasher(int(sx),int(sy),int(ex),int(ey))
-			basher_list.append(newbasher)
-
-		#except:
-		#	pass
+		try:
+			for b in parser.items('bashers'):
+				scoord,ecoord = b
+				sx = scoord.partition(',')[0]
+				sy = scoord.partition(',')[2]
+				ex = ecoord.partition(',')[0]
+				ey = ecoord.partition(',')[2]
+				newbasher = cMonsterBasher.cMonsterBasher(int(sx),int(sy),int(ex),int(ey))
+				basher_list.append(newbasher)
+		except:
+			pass
 		
 		return basher_list
 	############################
