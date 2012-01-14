@@ -49,6 +49,14 @@ class cLevel:
 		self.records = []
 		self.player_record_index = -1
 
+
+		#Specific status settings
+		try:
+			self.start_lives = parser.get('options','start_lives')
+		except:
+			self.start_lives = 3 #cannot include cStatus
+			pass
+
 	############################
 	#
 	# Stick Positioning
@@ -59,13 +67,18 @@ class cLevel:
                         Check if a given stick collides with one of the
                         level walls
                 """
-                tmask = pygame.mask.from_surface(self.imgcol.subsurface(stick.rect))
+		i,j = 0,0
+		try:
+			tmask = pygame.mask.from_surface(self.imgcol.subsurface(stick.rect))
 
-                col = stick.mask.overlap(tmask,(0,0))
+                	col = stick.mask.overlap(tmask,(0,0))
                 
-                if col == None: return 0,0,0
-                else: return 1,col[0]+stick.rect.x,col[1]+stick.rect.y
+                	if col == None: return 0,0,0
+                	else: return 1,col[0]+stick.rect.x,col[1]+stick.rect.y
 		
+		except: 
+			pass
+
 		return 0,i,j
 
 	def stick_in_goal(self,stick):

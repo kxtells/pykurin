@@ -134,7 +134,9 @@ def key_debug_actions(event):
         elif event.key == pygame.K_F2:
                 if DEBUG_DEATH: DEBUG_DEATH = False
                 else: DEBUG_DEATH = True
-                
+        elif event.key == pygame.K_f:
+		stick.flip_rotation()
+
 #Main Key Handler For the GAMING STATUS
 def key_handler(event):
         #Do not listen keystrokes is keyboard is disabled

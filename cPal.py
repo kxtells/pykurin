@@ -5,7 +5,7 @@ class cPal:
 	__MOV_SPEED = 3;
 	__ROT_SPEED = 2;
 	__BACK_TICKS = 12;
-	__JUMP_LENGTH = 5;
+	_JUMP_LENGTH = 5;
 	__TURBO_MULTIPLIER = 2;
 	
 	def __init__(self,x,y,rot,stickpath="sticks/stick.png"):
@@ -154,45 +154,38 @@ class cPal:
 		#JUMP directions
 		#jx = 0
 		#jy = 0
+		jx = cPal._JUMP_LENGTH * -(self.movx)
+		jy = cPal._JUMP_LENGTH * -(self.movy)
 		#Check colision position of stick (which quadrant)
-		#sx = cx - self.rect.x
-		#sy = cy - self.rect.y
-		#sxc = self.rect.width/2
-		#syc = self.rect.height/2
-
-		#if self.clockwise:
-		#	if sx < sxc and sy < syc :     #Q1
-		#		jx = 0
-		#		jy = +cPal.__JUMP_LENGTH
-		#	elif sx < sxc and sy > syc:     #Q2
-		#		jx = cPal.__JUMP_LENGTH
-		#		jy = -cPal.__JUMP_LENGTH
-		#	elif sx > sxc and sy < syc:     #Q3
-		#		jx = cPal.__JUMP_LENGTH
-		#		jy = cPal.__JUMP_LENGTH
-		#	else:                           #Q4
-		#		jx = 0
-		#		jy = -cPal.__JUMP_LENGTH
-		#else:
-		#	if sx < sxc and sy < syc :      #Q1
-		#		jx = cPal.__JUMP_LENGTH
-		#		jy = 0
-		#	elif sx < sxc and sy > syc:     #Q2
-		#		jx = 0
-		#		jy = -cPal.__JUMP_LENGTH
-		#	elif sx > sxc and sy < syc:     #Q3
-		#		jx = cPal.__JUMP_LENGTH
-		#		jy = cPal.__JUMP_LENGTH
-		#	else:                           #Q4
-		#		jx = -cPal.__JUMP_LENGTH
-		#		jy = -cPal.__JUMP_LENGTH
+		sx = cx - self.rect.x
+		sy = cy - self.rect.y
+		sxc = self.rect.width/2
+		syc = self.rect.height/2
+		ax = abs(sx - sxc)
+		ay = abs(sy - syc)
+		print str(ax)+".."+str(ay)
+		
+		if sx < sxc and sy < syc :     #Q1
+			jx += cPal._JUMP_LENGTH
+			jy += cPal._JUMP_LENGTH
+		elif sx < sxc and sy > syc:     #Q2
+			jx += cPal._JUMP_LENGTH
+			jy += -cPal._JUMP_LENGTH
+		elif sx > sxc and sy < syc:     #Q3
+			jx += -cPal._JUMP_LENGTH
+			jy += cPal._JUMP_LENGTH
+		else:                           #Q4
+			jx += -cPal._JUMP_LENGTH
+			jy += -cPal._JUMP_LENGTH
 			
 		#New easy jumpbacj
 		# @TODO: If you move counter direction when bashing a wall you can get past it
 		# The idea is that with the time penalty, even with that situation there's no 
 		# clear wining
-		jx = cPal.__JUMP_LENGTH * -(self.movx)
-		jy = cPal.__JUMP_LENGTH * -(self.movy)
+		#
+		
+
+		
 		self.rect = self.rect.move(jx,jy);
 
 	#Movement to reproduce when death
