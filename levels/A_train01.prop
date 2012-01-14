@@ -9,4 +9,5 @@ endx: 576
 endy: 170
 stick: sticks/stick.png
 uuid:b125b5e0-3e2b-11e1-b86c-0800200c9a66
-[bouncers]
+[bashers]
+300,300:400,400

@@ -28,3 +28,6 @@ class cItemRecoverLives(cMonster.cMonster):
 
 	def onCollision(self,stick,status):
 		status.reset_lives()
+	
+	def isMonster(self):
+		return False

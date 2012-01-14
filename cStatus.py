@@ -4,7 +4,7 @@ import time
 
 class cStatus:
 	"""All the status information to control the game"""
-	_INVINCIBLE_TIME = 0.3
+	_INVINCIBLE_TIME = 0.5
 	_MAX_LIVES = 3
 
 	"Games possible states"
@@ -17,6 +17,9 @@ class cStatus:
 	_STAT_TITLESCREEN = 6 
 	_STAT_GAMEMENU = 7
 
+	"""Debug shit"""
+	_DEBUG_COLLISION=False
+	_DEBUG_DEATH=False
 	def __init__(self,lives_images,width,height,fps=60):
 		self.lives=cStatus._MAX_LIVES
 		self.lifebar_img_arr = lives_images

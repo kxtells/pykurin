@@ -20,9 +20,6 @@ pygame.init()
 
 size = width, height = 640, 480
 
-#DEBUG
-DEBUG_COLLISION=False
-DEBUG_DEATH=False
 
 #some colors definitions
 black = 0, 0, 0
@@ -125,15 +122,13 @@ records_menu.set_background("backgrounds/records_screen.png")
 #Debug Options
 def key_debug_actions(event):
 #the global var collision may be modified
-        global DEBUG_COLLISION
-        global DEBUG_DEATH
 
         if event.key == pygame.K_F1:
-                if DEBUG_COLLISION: DEBUG_COLLISION = False
-                else: DEBUG_COLLISION = True
+                if status._DEBUG_COLLISION: status._DEBUG_COLLISION = False
+                else: status._DEBUG_COLLISION = True
         elif event.key == pygame.K_F2:
-                if DEBUG_DEATH: DEBUG_DEATH = False
-                else: DEBUG_DEATH = True
+                if status._DEBUG_DEATH: status._DEBUG_DEATH = False
+                else: status._DEBUG_DEATH = True
         elif event.key == pygame.K_f:
 		stick.flip_rotation()
 
@@ -316,18 +311,18 @@ def colision_handler(cx,cy):
         stick.flip_rotation_tmp()
 
 	#Only if not in debug mode or invincible mode
-        if not DEBUG_DEATH:
+        if not status._DEBUG_DEATH:
 		if not status.invincible:
 			status.set_invincible()
-                	if status.decrease_lives(): fancy_stick_death_animation()
+			status.decrease_lives()
 
 
 def item_colisions():
 	for m in status.level.items:
 		if stick.collides(m):
 			if not status.invincible:
-				handle_item_colision(m)
-def handle_item_colision(item):
+				handle_item_monster_colision(m)
+def handle_item_monster_colision(item):
 	"""
 		- Applies the animation on collision for the item
 		- calls the onCollision handler of item
@@ -336,6 +331,8 @@ def handle_item_colision(item):
 		- If applicable, generates a text sprite (Boing, Crash etc)
 		- If applicable deletes the item (one colision items)
 	"""
+	if item.isMonster(): stick.jump_back(0,0,1.5)
+
 	item.col_anim.draw = True
 	ANIM_SPRITES.append(item.col_anim)
 	item.onCollision(stick,status) #different item handlers
@@ -346,6 +343,16 @@ def handle_item_colision(item):
 	if item.delete_on_colision:
 		status.level.items.remove(item)
 
+def monster_colisions():
+	for m in status.level.monsters:
+		if stick.collides(m):
+			if not status.invincible:
+				handle_item_monster_colision(m)
+
+
+def monster_logic():
+	for m in status.level.monsters:
+		m.logic_update()
 #########
 #
 # DRAWING FUNCTIONS
@@ -377,10 +384,10 @@ def debug_onscreen(colides):
         window.blit(fps, (0, 80))
         window.blit(elapsed_time, (0, 100))
 
-        if DEBUG_COLLISION == True:
+        if status._DEBUG_COLLISION == True:
                 colisionOnOff   = myfont.render("COLLISION OFF",1,red)
                 window.blit(colisionOnOff, (400, 0))
-        if DEBUG_DEATH == True:
+        if status._DEBUG_DEATH == True:
                 deathOnOff      = myfont.render("DEATH OFF",1,red)
                 window.blit(deathOnOff, (400, 20))
 
@@ -448,9 +455,14 @@ def update_scene():
 	for i,m in enumerate(status.level.items):
                 if m.col_anim.draw == False: 
 			window.blit(m.anim.image,m.rect.move(dx,dy))
-			m.anim.update(pygame.time.get_ticks())
+			m.draw_update()
         
-        for i,s in enumerate(ANIM_SPRITES):
+	for i,m in enumerate(status.level.monsters):
+                if m.col_anim.draw == False: 
+			window.blit(m.anim.image,m.rect.move(dx,dy))
+			m.draw_update()
+        
+	for i,s in enumerate(ANIM_SPRITES):
                 if s.draw:
                         window.blit(s.image,s.rect.move(dx,dy))
                         s.update(pygame.time.get_ticks())
@@ -651,21 +663,31 @@ def main():
 		if status.GAME_STAT == cStatus._STAT_GAMING:
 
                         #Debug Purposes
-                        if not DEBUG_COLLISION:
+                        if not status._DEBUG_COLLISION:
+				
 				#Level Colision
                                 colision,cx,cy = status.level.stick_collides(stick);
                                 if colision: colision_handler(cx,cy)
-				#Monster colision
+				
+				#Item colision
 				item_colisions()
-                        
+                        	
+				#Monster Colisions
+				monster_colisions()
+
+			monster_logic()
                         playing_screen()                        
                         debug_onscreen(colision)
 			#Unset invincibility when needed
 			status.unset_invincible_by_time()
 
+			#check if goal
                         if status.level.stick_in_goal(stick): 
 				finish_level()
-                
+                	
+			#check if dead
+                	if status.lives <= 0: fancy_stick_death_animation()
+
                 #Game Over
                 elif status.GAME_STAT == cStatus._STAT_GAMEOVER: 
         		stick.fancy_rotation_death(0,10)

@@ -139,7 +139,7 @@ class cPal:
 
 	#
 	# @TODO: This function NEEDS REVISION.. Seems that some cases don't work properly
-	def jump_back(self,cx=0,cy=0):
+	def jump_back(self,cx=0,cy=0,multiplier=1):
 		"""
 			The stick Jumps Back to avoid further colisions
 			cx and xy are the MAP points of collision.
@@ -186,7 +186,7 @@ class cPal:
 		
 
 		
-		self.rect = self.rect.move(jx,jy);
+		self.rect = self.rect.move(jx*multiplier,jy*multiplier);
 
 	#Movement to reproduce when death
 	def fancy_rotation_death(self,amount,scale):
