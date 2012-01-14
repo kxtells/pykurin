@@ -14,6 +14,8 @@ class cStatus:
 	_STAT_GOAL = 3
 	_STAT_PAUSE = 4
 	_STAT_LEVELRECORD = 5
+	_STAT_TITLESCREEN = 6 
+	_STAT_GAMEMENU = 7
 
 	def __init__(self,lives_images,width,height,fps=60):
 		self.lives=cStatus._MAX_LIVES
