@@ -3,7 +3,7 @@ import pygame
 from cAnimSprite import cAnimSprite
 import functions as BF
 
-class cBouncer(cMonster.cMonster):
+class cItemBouncer(cMonster.cMonster):
 
 	def __init__(self,x,y,rot):
 		cMonster.cMonster.__init__(self,x,y,rot)
