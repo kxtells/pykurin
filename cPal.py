@@ -3,7 +3,7 @@ import pygame
 class cPal:
 	"""The 'stick' class.. the player"""
 	__MOV_SPEED = 3;
-	__ROT_SPEED = 3;
+	__ROT_SPEED = 2;
 	__BACK_TICKS = 12;
 	__JUMP_LENGTH = 5;
 	__TURBO_MULTIPLIER = 2;
