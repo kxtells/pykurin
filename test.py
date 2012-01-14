@@ -35,7 +35,9 @@ white = 255,255,255
 
 clock = pygame.time.Clock ()
 window = pygame.display.set_mode(size,pygame.DOUBLEBUF)
-
+icon   = pygame.image.load("icon.png").convert_alpha()
+pygame.display.set_caption("PYKURIN Alpha")
+pygame.display.set_icon(icon)
 #######################################
 #
 # BASIC SPRITE LOADING
