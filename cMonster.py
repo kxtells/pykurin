@@ -13,3 +13,6 @@ class cMonster:
 	    self.x = x
 	    self.y = y
 	    self.rot = rot
+
+    def onCollision(self,stick):
+		print "GENERIC collision"

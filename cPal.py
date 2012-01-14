@@ -139,7 +139,7 @@ class cPal:
 
 	#
 	# @TODO: This function NEEDS REVISION.. Seems that some cases don't work properly
-	def jump_back(self,cx,cy):
+	def jump_back(self,cx=0,cy=0):
 		"""
 			The stick Jumps Back to avoid further colisions
 			cx and xy are the MAP points of collision.
