@@ -5,7 +5,8 @@ import time
 class cStatus:
 	"""All the status information to control the game"""
 	_INVINCIBLE_TIME = 0.3
-	
+	_MAX_LIVES = 3
+
 	"Games possible states"
 	_STAT_GAMING = 0
 	_STAT_GAMEOVER = 1
@@ -15,7 +16,7 @@ class cStatus:
 	_STAT_LEVELRECORD = 5
 
 	def __init__(self,lives_images,width,height,fps=60):
-		self.lives=3
+		self.lives=cStatus._MAX_LIVES
 		self.lifebar_img_arr = lives_images
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
 		self.lifebar_rect = self.lifebar_image.get_rect()
@@ -84,7 +85,7 @@ class cStatus:
 		return False
 	
 	def reset_lives(self):
-		self.lives = 3
+		self.lives = cStatus._MAX_LIVES
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
 
 	def get_elapsed_time(self):
