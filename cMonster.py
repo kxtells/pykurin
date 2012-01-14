@@ -8,11 +8,12 @@ class cMonster:
     baseImage = None
     mask = None
     anim_image = None
+    delete_on_colision = False
 
     def __init__(self,x=0,y=0,rot=0):
 	    self.x = x
 	    self.y = y
 	    self.rot = rot
 
-    def onCollision(self,stick):
+    def onCollision(self,stick,status):
 		print "GENERIC collision"
