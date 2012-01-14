@@ -340,7 +340,7 @@ def handle_item_colision(item):
 	ANIM_SPRITES.append(item.col_anim)
 	item.onCollision(stick,status) #different item handlers
 	status.set_invincible()
-	tsprite = SPRITE_FAC.get_boing_sprite(item.rect.center[0],item.rect.center[1])
+	tsprite = SPRITE_FAC.get_boing_sprite(item.rect.center[0],item.rect.center[1]-item.rect.height)
 	ANIM_SPRITES.append(tsprite)
 	
 	if item.delete_on_colision:
@@ -443,12 +443,6 @@ def update_scene():
         window.blit(status.level.goal_sprite.image,status.level.goal_sprite.rect.move(dx,dy))
         status.level.goal_sprite.update(pygame.time.get_ticks())
         
-        for i,s in enumerate(ANIM_SPRITES):
-                if s.draw:
-                        window.blit(s.image,s.rect.move(dx,dy))
-                        s.update(pygame.time.get_ticks())
-		else:
-			ANIM_SPRITES.pop(i) #If draw is false, delete the reference
 			
 	#Items InGame
 	for i,m in enumerate(status.level.items):
@@ -456,6 +450,12 @@ def update_scene():
 			window.blit(m.anim.image,m.rect.move(dx,dy))
 			m.anim.update(pygame.time.get_ticks())
         
+        for i,s in enumerate(ANIM_SPRITES):
+                if s.draw:
+                        window.blit(s.image,s.rect.move(dx,dy))
+                        s.update(pygame.time.get_ticks())
+		else:
+			ANIM_SPRITES.pop(i) #If draw is false, delete the reference
 
 	window.blit(stick.image,stick.rect.move(dx,dy))
         
@@ -499,9 +499,10 @@ def fancy_stick_death_animation():
         while scale < 10:
                 update_scene()
                 stick.fancy_rotation_death(5,scale)
-                scale+=0.1
+                scale+=0.2
                 pygame.display.update()
                 clock.tick(30)
+	
 
 #InGame menu Screen
 def ingame_menu_screen(menu,rotate=True):
