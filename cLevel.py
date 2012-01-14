@@ -2,7 +2,8 @@ from ConfigParser import SafeConfigParser
 import pygame
 from cAnimSprite import cAnimSprite
 import functions as BF
-import cBouncer
+import cItemBouncer
+import cItemRecoverLives
 import shelve
 
 class cLevel:
@@ -30,9 +31,16 @@ class cLevel:
                 gy = int(parser.get('options','endy'))
                 self.goal_sprite.move(gx,gy)
                 
-		#MONSTERS LOADING
-		self.bouncers	=  self.retrieve_bouncer_list(parser)
+		#ITEMS LOADING
+		bouncers	=  self.retrieve_bouncer_list(parser)
+		recovers	=  self.retrieve_recover_list(parser)
+		self.items		=  []
+		self.items += bouncers
+		self.items += recovers
 
+
+		#MONSTERS LOADING
+		
 		#
 		# Record Storage between status
 		# Read the records once and temprary store them here
@@ -41,6 +49,11 @@ class cLevel:
 		self.records = []
 		self.player_record_index = -1
 
+	############################
+	#
+	# Stick Positioning
+	#
+	############################
 	def stick_collides(self,stick):
                 """
                         Check if a given stick collides with one of the
@@ -61,17 +74,43 @@ class cLevel:
                 """
                 return stick.rect.colliderect(self.goal_sprite.rect)
 
+	############################
+	#
+	# Retrieve specific data
+	#
+	############################
 	def retrieve_bouncer_list(self,parser):
 		bouncer_list = []
-		for b in parser.items('bouncers'):
-			bx,by = b
-			rot = 0
-			newbouncer = cBouncer.cBouncer(int(bx),int(by),rot)
-			bouncer_list.append(newbouncer)
+		try:
+			for b in parser.items('bouncers'):
+				bx,by = b
+				rot = 0
+				newbouncer = cItemBouncer.cItemBouncer(int(bx),int(by),rot)
+				bouncer_list.append(newbouncer)
+		except:
+			pass
 
 		return bouncer_list
 
-	
+	def retrieve_recover_list(self,parser):
+		recover_list = []
+		try:
+			for r in parser.items('recovers'):
+				rx,ry = r
+				newrecover = cItemRecoverLives.cItemRecoverLives(int(rx),int(ry))
+				recover_list.append(newrecover)
+
+		except:
+			pass
+		
+		return recover_list
+
+
+	############################
+	#
+	# Interfacing with record files
+	#
+	############################
 	def save_record(self,username,newtime):
 		"""
 			Saves the new record into the proper shelve
