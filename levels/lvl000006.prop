@@ -1,12 +1,14 @@
 [options]
-name: 6- Dummy Level, does not work
-collision: levels/lvl1col.png
-background: levels/lvl1.png
+name: 6- Curves and Holes
+collision: levels/lvl6col.png
+background: levels/lvl6.png
 background2: backgrounds/wood.jpg
-startx: 50
-starty: 60
-endx: 146
-endy: 444
+startx: 177
+starty: 270
+endx: 250
+endy: 730
 stick: sticks/stick.png
-uuid:8a7f9b40-3e2b-11e1-b86c-0800200c9a66
+uuid:c001ea60-3ed6-11e1-b86c-0800200c9a66
 [bouncers]
+520:661
+725:134
