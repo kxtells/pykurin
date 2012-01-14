@@ -341,7 +341,7 @@ def handle_item_colision(item):
 	tsprite = SPRITE_FAC.get_boing_sprite(item.rect.center[0],item.rect.center[1])
 	ANIM_SPRITES.append(tsprite)
 	
-	if m.delete_on_colision:
+	if item.delete_on_colision:
 		status.level.items.remove(item)
 
 #########
