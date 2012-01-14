@@ -50,7 +50,7 @@ SPRITE_FAC = cAnimSpriteFactory.cAnimSpriteFactory()
 tsprite = SPRITE_FAC.get_explosion_sprite()
 
 #Goal Text
-imgset = BF.load_and_slice_sprite(300,99,'goal_text.png');
+imgset = BF.load_and_slice_sprite(300,150,'goal_text.png');
 gtext_sprite = cAnimSprite(imgset)
 gtext_sprite.move(800,300)
 
@@ -320,8 +320,8 @@ def colision_handler(cx,cy):
                 	if status.decrease_lives(): fancy_stick_death_animation()
 
 
-def monster_colisions():
-	for i,m in enumerate(status.level.bouncers):
+def item_colisions():
+	for i,m in enumerate(status.level.items):
 		if stick.collides(m):
 			if not status.invincible:
 				m.col_anim.draw = True
@@ -329,7 +329,8 @@ def monster_colisions():
 				m.onCollision(stick) #different monster handlers
 				status.set_invincible()
 				tsprite = SPRITE_FAC.get_boing_sprite(m.rect.center[0],m.rect.center[1])
-				ANIM_SPRITES.append(tsprite)        
+				ANIM_SPRITES.append(tsprite)
+				#stick.jump_back()
 
 #########
 #
@@ -435,7 +436,8 @@ def update_scene():
 		else:
 			ANIM_SPRITES.pop(i) #If draw is false, delete the reference
 			
-	for i,m in enumerate(status.level.bouncers):
+	#Items InGame
+	for i,m in enumerate(status.level.items):
                 if m.col_anim.draw == False: 
 			window.blit(m.anim.image,m.rect.move(dx,dy))
 			m.anim.update(pygame.time.get_ticks())
@@ -639,7 +641,7 @@ def main():
                                 colision,cx,cy = status.level.stick_collides(stick);
                                 if colision: colision_handler(cx,cy)
 				#Monster colision
-				monster_colisions()
+				item_colisions()
                         
                         playing_screen()                        
                         debug_onscreen(colision)
