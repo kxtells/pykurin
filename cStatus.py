@@ -4,7 +4,7 @@ import time
 
 class cStatus:
 	"""All the status information to control the game"""
-	_INVINCIBLE_TIME = 0.5
+	_INVINCIBLE_TIME = 0.75
 	_MAX_LIVES = 3
 
 	"Games possible states"

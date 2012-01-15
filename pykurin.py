@@ -331,7 +331,9 @@ def handle_item_monster_colision(item):
 		- If applicable, generates a text sprite (Boing, Crash etc)
 		- If applicable deletes the item (one colision items)
 	"""
-	if item.isMonster(): stick.jump_back(0,0,1.5)
+	if item.isMonster(): 
+		stick.flip_rotation_tmp()
+		stick.jump_back(0,0,1.5)
 
 	item.col_anim.draw = True
 	item.onCollision(stick,status) #different item handlers
@@ -340,13 +342,13 @@ def handle_item_monster_colision(item):
 	ANIM_SPRITES.append(tsprite)
 	
 	if item.delete_on_colision:
-		status.level.items.remove(item)
+		if not item.isMonster(): status.level.items.remove(item)
+		#else: status.level.monsters.remove(item)
 
 def monster_colisions():
 	for m in status.level.monsters:
-		if stick.collides(m):
-			if not status.invincible:
-				handle_item_monster_colision(m)
+		if stick.collides(m) and not status.invincible:
+			handle_item_monster_colision(m)
 
 
 def monster_logic():
@@ -463,10 +465,12 @@ def update_scene():
 	for i,m in enumerate(status.level.monsters):
                 if m.col_anim.draw == False: 
 			window.blit(m.anim.image,m.rect.move(dx,dy))
+			m.draw_update()
 		else:
 			window.blit(m.col_anim.image,m.rect.move(dx,dy))
+			if m.draw_update() and m.delete_on_colision:
+				status.level.monsters.remove(m)
 		
-		m.draw_update()
         
 	for i,s in enumerate(ANIM_SPRITES):
                 if s.draw:

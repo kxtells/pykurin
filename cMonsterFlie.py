@@ -16,12 +16,13 @@ class cMonsterFlie(cMonster.cMonster):
 		col_anim_images = BF.load_and_slice_sprite(32,32,'flie_anim_death.png');
                 
 		self.anim     	= cAnimSprite(anim_images,30)
-		self.col_anim  	= cAnimSprite(col_anim_images,20)
+		self.col_anim  	= cAnimSprite(col_anim_images,10)
 		self.anim.rect  = self.rect
 		self.col_anim.rect  = self.rect
 
 		#Status sets
 		self.col_anim.draw = False
+		self.delete_on_colision = True
 
 		#
 		self.movx = 1
@@ -42,3 +43,6 @@ class cMonsterFlie(cMonster.cMonster):
 		self.movy = random.uniform(-2,2)*cmy	
 
 
+	def onCollision(self,stick,status):
+		cMonster.cMonster.onCollision(self,stick,status)
+		#status.level.monsters.remove(self)

@@ -33,9 +33,9 @@ class cMonster:
 	#Function to call on draw update
 	def draw_update(self):
                 if self.col_anim.draw == False: 
-			self.anim.update(time.get_ticks())
+			return self.anim.update(time.get_ticks())
 		else: 
-			self.col_anim.update(time.get_ticks())
+			return self.col_anim.update(time.get_ticks())
 
 
 	def isMonster(self):

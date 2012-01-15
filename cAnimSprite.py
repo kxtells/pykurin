@@ -28,12 +28,21 @@ class cAnimSprite(pygame.sprite.Sprite):
 		self.update(pygame.time.get_ticks())
 
 	def update(self,time):
+		"""
+			Updates the animation
+			if its the last value of the animation returns True
+		"""
+		ret = False
 		if not self.static:
 			if time - self._last_update > self._delay:
 				self._frame+=1
-				if self._frame >= len(self._images): self._frame = 0;self.draw = False
+				if self._frame >= len(self._images): 
+					self._frame = 0;
+					self.draw = False
+					ret = True
 				self.image = self._images[self._frame]
 				self._last_update = time
+		return ret
 
         #Change the sprite position
 	def move(self,x,y):

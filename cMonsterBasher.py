@@ -13,10 +13,10 @@ class cMonsterBasher(cMonster.cMonster):
 		self.mask       = pygame.mask.from_surface(self.image);
 		
 		anim_images     = BF.load_and_slice_sprite(64,64,'basher_nanim.png');
-		col_anim_images = BF.load_and_slice_sprite(64,64,'basher_nanim.png');
+		col_anim_images = BF.load_and_slice_sprite(64,64,'basher_colanim.png');
                 
 		self.anim     	= cAnimSprite(anim_images,5)
-		self.col_anim  	= cAnimSprite(col_anim_images,20)
+		self.col_anim  	= cAnimSprite(col_anim_images,5)
 		self.anim.rect  = self.rect
 		self.col_anim.rect  = self.rect
 
