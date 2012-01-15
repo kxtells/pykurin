@@ -11,7 +11,7 @@ class cAnimSpriteFactory():
 			explosion_imgset = BF.load_and_slice_sprite(32,32,'explosion'+str(x)+'.png');
 			self.explosions.append(explosion_imgset)
 
-		for x in range(3): 
+		for x in range(4): 
 			boing_imgset = BF.load_and_slice_sprite(100,50,'boing'+str(x)+'.png');
 			self.boings.append(boing_imgset)
 	
