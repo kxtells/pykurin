@@ -25,8 +25,14 @@ class cMonsterFlie(cMonster.cMonster):
 		self.delete_on_colision = True
 
 		#
-		self.movx = 1
-		self.movy = 1
+		mx=0
+		my=0
+		while mx==0 and my==0:
+			mx = random.randint(-1,1)
+			my = random.randint(-1,1)
+		
+		self.movx = mx
+		self.movy = my
 	
 	#Function to call on logic update
 	def logic_update(self):

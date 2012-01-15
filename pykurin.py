@@ -319,10 +319,13 @@ def colision_handler(cx,cy):
 
 def item_colisions():
 	for m in status.level.items:
-		if stick.collides(m):
+		colision,xc,yc = stick.collides(m)
+		if colision:
 			if not status.invincible:
-				handle_item_monster_colision(m)
-def handle_item_monster_colision(item):
+				handle_item_monster_colision(m,xc,yc)
+
+
+def handle_item_monster_colision(item,cx,cy):
 	"""
 		- Applies the animation on collision for the item
 		- calls the onCollision handler of item
@@ -333,7 +336,7 @@ def handle_item_monster_colision(item):
 	"""
 	if item.isMonster(): 
 		stick.flip_rotation_tmp()
-		stick.jump_back(0,0,1.5)
+		stick.jump_back(cx,cy,1.5)
 
 	item.col_anim.draw = True
 	item.onCollision(stick,status) #different item handlers
@@ -347,9 +350,9 @@ def handle_item_monster_colision(item):
 
 def monster_colisions():
 	for m in status.level.monsters:
-		if stick.collides(m) and not status.invincible:
-			handle_item_monster_colision(m)
-
+		colision,xc,yc = stick.collides(m)
+		if colision and not status.invincible:
+			handle_item_monster_colision(m,xc,yc)
 
 def monster_logic():
 	for m in status.level.monsters:

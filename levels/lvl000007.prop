@@ -1,12 +1,28 @@
 [options]
-name: 7- Dummy Level, does not work
-collision: levels/lvl1col.png
-background: levels/lvl1.png
+name: 7- Something is MOVING!
+collision: levels/lvl7col.png
+background: levels/lvl7.png
 background2: backgrounds/wood.jpg
-startx: 50
-starty: 60
-endx: 146
-endy: 444
+startx: 330
+starty: 250
+endx: 725
+endy: 875
 stick: sticks/stick.png
-uuid:834f8c90-3e2b-11e1-b86c-0800200c9a66
+uuid:0543bad0-3fb9-11e1-b86c-0800200c9a66
 [bouncers]
+[flies]
+600:600
+650:650
+300:300
+400:350
+600:250
+420:420
+600:220
+501:630
+521:620
+622:230
+623:240
+524:632
+525:630
+526:640
+527:651

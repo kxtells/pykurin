@@ -238,8 +238,7 @@ class cPal:
  			tstickmask = pygame.mask.from_surface(self.image.subsurface(trectstick))
                 	
 			col = tstickmask.overlap(tmonstmask,(0,0))
-                	if col == None: return False
-                	else: return True
-			return True
+                	if col == None: return False,0,0
+                	else: return True,col[0]+self.rect.x,col[1]+self.rect.y
 		
-		else: return False
+		else: return False,0,0
