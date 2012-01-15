@@ -334,7 +334,6 @@ def handle_item_monster_colision(item):
 	if item.isMonster(): stick.jump_back(0,0,1.5)
 
 	item.col_anim.draw = True
-	ANIM_SPRITES.append(item.col_anim)
 	item.onCollision(stick,status) #different item handlers
 	status.set_invincible()
 	tsprite = SPRITE_FAC.get_boing_sprite(item.rect.center[0],item.rect.center[1]-item.rect.height)
@@ -353,6 +352,9 @@ def monster_colisions():
 def monster_logic():
 	for m in status.level.monsters:
 		m.logic_update()
+		if status.level.stick_collides(m)[0]:
+			m.onWallCollision()
+
 #########
 #
 # DRAWING FUNCTIONS
@@ -456,11 +458,15 @@ def update_scene():
                 if m.col_anim.draw == False: 
 			window.blit(m.anim.image,m.rect.move(dx,dy))
 			m.draw_update()
-        
+     
+     	#Monsters
 	for i,m in enumerate(status.level.monsters):
                 if m.col_anim.draw == False: 
 			window.blit(m.anim.image,m.rect.move(dx,dy))
-			m.draw_update()
+		else:
+			window.blit(m.col_anim.image,m.rect.move(dx,dy))
+		
+		m.draw_update()
         
 	for i,s in enumerate(ANIM_SPRITES):
                 if s.draw:

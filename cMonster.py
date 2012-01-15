@@ -32,10 +32,17 @@ class cMonster:
 
 	#Function to call on draw update
 	def draw_update(self):
-		self.anim.update(time.get_ticks())
+                if self.col_anim.draw == False: 
+			self.anim.update(time.get_ticks())
+		else: 
+			self.col_anim.update(time.get_ticks())
+
 
 	def isMonster(self):
 		return True
 
 	def logic_update(self):
+		return False
+
+	def onWallCollision(self):
 		return False

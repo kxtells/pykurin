@@ -5,6 +5,7 @@ import functions as BF
 import cItemBouncer
 import cItemRecoverLives
 import cMonsterBasher
+import cMonsterFlie
 import shelve
 
 class cLevel:
@@ -42,8 +43,11 @@ class cLevel:
 
 		#MONSTERS LOADING
 		bashers = self.retrieve_basher_list(parser)
+		flies = self.retrieve_flies_list(parser)
 		self.monsters = []
 		self.monsters += bashers
+		self.monsters += flies
+
 		#
 		# Record Storage between status
 		# Read the records once and temprary store them here
@@ -76,13 +80,13 @@ class cLevel:
 
                 	col = stick.mask.overlap(tmask,(0,0))
                 
-                	if col == None: return 0,0,0
-                	else: return 1,col[0]+stick.rect.x,col[1]+stick.rect.y
+                	if col == None: return False,0,0
+                	else: return True,col[0]+stick.rect.x,col[1]+stick.rect.y
 		
 		except: 
 			pass
 
-		return 0,i,j
+		return False,i,j
 
 	def stick_in_goal(self,stick):
                 """
@@ -137,11 +141,27 @@ class cLevel:
 			pass
 		
 		return basher_list
+
+
+	def retrieve_flies_list(self,parser):
+		flies_list = []
+		try:
+			for b in parser.items('flies'):
+				sx,sy = b
+				newflie = cMonsterFlie.cMonsterFlie(int(sx),int(sy))
+				flies_list.append(newflie)
+		except:
+			raise
+
+		print "FLIES"
+		print flies_list
+		return flies_list
 	############################
 	#
 	# Interfacing with record files
 	#
 	############################
+	
 	def save_record(self,username,newtime):
 		"""
 			Saves the new record into the proper shelve
@@ -198,3 +218,5 @@ class cLevel:
 		self.records = dbrecords
 
 		return dbrecords
+
+

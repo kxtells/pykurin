@@ -12,3 +12,5 @@ uuid:6f8b9500-3e2b-11e1-b86c-0800200c9a66
 [bouncers]
 [bashers]
 300,300:400,400
+[flies]
+100:100
