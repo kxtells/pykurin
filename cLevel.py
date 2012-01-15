@@ -134,8 +134,9 @@ class cLevel:
 				sx = scoord.partition(',')[0]
 				sy = scoord.partition(',')[2]
 				ex = ecoord.partition(',')[0]
-				ey = ecoord.partition(',')[2]
-				newbasher = cMonsterBasher.cMonsterBasher(int(sx),int(sy),int(ex),int(ey))
+				ey = ecoord.partition(',')[2].partition(';')[0]
+				speed = ecoord.partition(',')[2].partition(';')[2]
+				newbasher = cMonsterBasher.cMonsterBasher(int(sx),int(sy),int(ex),int(ey),int(speed))
 				basher_list.append(newbasher)
 		except:
 			pass
@@ -151,10 +152,8 @@ class cLevel:
 				newflie = cMonsterFlie.cMonsterFlie(int(sx),int(sy))
 				flies_list.append(newflie)
 		except:
-			raise
+			pass
 
-		print "FLIES"
-		print flies_list
 		return flies_list
 	############################
 	#

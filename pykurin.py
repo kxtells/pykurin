@@ -344,9 +344,6 @@ def handle_item_monster_colision(item,cx,cy):
 	tsprite = SPRITE_FAC.get_boing_sprite(item.rect.center[0],item.rect.center[1]-item.rect.height)
 	ANIM_SPRITES.append(tsprite)
 	
-	if item.delete_on_colision:
-		if not item.isMonster(): status.level.items.remove(item)
-		#else: status.level.monsters.remove(item)
 
 def monster_colisions():
 	for m in status.level.monsters:
@@ -463,6 +460,10 @@ def update_scene():
                 if m.col_anim.draw == False: 
 			window.blit(m.anim.image,m.rect.move(dx,dy))
 			m.draw_update()
+		else:
+			window.blit(m.col_anim.image,m.rect.move(dx,dy))
+			if m.draw_update() and m.delete_on_colision:
+				status.level.items.remove(m)
      
      	#Monsters
 	for i,m in enumerate(status.level.monsters):

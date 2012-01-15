@@ -1,12 +1,23 @@
 [options]
-name: 8- Dummy Level, does not work
-collision: levels/lvl1col.png
-background: levels/lvl1.png
+name: 8- Time Your Moves
+collision: levels/lvl8col.png
+background: levels/lvl8.png
 background2: backgrounds/wood.jpg
-startx: 50
-starty: 60
-endx: 146
-endy: 444
+startx: 320
+starty: 340
+endx: 1630
+endy: 750
 stick: sticks/stick.png
-uuid:7c053f20-3e2b-11e1-b86c-0800200c9a66
+uuid:aeea8a70-3fc1-11e1-b86c-0800200c9a66
 [bouncers]
+850:300
+580:560
+610:560
+642:560
+950:280
+[bashers]
+490,200:490,350;1
+660,420:660,280;1
+920,570:1050,570;1
+920,440:1050,440;1
+920,345:1050,345;1

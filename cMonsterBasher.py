@@ -4,8 +4,11 @@ from cAnimSprite import cAnimSprite
 import functions as BF
 
 class cMonsterBasher(cMonster.cMonster):
+	movx = 0
+	movy = 0
+	speed = 1
 
-	def __init__(self,x,y,ex,ey):
+	def __init__(self,x,y,ex,ey,speed):
 		cMonster.cMonster.__init__(self,x,y)
 		self.image      = pygame.image.load("sprites/basher_col.png").convert_alpha()
 		self.baseImage  = pygame.image.load("sprites/basher_col.png").convert_alpha()
@@ -24,13 +27,12 @@ class cMonsterBasher(cMonster.cMonster):
 		self.col_anim.draw = False
 
 		#
-		self.movx = 1
-		self.movy = 0
 		self.startx = x
-		self.starty = y 
+		self.starty = y
 		self.endx = ex
 		self.endy = ey
 		self.going_to_end = True
+		self.speed = speed
 
 	#Function to call on logic update
 	def logic_update(self):
@@ -38,38 +40,68 @@ class cMonsterBasher(cMonster.cMonster):
 		y = self.rect.y
 
 
-		if self.going_to_end:
-			if x < self.endx:
-				self.movx = 1
-			else:
-				self.movx = -1
-	
-			if y < self.endy:
-				self.movy = 1
-			else:
-				self.movy = -1
+		if self.startx == self.endx:
+			self.movx = 0
 		else:
-			if x < self.startx:
-				self.movx = 1
-			else:
-				self.movx = -1
-	
-			if y < self.starty:
-				self.movy = 1
-			else:
-				self.movy = -1
+			self.update_x_movement()
 
-		if self.going_to_end:
-			if x >= self.endx and y >= self.endy: 
-				self.movx = 0
-				self.movy = 0
-				self.going_to_end = False
+		if self.starty == self.endy:
+			self.movy = 0
 		else:
-			if x <= self.startx and y <= self.endy: 
-				self.movx = 0
-				self.movy = 0
-				self.going_to_end = True
+			self.update_y_movement()
 
 		self.rect = self.rect.move(self.movx,self.movy)
+		self.check_and_set_direction()
+
+	def check_and_set_direction(self):
+		x = self.rect.x
+		y = self.rect.y
+
+		#if (x < xmin and x < xmax) or (y > ymin and y > ymax):
+		#	self.flip_direction()
+		
+		if self.going_to_end:
+			if (x == self.endx + self.speed/2 and y == self.endy + self.speed/2) \
+			or (x == self.endx + self.speed/2 and y == self.endy - self.speed/2) \
+			or (x == self.endx - self.speed/2 and y == self.endy + self.speed/2) \
+			or (x == self.endx - self.speed/2 and y == self.endy - self.speed/2):
+				self.going_to_end = False
+		else:
+			if (x == self.startx + self.speed/2 and y == self.starty + self.speed/2) \
+			or (x == self.startx + self.speed/2 and y == self.starty - self.speed/2) \
+			or (x == self.startx - self.speed/2 and y == self.starty + self.speed/2) \
+			or (x == self.startx - self.speed/2 and y == self.starty - self.speed/2): 
+				self.going_to_end = True
+	
+	def flip_direction(self):
+		if self.going_to_end: self.going_to_end = False
+		else: self.going_to_end = True
 
 
+	def update_x_movement(self):
+		x = self.rect.x
+		y = self.rect.y
+		if self.going_to_end:
+			if self.x < self.endx:
+				self.movx = self.speed
+			else:
+				self.movx = -self.speed
+		else:
+			if self.x < self.startx:
+				self.movx = self.speed
+			else:
+				self.movx = -self.speed
+
+	def update_y_movement(self):
+		x = self.rect.x
+		y = self.rect.y
+		if self.going_to_end:
+			if y < self.endy:
+				self.movy = self.speed
+			else:
+				self.movy = -self.speed
+		else:
+			if y < self.starty:
+				self.movy = self.speed
+			else:
+				self.movy = -self.speed
