@@ -116,7 +116,7 @@ records_menu = cMenu(records_menu_texts,0,blue,red)
 records_menu.set_background("backgrounds/records_screen.png")
 
 #Records Menu
-main_menu_texts = 'Main Game', 'Survival Mode' , 'Settings'
+main_menu_texts = 'Main Game', 'Survival Mode' , 'Settings' , 'Say Goodbye'
 main_menu = cMenu(main_menu_texts,0,blue,red)
 main_menu.set_background("backgrounds/squared_paper_maintitle.png")
 #######################################
@@ -295,6 +295,11 @@ def main_menu_selection():
 	#Settings
 	elif main_menu.current == 2:
 		print "nothing"
+
+	#Exit
+	elif main_menu.current == 3:
+		pygame.quit()
+		sys.exit()
 
 #MENU BINDINGS
 gover_menu.action_function = game_over_menu_selection
