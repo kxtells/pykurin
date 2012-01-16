@@ -16,10 +16,13 @@ class cStatus:
 	_STAT_LEVELRECORD = 5
 	_STAT_TITLESCREEN = 6 
 	_STAT_GAMEMENU = 7
+	_STAT_MAINMENU = 8
 
 	"""Debug shit"""
 	_DEBUG_COLLISION=False
 	_DEBUG_DEATH=False
+	
+	
 	def __init__(self,lives_images,width,height,fps=60):
 		self.lives=cStatus._MAX_LIVES
 		self.lifebar_img_arr = lives_images
@@ -34,7 +37,8 @@ class cStatus:
 		#	2 - Level Selection
 		#       3 - Goal SCREEN
 		#       4 - PAUSE SCREEN
-		self.GAME_STAT = cStatus._STAT_LEVELSEL
+		#self.GAME_STAT = cStatus._STAT_LEVELSEL
+		self.GAME_STAT = cStatus._STAT_MAINMENU
 
                 # Substatus is used on different screens to move to different sub status
                 # (for example, goal screen has 3 status:

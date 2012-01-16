@@ -20,6 +20,7 @@ pygame.init()
 
 size = width, height = 640, 480
 
+FPS = 40
 
 #some colors definitions
 black = 0, 0, 0
@@ -31,7 +32,7 @@ white = 255,255,255
 
 
 clock = pygame.time.Clock ()
-window = pygame.display.set_mode(size,pygame.DOUBLEBUF)
+window = pygame.display.set_mode(size)
 icon   = pygame.image.load("icon.png").convert_alpha()
 pygame.display.set_caption("PYKURIN Alpha")
 pygame.display.set_icon(icon)
@@ -114,6 +115,10 @@ records_menu_texts = 'Next Level', 'Repeat' , 'Return to level Select'
 records_menu = cMenu(records_menu_texts,0,blue,red)
 records_menu.set_background("backgrounds/records_screen.png")
 
+#Records Menu
+main_menu_texts = 'Main Game', 'Survival Mode' , 'Settings'
+main_menu = cMenu(main_menu_texts,0,blue,red)
+main_menu.set_background("backgrounds/squared_paper_maintitle.png")
 #######################################
 #
 # KEY HANDLERS
@@ -204,6 +209,9 @@ def event_handler(event):
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,records_menu)
 
 
+	#MAIN Menu Screen
+        elif status.GAME_STAT == cStatus._STAT_MAINMENU:
+                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,main_menu)
 
 #######################################
 #
@@ -275,11 +283,25 @@ def pause_menu_selection():
                 pygame.quit()
                 sys.exit()
 
+def main_menu_selection():
+        #Go to level selection to start the game
+        if main_menu.current == 0:
+		status.GAME_STAT = cStatus._STAT_LEVELSEL
+
+        #Survival Mode
+	elif main_menu.current == 1:
+		print "Under development"
+	
+	#Settings
+	elif main_menu.current == 2:
+		print "nothing"
+
 #MENU BINDINGS
 gover_menu.action_function = game_over_menu_selection
 levels_menu.action_function = level_menu_selection
 pause_menu.action_function = pause_menu_selection
 records_menu.action_function = records_menu_selection
+main_menu.action_function = main_menu_selection
 
 pause_menu.event_function = pause_menu_events
 
@@ -527,7 +549,7 @@ def fancy_stick_death_animation():
                 stick.fancy_rotation_death(5,scale)
                 scale+=0.2
                 pygame.display.update()
-                clock.tick(30)
+                clock.tick(FPS)
 	
 
 #InGame menu Screen
@@ -723,9 +745,12 @@ def main():
                 elif status.GAME_STAT == cStatus._STAT_PAUSE: 
 			ingame_menu_screen(pause_menu,rotate=False)
                 
+		#Main Menu
+                elif status.GAME_STAT == cStatus._STAT_MAINMENU: 
+			ingame_menu_screen(main_menu,rotate=False)
                 
                 pygame.display.update()
-                clock.tick(30) 
+                clock.tick(FPS) 
 
 
 if __name__ == '__main__': main()  
