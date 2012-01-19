@@ -449,12 +449,12 @@ def update_scene_records():
         	timestr         = str(seconds)+":"+millis[0:3]
         	
 		if player_index == i:
-			bgcolor = yellow
+			timefont	= myfont.render(timestr, 1, blue,yellow)
+			namefont	= myfont.render(player, 1, blue,yellow)
 		else:
-			bgcolor = None
+			timefont	= myfont.render(timestr, 1, blue)
+			namefont	= myfont.render(player, 1, blue)
 
-		timefont	= myfont.render(timestr, 1, blue,bgcolor)
-		namefont	= myfont.render(player, 1, blue,bgcolor)
         	
 		window.blit(namefont, (200, 50*(i+3)))
 		window.blit(timefont, (100, 50*(i+3)))
