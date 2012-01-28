@@ -115,7 +115,7 @@ records_menu_texts = 'Next Level', 'Repeat' , 'Return to level Select'
 records_menu = cMenu(records_menu_texts,0,blue,red)
 records_menu.set_background("backgrounds/records_screen.png")
 
-#Records Menu
+#Main Menu
 main_menu_texts = 'Main Game', 'Survival Mode' , 'Settings' , 'Say Goodbye'
 main_menu = cMenu(main_menu_texts,0,blue,red)
 main_menu.set_background("backgrounds/squared_paper_maintitle.png")
