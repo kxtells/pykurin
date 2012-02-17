@@ -67,6 +67,7 @@ class cStatus:
                 self.start_time = time.time()
 		self.pause_stime = time.time()
 		self.pause_time_diff = 0
+		self.penalty_seconds = 0
 
                 #
                 # Listen KeyStrokes
@@ -99,9 +100,9 @@ class cStatus:
 
 	def get_elapsed_time(self):
 		if self.GAME_STAT == cStatus._STAT_PAUSE:
-			return time.time() - self.start_time - (time.time() - self.pause_stime)
+			return time.time() - self.start_time - (time.time() - self.pause_stime) + self.penalty_seconds
 		else:
-			return time.time() - self.start_time - self.pause_time_diff
+			return time.time() - self.start_time - self.pause_time_diff + self.penalty_seconds
 
         def reset_timer(self):
                 self.start_time = time.time()
@@ -138,3 +139,10 @@ class cStatus:
 		self.GAME_STAT = cStatus._STAT_GAMING
 		diff = time.time() - self.pause_stime
 		self.pause_time_diff += diff
+
+	def add_seconds(self,num):
+		self.penalty_seconds += num
+
+	
+	def clear_penalty_seconds(self):
+		self.penalty_seconds = 0

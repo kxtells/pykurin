@@ -20,7 +20,7 @@ pygame.init()
 
 size = width, height = 640, 480
 
-FPS = 40
+FPS = 45
 
 #some colors definitions
 black = 0, 0, 0
@@ -56,7 +56,6 @@ gtext_sprite.move(800,300)
 imgset = BF.load_and_slice_sprite(230,100,'newrecord.png');
 newrecord_sprite = cAnimSprite(imgset,1)
 newrecord_sprite.move(450,150)
-print imgset
 
 #Lives sprite
 imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
@@ -115,7 +114,7 @@ records_menu_texts = 'Next Level', 'Repeat' , 'Return to level Select'
 records_menu = cMenu(records_menu_texts,0,blue,red)
 records_menu.set_background("backgrounds/records_screen.png")
 
-#Main Menu
+#Records Menu
 main_menu_texts = 'Main Game', 'Survival Mode' , 'Settings' , 'Say Goodbye'
 main_menu = cMenu(main_menu_texts,0,blue,red)
 main_menu.set_background("backgrounds/squared_paper_maintitle.png")
@@ -231,6 +230,7 @@ def load_level(level_num):
 	status.SUBSTAT = 0
         status.current_level = level_num
         status.reset_timer()
+	status.clear_penalty_seconds()
 
 #Records menu selection function
 def records_menu_selection():
@@ -335,7 +335,10 @@ def colision_handler(cx,cy):
 
 	#Move the Stick back from the collision place
 	stick.jump_back(cx,cy)
-        stick.flip_rotation_tmp()
+    	stick.flip_rotation_tmp()
+
+	#Add 3 seconds to the total time
+	status.add_seconds(3)
 
 	#Only if not in debug mode or invincible mode
         if not status._DEBUG_DEATH:
@@ -449,15 +452,15 @@ def update_scene_records():
         	timestr         = str(seconds)+":"+millis[0:3]
         	
 		if player_index == i:
-			timefont	= myfont.render(timestr, 1, blue,yellow)
-			namefont	= myfont.render(player, 1, blue,yellow)
+			bgcolor = yellow
 		else:
-			timefont	= myfont.render(timestr, 1, blue)
-			namefont	= myfont.render(player, 1, blue)
+			bgcolor = None
 
+		timefont	= myfont.render(timestr, 1, blue,bgcolor)
+		namefont	= myfont.render(player, 1, blue,bgcolor)
         	
 		window.blit(namefont, (200, 50*(i+3)))
-		window.blit(timefont, (100, 50*(i+3)))
+		window.blit(timefont, (50, 50*(i+3)))
 
 
 #updates all the needed images/sprites

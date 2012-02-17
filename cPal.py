@@ -163,7 +163,7 @@ class cPal:
 		syc = self.rect.height/2
 		ax = abs(sx - sxc)
 		ay = abs(sy - syc)
-		print str(ax)+".."+str(ay)
+		#print str(ax)+".."+str(ay)
 		
 		if sx < sxc and sy < syc :     #Q1
 			jx += cPal._JUMP_LENGTH

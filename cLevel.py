@@ -28,7 +28,7 @@ class cLevel:
 
                 #Load the Goal sprite
 		goal_images     =  BF.load_and_slice_sprite(100,100,'goal.png');
-                self.goal_sprite     =  cAnimSprite(goal_images,5)
+                self.goal_sprite=  cAnimSprite(goal_images,5)
                 gx = int(parser.get('options','endx'))
                 gy = int(parser.get('options','endy'))
                 self.goal_sprite.move(gx,gy)
