@@ -177,6 +177,8 @@ def key_menu_handler(event,menu):
 def pause_menu_events(event):
 	if event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.unpause_game()
 
+def level_menu_events(event):
+	if event.key == pygame.K_ESCAPE: status.GAME_STAT = status._STAT_MAINMENU
 #
 # MAIN ENTRANCE FOR EVENT HANDLING 
 #
@@ -308,6 +310,7 @@ pause_menu.action_function = pause_menu_selection
 records_menu.action_function = records_menu_selection
 main_menu.action_function = main_menu_selection
 
+levels_menu.event_function = level_menu_events
 pause_menu.event_function = pause_menu_events
 
 
