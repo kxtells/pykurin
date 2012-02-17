@@ -1,16 +1,14 @@
 [options]
-name: Level10
-collision: levels/lvl1col.png
-background: levels/lvl1.png
+name: 10 - Messed
+collision: levels/lvl10col.png
+background: levels/lvl10.png
 background2: backgrounds/wood.jpg
-startx: 50
-starty: 60
-endx: 146
-endy: 444
+startx: 169
+starty: 142
+endx: 1129
+endy: 160
 stick: sticks/stick.png
-uuid:6f8b9500-3e2b-11e1-b86c-0800200c9a66
+uuid:1b322240-597d-11e1-b86c-0800200c9a66
 [bouncers]
 [bashers]
 300,300:400,400
-[flies]
-100:100
