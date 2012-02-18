@@ -15,6 +15,7 @@ from cAnimSprite import cAnimSprite
 from cStatus import cStatus
 from cMenu import cMenu
 from cLevelList import cLevelList
+from cSettings import cSettings
 
 pygame.init()
 
@@ -73,6 +74,7 @@ number_gen = cCustomFont.cCustomFont(imgset_numbers)
 #######################################
 #Status load
 status = cStatus(imgsetlives,width,height)
+settings = cSettings()
 
 #First Base Load
 status.level = cLevel("levels/lvl000001.prop")
@@ -115,7 +117,7 @@ records_menu = cMenu(records_menu_texts,0,blue,red)
 records_menu.set_background("backgrounds/records_screen.png")
 
 #Records Menu
-main_menu_texts = 'Main Game', 'Survival Mode' , 'Settings' , 'Say Goodbye'
+main_menu_texts = 'Main Game', 'Settings' , 'Say Goodbye'
 main_menu = cMenu(main_menu_texts,0,blue,red)
 main_menu.set_background("backgrounds/squared_paper_maintitle.png")
 #######################################
@@ -290,16 +292,12 @@ def main_menu_selection():
         if main_menu.current == 0:
 		status.GAME_STAT = cStatus._STAT_LEVELSEL
 
-        #Survival Mode
-	elif main_menu.current == 1:
-		print "Under development"
-	
 	#Settings
-	elif main_menu.current == 2:
+	elif main_menu.current == 1:
 		print "nothing"
 
 	#Exit
-	elif main_menu.current == 3:
+	elif main_menu.current == 2:
 		pygame.quit()
 		sys.exit()
 
@@ -698,7 +696,7 @@ def playing_screen():
 def finish_level():
         time = status.get_elapsed_time()
 	status.GAME_STAT = cStatus._STAT_GOAL
-	records = status.level.save_record('kxtells',time)
+	records = status.level.save_record(settings.get_username(),time)
 
 def main():
         #Main Game Function
