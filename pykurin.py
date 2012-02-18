@@ -9,6 +9,7 @@ import sys, pygame
 import functions as BF
 import cAnimSpriteFactory
 import cCustomFont
+import cInputKeys
 from cPal import cPal
 from cLevel import cLevel
 from cAnimSprite import cAnimSprite
@@ -36,6 +37,9 @@ window = pygame.display.set_mode(size)
 icon   = pygame.image.load("icon.png").convert_alpha()
 pygame.display.set_caption("PYKURIN Alpha")
 pygame.display.set_icon(icon)
+
+INPUT_KEYS = cInputKeys.cInputKeys()
+
 #######################################
 #
 # BASIC SPRITE LOADING
@@ -125,12 +129,19 @@ settings_menu_texts = ['Player Name: '+str(settings.get_username()), 'Fullscreen
 settings_menu = cMenu(settings_menu_texts,0,blue,red)
 settings_menu.set_background("backgrounds/squared_paper_maintitle.png")
 
-#default fullscreens for settings menu
-if settings.get_fullscreen(): 
-	settings_menu.options[1] = "Fullscreen: ON"
-else:
-	settings_menu.options[1] = "Fullscreen: OFF"
+#
+# Function to update the settings menu
+#
+def update_settings_menu_texts():
+	#default fullscreens for settings menu
+	if settings.get_fullscreen(): 
+		settings_menu.options[1] = "Fullscreen: ON"
+	else:
+		settings_menu.options[1] = "Fullscreen: OFF"
 
+	settings_menu.options[0] = "Player Name: "+str(settings.get_username())
+
+update_settings_menu_texts()
 
 #######################################
 #
@@ -147,6 +158,7 @@ def set_fullscreen():
 def toggle_fullscreen():
 	"""
 		Change between fullscreen and windowed
+		Modifies the texts on settings menu
 	"""
 	fullscreen = settings.get_fullscreen()
 	if not fullscreen:
@@ -268,6 +280,13 @@ def event_handler(event):
         elif status.GAME_STAT == cStatus._STAT_SETTINGS:
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,settings_menu)
 
+	#TEXT INPUT
+	elif status.GAME_STAT == status._STAT_NEWNAME:
+		if INPUT_KEYS.process_keystroke(event):
+			settings.set_username(INPUT_KEYS.text)
+			update_settings_menu_texts()
+			status.GAME_STAT = status._STAT_SETTINGS
+
 #######################################
 #
 # SPECIFIC MENU FUNCTIONS AND BINDINGS
@@ -302,7 +321,7 @@ def records_menu_selection():
 
 def settings_menu_selection():
 	if settings_menu.current == 0:
-		print "Username Change"
+		status.GAME_STAT = cStatus._STAT_NEWNAME
 
 	elif settings_menu.current == 1:
 		toggle_fullscreen()
@@ -357,6 +376,7 @@ def main_menu_selection():
 
 	#Settings
 	elif main_menu.current == 1:
+		update_settings_menu_texts()
 		status.GAME_STAT = cStatus._STAT_SETTINGS
 
 	#Exit
@@ -638,6 +658,13 @@ def ingame_menu_screen(menu,rotate=True):
 	if rotate: stick.rotate(1)
 	draw_menu(menu)
 
+def newname_screen():
+	window.fill(white)
+	myfont = pygame.font.SysFont("Arial", 20)
+	
+	namefont    = myfont.render(INPUT_KEYS.text, 1, blue)
+	window.blit(namefont, (200, 50))
+
 #Game Over Screen
 
 
@@ -823,10 +850,13 @@ def main():
                 elif status.GAME_STAT == cStatus._STAT_MAINMENU: 
 			ingame_menu_screen(main_menu,rotate=False)
                 
-		#Main Menu
+		#settings Menu
                 elif status.GAME_STAT == cStatus._STAT_SETTINGS: 
 			ingame_menu_screen(settings_menu,rotate=False)
                 
+                elif status.GAME_STAT == cStatus._STAT_NEWNAME: 
+			newname_screen()
+		
 		pygame.display.update()
                 clock.tick(FPS) 
 
