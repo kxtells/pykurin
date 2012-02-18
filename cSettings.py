@@ -5,6 +5,7 @@ class cSettings:
 	username = None
 	fullscreen = None
 	settings_file = "db/settings.set"
+	loaded = False
 
 	#def __init__(self,file):
 		
@@ -12,21 +13,37 @@ class cSettings:
 	def get_username(self):
 		if self.username == None:
 			self.load_settings_file()
-		
 		return self.username
 
+	def get_fullscreen(self):
+		if self.fullscreen == None:
+			self.load_settings_file()
+		return self.fullscreen
+
+	def set_username(self,newname):
+		self.load_settings_file()
+		self.username = newname
+		self.save_settings_file()
+
+	def set_fullscreen(self,newbool):
+		self.load_settings_file()
+		self.fullscreen = newbool
+		self.save_settings_file()
 
 	def load_settings_file(self):
 		"""
 			Loads the settings file and
 			fills all the settings
 		"""
+		if self.loaded: return #if already loaded, no need to open files to load
+
 		try:
 			s = open(self.settings_file, 'r');s.close() #file exists check, if not, an exception raises
 			db = shelve.open(self.settings_file)
 			self.username = db["username"]
 			self.fullscreen = db["fullscreen"]
 			db.close()
+			self.loaded = True
 		except:
 			self.load_default_settings()
 

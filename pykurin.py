@@ -20,7 +20,6 @@ from cSettings import cSettings
 pygame.init()
 
 size = width, height = 640, 480
-
 FPS = 45
 
 #some colors definitions
@@ -69,7 +68,7 @@ number_gen = cCustomFont.cCustomFont(imgset_numbers)
 
 #######################################
 #
-# STATUS CREATION
+# STATUS and SETTINGS CREATION
 #
 #######################################
 #Status load
@@ -120,6 +119,52 @@ records_menu.set_background("backgrounds/records_screen.png")
 main_menu_texts = 'Main Game', 'Settings' , 'Say Goodbye'
 main_menu = cMenu(main_menu_texts,0,blue,red)
 main_menu.set_background("backgrounds/squared_paper_maintitle.png")
+
+#Settings Menu
+settings_menu_texts = ['Player Name', 'Fullscreen', 'Go Back' ]
+settings_menu = cMenu(settings_menu_texts,0,blue,red)
+settings_menu.set_background("backgrounds/squared_paper_maintitle.png")
+
+
+#######################################
+#
+# FULLSCREEN HANDLER
+#
+#######################################
+
+def set_fullscreen():
+	"""
+		Set a fullscreen
+	"""
+	pygame.display.set_mode((width,height),pygame.FULLSCREEN) 
+
+def toggle_fullscreen():
+	"""
+		Change between fullscreen and windowed
+	"""
+	fullscreen = settings.get_fullscreen()
+	if not fullscreen:
+		set_fullscreen()
+		fullscreen = True
+	else:
+		pygame.display.set_mode(size)
+		fullscreen = False
+	
+	settings.set_fullscreen(fullscreen)
+	fullscreen = settings.get_fullscreen()
+
+	#modify the settings_menu text
+	if fullscreen: text = ' ON'
+	else: text = ' OFF'
+	settings_menu.options[1] = "Fullscreen"+text
+
+#default fullscreens for settings menu
+if settings.get_fullscreen(): 
+	settings_menu.options[1] = "Fullscreen ON"
+	set_fullscreen()
+else:
+	settings_menu.options[1] = "Fullscreen OFF"
+
 #######################################
 #
 # KEY HANDLERS
@@ -179,8 +224,10 @@ def key_menu_handler(event,menu):
 def pause_menu_events(event):
 	if event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.unpause_game()
 
+#Also used by settings menu
 def level_menu_events(event):
 	if event.key == pygame.K_ESCAPE: status.GAME_STAT = status._STAT_MAINMENU
+
 #
 # MAIN ENTRANCE FOR EVENT HANDLING 
 #
@@ -211,10 +258,13 @@ def event_handler(event):
         elif status.GAME_STAT == cStatus._STAT_LEVELRECORD:
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,records_menu)
 
-
 	#MAIN Menu Screen
         elif status.GAME_STAT == cStatus._STAT_MAINMENU:
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,main_menu)
+
+	#SETTINGS Menu Screen
+        elif status.GAME_STAT == cStatus._STAT_SETTINGS:
+                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,settings_menu)
 
 #######################################
 #
@@ -247,6 +297,17 @@ def records_menu_selection():
 	
 	elif records_menu.current == 2:
 		status.GAME_STAT = cStatus._STAT_LEVELSEL
+
+def settings_menu_selection():
+	if settings_menu.current == 0:
+		print "Username Change"
+
+	elif settings_menu.current == 1:
+		toggle_fullscreen()
+
+
+	elif settings_menu.current == 2:
+		status.GAME_STAT = cStatus._STAT_MAINMENU
 
 #Game over menu selection function
 def game_over_menu_selection():
@@ -294,7 +355,7 @@ def main_menu_selection():
 
 	#Settings
 	elif main_menu.current == 1:
-		print "nothing"
+		status.GAME_STAT = cStatus._STAT_SETTINGS
 
 	#Exit
 	elif main_menu.current == 2:
@@ -307,8 +368,10 @@ levels_menu.action_function = level_menu_selection
 pause_menu.action_function = pause_menu_selection
 records_menu.action_function = records_menu_selection
 main_menu.action_function = main_menu_selection
+settings_menu.action_function = settings_menu_selection
 
 levels_menu.event_function = level_menu_events
+settings_menu.event_function = level_menu_events
 pause_menu.event_function = pause_menu_events
 
 
@@ -758,7 +821,11 @@ def main():
                 elif status.GAME_STAT == cStatus._STAT_MAINMENU: 
 			ingame_menu_screen(main_menu,rotate=False)
                 
-                pygame.display.update()
+		#Main Menu
+                elif status.GAME_STAT == cStatus._STAT_SETTINGS: 
+			ingame_menu_screen(settings_menu,rotate=False)
+                
+		pygame.display.update()
                 clock.tick(FPS) 
 
 
