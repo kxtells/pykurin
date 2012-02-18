@@ -517,14 +517,12 @@ def update_scene_goal():
         window.blit(gtext_sprite.image,gtext_sprite.rect)
         gtext_sprite.update(pygame.time.get_ticks())
 
+#
 #@TODO: THis has to be beautiful
+#
 def update_scene_records():
 	records = status.level.records
 	player_index = status.level.player_record_index
-
-	if player_index > -1:
-        	window.blit(newrecord_sprite.image,newrecord_sprite.rect)
-                newrecord_sprite.update(pygame.time.get_ticks())
 
 	# pick a font you have and set its size
         myfont = pygame.font.SysFont("Arial", 30)
@@ -547,6 +545,10 @@ def update_scene_records():
         	
 		window.blit(namefont, (200, 50*(i+3)))
 		window.blit(timefont, (50, 50*(i+3)))
+
+	if player_index > -1:
+        	window.blit(newrecord_sprite.image,newrecord_sprite.rect)
+                newrecord_sprite.update(pygame.time.get_ticks())
 
 
 #updates all the needed images/sprites
