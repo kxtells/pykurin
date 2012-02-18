@@ -90,9 +90,13 @@ class cLevel:
 
 	def stick_in_goal(self,stick):
                 """
-                    Check if the stick collides with the level goal    
+                    Check if the stick center is within the level goal    
                 """
-                return stick.rect.colliderect(self.goal_sprite.rect)
+		scx = stick.rect.center[0]
+		scy = stick.rect.center[1]
+		stick_center_rect = (scx-10,scy-10,10,10)
+		return self.goal_sprite.rect.contains(stick_center_rect)
+		#return stick.rect.colliderect(self.goal_sprite.rect)
 
 	############################
 	#
@@ -155,6 +159,8 @@ class cLevel:
 			pass
 
 		return flies_list
+
+
 	############################
 	#
 	# Interfacing with record files
