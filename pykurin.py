@@ -125,6 +125,12 @@ settings_menu_texts = ['Player Name', 'Fullscreen', 'Go Back' ]
 settings_menu = cMenu(settings_menu_texts,0,blue,red)
 settings_menu.set_background("backgrounds/squared_paper_maintitle.png")
 
+#default fullscreens for settings menu
+if settings.get_fullscreen(): 
+	settings_menu.options[1] = "Fullscreen ON"
+else:
+	settings_menu.options[1] = "Fullscreen OFF"
+
 
 #######################################
 #
@@ -159,11 +165,7 @@ def toggle_fullscreen():
 	settings_menu.options[1] = "Fullscreen"+text
 
 #default fullscreens for settings menu
-if settings.get_fullscreen(): 
-	settings_menu.options[1] = "Fullscreen ON"
-	set_fullscreen()
-else:
-	settings_menu.options[1] = "Fullscreen OFF"
+if settings.get_fullscreen(): set_fullscreen()
 
 #######################################
 #
