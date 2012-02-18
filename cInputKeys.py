@@ -10,6 +10,30 @@ class cInputKeys():
 
 	def __init__(self):
 		self.text = ""
+		self.error_text = ""
+
+	def get_error(self):
+		return self.error_text
+
+	def clear_error(self):
+		self.error_text = ""
+
+	def sanitize_input(self):
+		"""
+			Called when the user presser intro.
+			returns True or False depending if the string is acceptable
+			if not, sets self.error_text
+		"""
+		if len(self.text)<3:
+			self.error_text = 'At least three letters on your name'
+			return False
+
+		if not all(ord(c) < 128 for c in self.text):
+			self.error_text = 'Invalid characters'
+			return False
+		
+		return True
+
 
 	def process_keystroke(self,event):
 		"""
