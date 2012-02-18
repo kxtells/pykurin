@@ -664,7 +664,7 @@ def fancy_stick_death_animation():
 	
 
 #InGame menu Screen
-def ingame_menu_screen(menu,rotate=True):
+def ingame_menu_screen(menu,rotate=True,x=200,y=200):
 	"""
 	 Paints a menu on screen while keeping the painting going behind.
 	  - menu (the menu to print)
@@ -673,8 +673,11 @@ def ingame_menu_screen(menu,rotate=True):
 	update_scene()
 	update_gui()
 	if rotate: stick.rotate(1)
-	draw_menu(menu)
+	draw_menu(menu,x,y)
 
+#
+# What to draw on screen for a newname
+#
 def newname_screen():
 	window.fill(white)
 	myfont = pygame.font.SysFont("Arial", 20)
@@ -778,7 +781,7 @@ def level_select_menu():
 # Draws a menu on screen 
 # - menu (the menu to draw)
 #
-def draw_menu(menu,sx=200,sy=200):
+def draw_menu(menu,sx=200,sy=160):
         # pick a font you have and set its size
         myfont = pygame.font.SysFont("Arial", menu.get_font_size())
         
@@ -865,7 +868,7 @@ def main():
 
 		#Pause Menu
                 elif status.GAME_STAT == cStatus._STAT_PAUSE: 
-			ingame_menu_screen(pause_menu,rotate=False)
+			ingame_menu_screen(pause_menu,rotate=False,x=200,y=160)
                 
 		#Main Menu
                 elif status.GAME_STAT == cStatus._STAT_MAINMENU: 
