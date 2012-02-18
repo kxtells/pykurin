@@ -8,6 +8,7 @@ class cMenu:
 		self.select_color = selcolor
 		self.background = None
 		self.background_scroll = False
+		self.font_size = 20
 
 		#Attributes to Bind possible functions
 		self.action_function = None
@@ -23,3 +24,9 @@ class cMenu:
 
 	def set_background(self,path):
 		self.background	= pygame.image.load(path)
+
+	def set_font_size(self,num):
+		self.font_size = num
+
+	def get_font_size(self):
+		return self.font_size
