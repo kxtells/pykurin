@@ -127,7 +127,9 @@ main_menu.set_background("backgrounds/squared_paper_maintitle.png")
 #Settings Menu
 settings_menu_texts = ['Player Name: '+str(settings.get_username()), 'Fullscreen', 'Go Back' ]
 settings_menu = cMenu(settings_menu_texts,0,blue,red)
-settings_menu.set_background("backgrounds/squared_paper_maintitle.png")
+settings_menu.set_background("backgrounds/squared_paper_settings.png")
+
+INPUT_KEYS_BG = pygame.image.load("backgrounds/squared_paper_wun.png")
 
 #
 # Function to update the settings menu
@@ -140,6 +142,7 @@ def update_settings_menu_texts():
 		settings_menu.options[1] = "Fullscreen: OFF"
 
 	settings_menu.options[0] = "Player Name: "+str(settings.get_username())
+
 
 update_settings_menu_texts()
 
@@ -233,6 +236,21 @@ def key_menu_handler(event,menu):
 		else:
 			if menu.event_function != None: menu.event_function(event)
 
+
+def input_name_keyhandler(event):
+	"""
+		Input handler when reading a username
+	"""
+	if event.key == pygame.K_ESCAPE: status.GAME_STAT = status._STAT_SETTINGS
+	
+	if INPUT_KEYS.process_keystroke(event): #process the keystrokes, and if keystroke is ENTER finish
+		if INPUT_KEYS.sanitize_input():
+			settings.set_username(INPUT_KEYS.text)
+			update_settings_menu_texts()
+			status.GAME_STAT = status._STAT_SETTINGS
+
+
+
 #Specific Pause menu handler
 # (for giving the change to exit the menu without selecting)
 def pause_menu_events(event):
@@ -282,10 +300,7 @@ def event_handler(event):
 
 	#TEXT INPUT
 	elif status.GAME_STAT == status._STAT_NEWNAME:
-		if INPUT_KEYS.process_keystroke(event):
-			settings.set_username(INPUT_KEYS.text)
-			update_settings_menu_texts()
-			status.GAME_STAT = status._STAT_SETTINGS
+		if event.type == pygame.KEYDOWN: input_name_keyhandler(event)
 
 #######################################
 #
@@ -525,7 +540,7 @@ def update_scene_records():
 	player_index = status.level.player_record_index
 
 	# pick a font you have and set its size
-        myfont = pygame.font.SysFont("Arial", 30)
+        myfont = pygame.font.SysFont("Arial", 25)
 	
 	for i,r in enumerate(records):
 		player = r[1]
@@ -664,8 +679,12 @@ def newname_screen():
 	window.fill(white)
 	myfont = pygame.font.SysFont("Arial", 20)
 	
+	window.blit(INPUT_KEYS_BG,INPUT_KEYS_BG.get_rect())
+	
 	namefont    = myfont.render(INPUT_KEYS.text, 1, blue)
-	window.blit(namefont, (200, 50))
+	errorfont    = myfont.render(INPUT_KEYS.get_error(), 1, red)
+	window.blit(namefont, (200, 200))
+	window.blit(errorfont, (200, 250))
 
 #Game Over Screen
 
@@ -759,9 +778,9 @@ def level_select_menu():
 # Draws a menu on screen 
 # - menu (the menu to draw)
 #
-def draw_menu(menu,sx=200,sy=165):
+def draw_menu(menu,sx=200,sy=200):
         # pick a font you have and set its size
-        myfont = pygame.font.SysFont("Arial", 20)
+        myfont = pygame.font.SysFont("Arial", menu.get_font_size())
         
 	if menu.background != None:
 		window.blit(menu.background,menu.background.get_rect())
