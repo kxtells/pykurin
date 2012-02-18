@@ -17,6 +17,7 @@ class cStatus:
 	_STAT_TITLESCREEN = 6 
 	_STAT_GAMEMENU = 7
 	_STAT_MAINMENU = 8
+	_STAT_SETTINGS = 9
 
 	"""Debug shit"""
 	_DEBUG_COLLISION=False
