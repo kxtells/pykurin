@@ -27,10 +27,10 @@ class cLevel:
 		self.uuid	= parser.get('options','uuid')
 
                 #Load the Goal sprite
-		goal_images     =  BF.load_and_slice_sprite(100,100,'goal.png');
-                self.goal_sprite=  cAnimSprite(goal_images,5)
                 gx = int(parser.get('options','endx'))
                 gy = int(parser.get('options','endy'))
+		goal_images     =  BF.load_and_slice_sprite(100,100,'goal.png');
+                self.goal_sprite=  cAnimSprite(goal_images,5)
                 self.goal_sprite.move(gx,gy)
                 
 		#ITEMS LOADING
@@ -96,7 +96,6 @@ class cLevel:
 		scy = stick.rect.center[1]
 		stick_center_rect = (scx-10,scy-10,10,10)
 		return self.goal_sprite.rect.contains(stick_center_rect)
-		#return stick.rect.colliderect(self.goal_sprite.rect)
 
 	############################
 	#
