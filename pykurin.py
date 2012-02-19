@@ -54,7 +54,7 @@ tsprite = SPRITE_FAC.get_explosion_sprite()
 #Goal Text
 imgset = BF.load_and_slice_sprite(300,150,'goal_text.png');
 gtext_sprite = cAnimSprite(imgset)
-gtext_sprite.move(800,300)
+gtext_sprite.move(800,250)
 
 #New Record Text
 imgset = BF.load_and_slice_sprite(230,100,'newrecord.png');
@@ -311,15 +311,15 @@ def event_handler(event):
 #Load a Specific Level (needed for level menu function)
 # @TODO : Maybe better in another place or python file
 def load_level(level_num):
-        status.level = cLevel(level_list.levelfiles[level_num])
-        stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
-        #stick.load_stick_image(status.level.stick)
+	status.level = cLevel(level_list.levelfiles[level_num])
+	stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
+	#stick.load_stick_image(status.level.stick)
         
-        status.reset_lives()
-        status.set_game_status(cStatus._STAT_GAMING)
+	status.reset_lives()
+	status.set_game_status(cStatus._STAT_GAMING)
 	status.SUBSTAT = 0
-        status.current_level = level_num
-        status.reset_timer()
+	status.current_level = level_num
+	status.reset_timer()
 	status.clear_penalty_seconds()
 
 #Records menu selection function
@@ -729,7 +729,7 @@ def goal_screen():
 		update_scene_goal()
 		if gtext_sprite.out_of_screen():
 			status.SUBSTAT = 2
-			gtext_sprite.move(800,300) #return to begining
+			gtext_sprite.move(800,250) #return to begining
 	
 	elif status.SUBSTAT == 2:
 		status.SUBSTAT = 0     #reset to original
