@@ -241,13 +241,13 @@ def input_name_keyhandler(event):
 	"""
 		Input handler when reading a username
 	"""
-	if event.key == pygame.K_ESCAPE: status.GAME_STAT = status._STAT_SETTINGS
+	if event.key == pygame.K_ESCAPE: status.set_game_status(cStatus._STAT_SETTINGS)
 	
 	if INPUT_KEYS.process_keystroke(event): #process the keystrokes, and if keystroke is ENTER finish
 		if INPUT_KEYS.sanitize_input():
 			settings.set_username(INPUT_KEYS.text)
 			update_settings_menu_texts()
-			status.GAME_STAT = status._STAT_SETTINGS
+			status.set_game_status(cStatus._STAT_SETTINGS)
 
 
 
@@ -258,7 +258,7 @@ def pause_menu_events(event):
 
 #Also used by settings menu
 def level_menu_events(event):
-	if event.key == pygame.K_ESCAPE: status.GAME_STAT = status._STAT_MAINMENU
+	if event.key == pygame.K_ESCAPE: status.set_game_status(cStatus._STAT_MAINMENU)
 
 #
 # MAIN ENTRANCE FOR EVENT HANDLING 
@@ -316,7 +316,7 @@ def load_level(level_num):
         #stick.load_stick_image(status.level.stick)
         
         status.reset_lives()
-        status.GAME_STAT = cStatus._STAT_GAMING 
+        status.set_game_status(cStatus._STAT_GAMING)
 	status.SUBSTAT = 0
         status.current_level = level_num
         status.reset_timer()
@@ -332,18 +332,18 @@ def records_menu_selection():
                 load_level(status.current_level)
 	
 	elif records_menu.current == 2:
-		status.GAME_STAT = cStatus._STAT_LEVELSEL
+		status.set_game_status(cStatus._STAT_LEVELSEL)
 
 def settings_menu_selection():
 	if settings_menu.current == 0:
-		status.GAME_STAT = cStatus._STAT_NEWNAME
+		status.set_game_status(cStatus._STAT_NEWNAME)
 
 	elif settings_menu.current == 1:
 		toggle_fullscreen()
 
 
 	elif settings_menu.current == 2:
-		status.GAME_STAT = cStatus._STAT_MAINMENU
+		status.set_game_status(cStatus._STAT_MAINMENU)
 
 #Game over menu selection function
 def game_over_menu_selection():
@@ -353,7 +353,7 @@ def game_over_menu_selection():
 
         #Return to Level Select Menu
         elif gover_menu.current == 1:
-                status.GAME_STAT = 2
+        		status.set_game_status(cStatus._STAT_LEVELSEL)
         
         #Exit Application
         elif gover_menu.current == 2:
@@ -363,7 +363,7 @@ def game_over_menu_selection():
 #Level Menu Selection Function
 def level_menu_selection():
         load_level(levels_menu.current)
-        status.GAME_STAT = 0
+        status.set_game_status(cStatus._STAT_GAMING)
 
 #Pause Menu selection Function
 def pause_menu_selection():
@@ -377,7 +377,7 @@ def pause_menu_selection():
 	
 	#Return to Level Select Menu
         elif pause_menu.current == 2:
-                status.GAME_STAT = 2
+        	status.set_game_status(cStatus._STAT_LEVELSEL)
         
         #Exit Application
         elif pause_menu.current == 3:
@@ -386,13 +386,13 @@ def pause_menu_selection():
 
 def main_menu_selection():
         #Go to level selection to start the game
-        if main_menu.current == 0:
-		status.GAME_STAT = cStatus._STAT_LEVELSEL
+	if main_menu.current == 0:
+		status.set_game_status(cStatus._STAT_LEVELSEL)
 
 	#Settings
 	elif main_menu.current == 1:
 		update_settings_menu_texts()
-		status.GAME_STAT = cStatus._STAT_SETTINGS
+		status.set_game_status(cStatus._STAT_SETTINGS)
 
 	#Exit
 	elif main_menu.current == 2:
@@ -701,39 +701,39 @@ def level_selection_screen():
 
 
 def goal_screen():
-        """
-                Update screen when goal. Different situations to handle, controlled
+	"""
+		Update screen when goal. Different situations to handle, controlled
 		by status.SUBSTAT
-		1 - Move the stick to the center of the goal
-                2 - Do a fancy flip Screen animation
-                3 - Show a screen with the results
-                4 - Give options: Repeat or Next level
-        """
-        update_scene()
-        stick.rotate(25)
+			1 - Move the stick to the center of the goal
+			2 - Do a fancy flip Screen animation
+			3 - Show a screen with the results
+			4 - Give options: Repeat or Next level
+	"""
+	update_scene()
+	stick.rotate(25)
 
-        if status.SUBSTAT == 0:
-                #Move Stick to Goal center
-                ox = status.level.goal_sprite.rect.x;
-                oy = status.level.goal_sprite.rect.y;
+	if status.SUBSTAT == 0:
+		#Move Stick to Goal center
+		ox = status.level.goal_sprite.rect.x;
+		oy = status.level.goal_sprite.rect.y;
 
-                if not stick.move_towards_position(ox,oy):
-                        stick.movement()
-                else:
-                        stick.enable_disable_movement()
-                        status.SUBSTAT = 1
+		if not stick.move_towards_position(ox,oy):
+			stick.movement()
+		else:
+			stick.enable_disable_movement()
+			status.SUBSTAT = 1
 
-        elif status.SUBSTAT == 1:
-                #Goal Running there
-                gtext_sprite.incr_move(-10,0)
-                update_scene_goal()
-                if gtext_sprite.out_of_screen():
-                        status.SUBSTAT = 2
-                        gtext_sprite.move(800,300) #return to begining
-
-        elif status.SUBSTAT == 2:
-                status.SUBSTAT = 0     #reset to original
-        	status.GAME_STAT = cStatus._STAT_LEVELRECORD
+	elif status.SUBSTAT == 1:
+		#Goal Running there
+		gtext_sprite.incr_move(-10,0)
+		update_scene_goal()
+		if gtext_sprite.out_of_screen():
+			status.SUBSTAT = 2
+			gtext_sprite.move(800,300) #return to begining
+	
+	elif status.SUBSTAT == 2:
+		status.SUBSTAT = 0     #reset to original
+		status.set_game_status(cStatus._STAT_LEVELRECORD)
 
 def records_screen():
 	"""
@@ -807,32 +807,32 @@ def draw_menu(menu,sx=200,sy=160):
 # Draws everything of the playing level screen
 #
 def playing_screen():
-        update_scene()
+	update_scene()
 	update_gui()
-        stick.rotate()
-        stick.movement()
+	stick.rotate()
+	stick.movement()
 
 
 def finish_level():
-        time = status.get_elapsed_time()
-	status.GAME_STAT = cStatus._STAT_GOAL
+	time = status.get_elapsed_time()
+	status.set_game_status(cStatus._STAT_GOAL)
 	records = status.level.save_record(settings.get_username(),time)
 
 def main():
         #Main Game Function
-        while 1:
-                for event in pygame.event.get(): event_handler(event)
-                window.fill(white)
+	while 1:
+		for event in pygame.event.get(): event_handler(event)
+		window.fill(white)
 
-                #Playing Level
+		#Playing Level
 		if status.GAME_STAT == cStatus._STAT_GAMING:
 
-                        #Debug Purposes
-                        if not status._DEBUG_COLLISION:
+			#Debug Purposes
+			if not status._DEBUG_COLLISION:
 				
 				#Level Colision
-                                colision,cx,cy = status.level.stick_collides(stick);
-                                if colision: colision_handler(cx,cy)
+				colision,cx,cy = status.level.stick_collides(stick);
+				if colision: colision_handler(cx,cy)
 				
 				#Item colision
 				item_colisions()
@@ -841,52 +841,53 @@ def main():
 				monster_colisions()
 
 			monster_logic()
-                        playing_screen()                        
-                        debug_onscreen(colision)
+			playing_screen()                        
+			debug_onscreen(colision)
 			#Unset invincibility when needed
 			status.unset_invincible_by_time()
 
 			#check if goal
-                        if status.level.stick_in_goal(stick): 
+			if status.level.stick_in_goal(stick): 
 				finish_level()
                 	
 			#check if dead
-                	if status.lives <= 0: fancy_stick_death_animation()
+			if status.lives <= 0: fancy_stick_death_animation()
 
-                #Game Over
-                elif status.GAME_STAT == cStatus._STAT_GAMEOVER: 
-        		stick.fancy_rotation_death(0,10)
+			#Game Over
+		
+		elif status.GAME_STAT == cStatus._STAT_GAMEOVER: 
+			stick.fancy_rotation_death(0,10)
 			ingame_menu_screen(gover_menu)
                 
-                #Level Selection
-                elif status.GAME_STAT == cStatus._STAT_LEVELSEL:
-                        level_selection_screen()
+			#Level Selection
+		elif status.GAME_STAT == cStatus._STAT_LEVELSEL:
+			level_selection_screen()
 
 		#Goal
-                elif status.GAME_STAT == cStatus._STAT_GOAL:
-                        goal_screen()
+		elif status.GAME_STAT == cStatus._STAT_GOAL:
+			goal_screen()
                 
 		#After Goal, Level Records Screen
-                elif status.GAME_STAT == cStatus._STAT_LEVELRECORD:
+		elif status.GAME_STAT == cStatus._STAT_LEVELRECORD:
 			records_screen()
 
 		#Pause Menu
-                elif status.GAME_STAT == cStatus._STAT_PAUSE: 
+		elif status.GAME_STAT == cStatus._STAT_PAUSE: 
 			ingame_menu_screen(pause_menu,rotate=False,x=200,y=160)
                 
 		#Main Menu
-                elif status.GAME_STAT == cStatus._STAT_MAINMENU: 
+		elif status.GAME_STAT == cStatus._STAT_MAINMENU: 
 			ingame_menu_screen(main_menu,rotate=False)
                 
 		#settings Menu
-                elif status.GAME_STAT == cStatus._STAT_SETTINGS: 
+		elif status.GAME_STAT == cStatus._STAT_SETTINGS: 
 			ingame_menu_screen(settings_menu,rotate=False)
                 
-                elif status.GAME_STAT == cStatus._STAT_NEWNAME: 
+		elif status.GAME_STAT == cStatus._STAT_NEWNAME: 
 			newname_screen()
 		
 		pygame.display.update()
-                clock.tick(FPS) 
+		clock.tick(FPS) 
 
 
 if __name__ == '__main__': main()  
