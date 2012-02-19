@@ -10,7 +10,7 @@ endy: 90
 stick: sticks/stick.png
 uuid:b7a698d0-3e2b-11e1-b86c-0800200c9a66
 [bouncers]
-1270:196
-1375:390
+1286:212
+1391:406
 [recovers]
 1124:279

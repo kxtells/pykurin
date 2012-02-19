@@ -108,7 +108,7 @@ class cLevel:
 			for b in parser.items('bouncers'):
 				bx,by = b
 				rot = 0
-				newbouncer = cItemBouncer.cItemBouncer(int(bx),int(by),rot)
+				newbouncer = cItemBouncer.cItemBouncer(int(bx)-16,int(by)-16,rot)
 				bouncer_list.append(newbouncer)
 		except:
 			pass

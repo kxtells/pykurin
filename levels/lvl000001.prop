@@ -6,7 +6,7 @@ background2: backgrounds/wood.jpg
 startx: 50
 starty: 60
 endx: 200
-endy: 490
+endy: 475
 stick: sticks/stick.png
 uuid:a577e740-3e2b-11e1-b86c-0800200c9a66
 [bouncers]

@@ -11,6 +11,7 @@ stick: sticks/stick.png
 uuid:ef4c4860-5b0a-11e1-b86c-0800200c9a66
 [bouncers]
 180:290
+760:1042
 [recovers]
 [bashers]
 145,1090:145,1280;1
