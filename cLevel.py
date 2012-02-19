@@ -16,8 +16,8 @@ class cLevel:
 		parser.read(file)
 
 		self.name 	= parser.get('options','name')
-		self.startx 	= int(parser.get('options','startx'))
-		self.starty 	= int(parser.get('options','starty'))
+		self.startx 	= int(parser.get('options','startx'))-32 #stick is 64 in size
+		self.starty 	= int(parser.get('options','starty'))-32
 		self.imgcol 	= pygame.image.load(parser.get('options','collision')).convert_alpha();
 		self.image 	= pygame.image.load(parser.get('options','background')).convert_alpha();
 		self.bg 	= pygame.image.load(parser.get('options','background2')).convert_alpha();
