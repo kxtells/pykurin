@@ -148,3 +148,6 @@ class cStatus:
 	
 	def clear_penalty_seconds(self):
 		self.penalty_seconds = 0
+
+	def set_game_status(self,stat):
+		self.GAME_STAT = stat
