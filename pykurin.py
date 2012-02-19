@@ -621,12 +621,16 @@ def update_scene():
 
 #Updates all the gui sprites
 def update_gui():
-        #LifeBar status
-        window.blit(status.lifebar_image,status.lifebar_rect)
+	#LifeBar status
+	window.blit(status.lifebar_image,status.lifebar_rect)
         
 	#TIMING
-        seconds         = int(status.get_elapsed_time())
-        millis          = str(seconds - status.get_elapsed_time()).partition(".")[2]
+	seconds         = int(status.get_elapsed_time())
+	millis          = str(seconds - status.get_elapsed_time()).partition(".")[2]
+
+	if seconds > 999: 
+		seconds = "999"
+		millis = "00"
 
 	seconds_images = number_gen.parse_number(int(seconds))
 	millis_images = number_gen.parse_number(int(millis[0:2]))
