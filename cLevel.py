@@ -139,7 +139,7 @@ class cLevel:
 				ex = ecoord.partition(',')[0]
 				ey = ecoord.partition(',')[2].partition(';')[0]
 				speed = ecoord.partition(',')[2].partition(';')[2]
-				newbasher = cMonsterBasher.cMonsterBasher(int(sx),int(sy),int(ex),int(ey),int(speed))
+				newbasher = cMonsterBasher.cMonsterBasher(int(sx)-32,int(sy)-32,int(ex)-32,int(ey)-32,int(speed))
 				basher_list.append(newbasher)
 		except:
 			pass
