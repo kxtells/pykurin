@@ -45,13 +45,16 @@ class subbar(menubar):
 	cx = 0
 	cy = 0
 
+	TITLE = 1
 
 	def __init__(self):
 		self.a = "a2"
 	
 	def touched_bar(self,mx,my):
-		if my > 580: return True
-		else: return False
+		if my > 580: 
+			if mx < 100:
+				return self.TITLE
+		else: return None
 	
 	def set_cursor(self,x,y):
 		self.cx = x

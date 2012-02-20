@@ -29,6 +29,8 @@ class datacontainer:
 	background_filename = None
 	title = "NO TITLE"
 	uuid = None
+
+	last_error = None
 	
 	def set_image(self,imagepath):
 		self.image = image.load(imagepath)
@@ -37,6 +39,16 @@ class datacontainer:
 		#part = imagepath.rpartition('/')
 		#self.img_filename = "levels/"+part[-1]
 		self.img_filename = imagepath
+	
+
+	def set_last_error(self,text):
+		self.last_error = text
+
+	def get_last_error(self):
+		if last_error==None:
+			return "OK"
+		else:
+			return self.last_error
 
 	def get_image(self,img):
 		return self.image
@@ -63,27 +75,21 @@ class datacontainer:
 		if ident==0:
 			return True
 		elif ident == 1: #basher
-			print "addbasher"
 			self.bashers.append(Rect(mx-32,my-32,64,64))
 			self.bashers_end.append(Rect(mx-8 -64,my-8 -64,16,16)) #where basher moves
 		elif ident == 2: #bouncer
-			print "addbouncer"
 			self.bouncers.append(Rect(mx-16,my-16,32,32))
 		elif ident == 3: #lives
-			print "addlives"
 			self.lives.append(Rect(mx-16,my-16,32,32))
-		elif ident == 4: #lives
-			print "addgoal"
+		elif ident == 4: #Goal
 			if len(self.goals)<1: #only one goal ma friend
 				self.goals.append(Rect(mx-50,my-50,100,100))
-		elif ident == 5: #lives
-			print "addstart"
+		elif ident == 5: #Start
 			if len(self.sticks)<1: #only one goal ma friend
 				self.sticks.append(Rect(mx-32,my-32,64,64))							
 	
 	def move_current_item(self,mx,my):
 		if self.selecteditem == None: return False
-		print self.selecteditem
 		ident = self.selecteditem[0]
 		obj = self.selecteditem[1]
 		
@@ -204,7 +210,6 @@ class datacontainer:
 
 		del self.bashers[:]
 		del self.bashers_end[:]
-		print "retrieving"
 				
 		try:
 			for b in parser.items('bashers'):

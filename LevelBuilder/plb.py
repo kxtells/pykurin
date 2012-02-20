@@ -293,6 +293,14 @@ def handle_event(evt):
 		y = evt.pos[1]
 
 		#
+		# Sub bar
+		#
+		sub = SB.touched_bar(x,y)
+		if sub!= None:
+			if sub == SB.TITLE:
+				action_set_title()
+
+		#
 		# UPPER MENU
 		#
 		action = MB.click_action(x,y)
@@ -308,7 +316,6 @@ def handle_event(evt):
 			if action == MB.LOADBG:
 				action_openbackgroundimage()
 		
-		if SB.touched_bar(x,y): action_set_title()
 		
 		#
 		# Canvas
@@ -319,7 +326,6 @@ def handle_event(evt):
 			else: #no item selected on menu, let's work on the canvas
 				#if DC.isItemSelected(): #is a item on canvas selected? do something
 				if DC.touched_selected_item(x-pad_x,y-pad_y):
-					print "properties of icon"
 					move_object = True
 						#DC.unselect_item()
 				else:
