@@ -1,4 +1,5 @@
-# Basic class definition courtesy of Nicolas Crovatti (http://shinylittlething.com/2009/07/21/pygame-and-animated-sprites/)
+# Basic class definition courtesy of Nicolas Crovatti 
+# (http://shinylittlething.com/2009/07/21/pygame-and-animated-sprites/)
 #
 #
 

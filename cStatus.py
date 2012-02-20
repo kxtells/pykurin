@@ -24,6 +24,9 @@ class cStatus:
 	_DEBUG_COLLISION=False
 	_DEBUG_DEATH=False
 	
+
+
+	level = None
 	
 	def __init__(self,lives_images,width,height,fps=60):
 		self.lives=cStatus._MAX_LIVES
@@ -54,7 +57,7 @@ class cStatus:
 		#
 		# Level Information
 		#
-		self.level = cLevel("levels/lvl000001.prop") #loads the default level
+		self.level;
 		self.current_level = 1
 		
 		#

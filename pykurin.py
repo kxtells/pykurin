@@ -80,8 +80,7 @@ status = cStatus(imgsetlives,width,height)
 settings = cSettings()
 
 #First Base Load
-status.level = cLevel("levels/lvl000001.prop")
-stick = cPal(status.level.startx,status.level.starty,0);
+stick = cPal(0,0,0)
 
 #General arrays with Sprites
 BASIC_SPRITES=[]
@@ -679,6 +678,17 @@ def ingame_menu_screen(menu,rotate=True,x=200,y=200):
 	if rotate: stick.rotate(1)
 	draw_menu(menu,x,y)
 
+#InGame menu Screen
+def menu_screen(menu,rotate=True,x=200,y=200):
+	"""
+	 Paints a menu on screen
+	  - menu (the menu to print)
+	  - rotate (keeps the stick rotating) --- True in fancy gameover, False in Pause
+	"""
+	update_gui()
+	if rotate: stick.rotate(1)
+	draw_menu(menu,x,y)	
+
 #
 # What to draw on screen for a newname
 #
@@ -877,11 +887,11 @@ def main():
                 
 		#Main Menu
 		elif status.GAME_STAT == cStatus._STAT_MAINMENU: 
-			ingame_menu_screen(main_menu,rotate=False)
+			menu_screen(main_menu,rotate=False)
                 
 		#settings Menu
 		elif status.GAME_STAT == cStatus._STAT_SETTINGS: 
-			ingame_menu_screen(settings_menu,rotate=False)
+			menu_screen(settings_menu,rotate=False)
                 
 		elif status.GAME_STAT == cStatus._STAT_NEWNAME: 
 			newname_screen()
