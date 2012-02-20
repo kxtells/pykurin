@@ -19,14 +19,16 @@ class datacontainer:
 	lives = []
 	goals = []
 	sticks = []
+	bashers_end = []
 
-	items_pack = [bashers,bouncers,lives,goals,sticks]
+	items_pack = [bashers,bouncers,lives,goals,sticks,bashers_end]
 	selecteditem = None
 
 	colimg_filename = None
 	img_filename = None
 	background_filename = None
 	title = "NO TITLE"
+	uuid = None
 	
 	def set_image(self,imagepath):
 		self.image = image.load(imagepath)
@@ -51,12 +53,19 @@ class datacontainer:
 	def set_bg_image(self,imagepath):
 		self.background_filename = imagepath
 
+	def set_uuid(self,uuid):
+		self.uuid = uuid
+	
+	def generate_uuid(self):
+		self.uuid = uuid.uuid4()
+
 	def add_item(self,ident,mx,my):
 		if ident==0:
 			return True
 		elif ident == 1: #basher
 			print "addbasher"
 			self.bashers.append(Rect(mx-32,my-32,64,64))
+			self.bashers_end.append(Rect(mx-8 -64,my-8 -64,16,16)) #where basher moves
 		elif ident == 2: #bouncer
 			print "addbouncer"
 			self.bouncers.append(Rect(mx-16,my-16,32,32))
@@ -85,7 +94,9 @@ class datacontainer:
 		elif ident==3:
 			self.items_pack[ident][obj] = Rect(mx-50,my-50,100,100)
 		elif ident==4:
-			self.items_pack[ident][obj] = Rect(mx-32,my-32,64,64)			
+			self.items_pack[ident][obj] = Rect(mx-32,my-32,64,64)
+		elif ident==5:
+			self.items_pack[ident][obj] = Rect(mx-8,my-8,16,16)							
 
 	def touched_item(self,mx,my):
 		touched = None
@@ -123,6 +134,13 @@ class datacontainer:
 			st = self.selecteditem[0]
 			si = self.selecteditem[1]
 			self.items_pack[st].pop(si)
+
+			#basher is a double item, so we have to delete that
+			if st == 0: #it's a basher
+				self.items_pack[5].pop(si)
+			elif st == 5: #it's the end of a basher
+				self.items_pack[5].pop(si)
+
 			self.selecteditem = None
 
 
@@ -166,7 +184,8 @@ class datacontainer:
 		self.background_filename = bgfilename
 		title = parser.get('options','name')
 		self.title = title
-
+		uuid = parser.get('options','uuid')
+		self.uuid = uuid
 
 		#print imagefile
 		part = full_path.rpartition('/')
@@ -179,7 +198,27 @@ class datacontainer:
 		self.retrieve_lives_list(parser,xpadding,ypadding)
 		self.retrieve_end(parser,xpadding,ypadding)
 		self.retrieve_start(parser,xpadding,ypadding)
+		self.retrieve_bashers_list(parser,xpadding,ypadding)
 	
+	def retrieve_bashers_list(self,parser,xp,yp):
+
+		del self.bashers[:]
+		del self.bashers_end[:]
+		print "retrieving"
+				
+		try:
+			for b in parser.items('bashers'):
+				#FORMAT: 490,200:490,350;1
+				basher, basher_end_tmp = b
+				basher_end = basher_end_tmp.partition(";")[0]
+				bx,t,by = basher.partition(",")
+				bex,t,bey = basher_end.partition(",")
+
+				self.bashers.append(Rect(int(bx)-32+xp,int(by)-32+yp,64,64))
+				self.bashers_end.append(Rect(int(bex)-8+xp,int(bey)-8+yp,16,16))	
+		except:
+			pass
+
 	def retrieve_bouncer_list(self,parser,xp,yp):
 		del self.bouncers[:]
 		try:
@@ -236,7 +275,7 @@ class datacontainer:
 		colimg = "levels/"+self.colimg_filename.rpartition("/")[-1]
 		img = "levels/"+self.img_filename.rpartition("/")[-1]
 		bg = "backgrounds/"+self.background_filename.rpartition("/")[-1]
-		f.write("collision: "+colimg+"\n")
+		f.write("collision:"+colimg+"\n")
 		f.write("background:"+img+"\n")
 		f.write("background2:"+bg+"\n")
 
@@ -248,11 +287,12 @@ class datacontainer:
 		goaly = self.goals[0][1] +50 -ypadding
 		f.write("endx:"+str(goalx)+"\n")
 		f.write("endy:"+str(goaly)+"\n")
-		f.write("stick: sticks/stick.png\n") #default value at the moment
+		f.write("stick:sticks/stick.png\n") #default value at the moment
 
 		#How to generate a UUID from python easily?
-		generated_uuid = uuid.uuid4()
-		f.write("uuid:"+str(generated_uuid)+"\n")
+		if self.uuid == None:
+			self.generated_uuid()
+		f.write("uuid:"+str(self.uuid)+"\n")
 
 		f.write("[bouncers]\n")
 		for b in self.bouncers:
@@ -267,7 +307,17 @@ class datacontainer:
 			f.write(str(bx)+":"+str(by)+"\n")
 
 		f.write("[bashers]\n")
-			 #still to implement
+			
+		for i,b in enumerate(self.bashers):
+			#FORMAT: 490,200:490,350;1
+			be = self.bashers_end[i]
+
+			bx = b.center[0] -xpadding
+			by = b.center[1] -ypadding
+			bex = be.center[0] -xpadding
+			bey = be.center[1] -ypadding
+			 
+			f.write(str(bx)+","+str(by)+":"+str(bex)+","+str(bey)+";1\n")
 		f.write("[flies]\n")
 		f.close()
 

@@ -111,11 +111,13 @@ def draw_subbar():
 
 
 def draw_objects():
+	"""
+		Draw all the objects and other information
+		about them that just will appear here in the
+		editor
+	"""
 	for bouncer_rect in DC.bouncers:
 		window.blit(bouncer_img,bouncer_rect.move(pad_x,pad_y))
-	
-	for basher_rect in DC.bashers:
-		window.blit(basher_img,basher_rect.move(pad_x,pad_y))
 	
 	for lives_rect in DC.lives:
 		window.blit(lives_img,lives_rect.move(pad_x,pad_y))
@@ -124,7 +126,22 @@ def draw_objects():
 		window.blit(goal_img,goals_rect.move(pad_x,pad_y))
 
 	for sticks_rect in DC.sticks:
-		window.blit(stick_img,sticks_rect.move(pad_x,pad_y))		
+		window.blit(stick_img,sticks_rect.move(pad_x,pad_y))
+	
+	for i,basher_rect in enumerate(DC.bashers):
+		brect_moved = basher_rect.move(pad_x,pad_y)
+		r = DC.bashers_end[i].move(pad_x,pad_y)
+
+		#draw basher_movement line
+		p1 = brect_moved.center[0] , brect_moved.center[1]
+		p2 = r.center[0] , r.center[1]
+		pygame.draw.line(window, red, p1, p2)
+
+		#draw the basher
+		window.blit(basher_img,brect_moved)
+		
+		#draw the last point of basher movement
+		pygame.draw.rect(window,red,r)
 
 def draw_selection():
 	item = DC.get_selected_square()
