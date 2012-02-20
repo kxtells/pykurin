@@ -79,6 +79,9 @@ def draw_feedback_on_icons():
 
 
 def draw_menu():
+	"""
+		Draws the ontop menu with the various icons
+	"""
 	r = (0,0,w,menu_height)
 	pygame.draw.rect(window, gray, pygame.Rect(r))
 
@@ -92,10 +95,17 @@ def draw_menu():
 
 
 def draw_image():
+	"""
+		Draws the level image
+	"""
 	if DC.image != None:
 		window.blit(DC.image,DC.image.get_rect().move(pad_x,menu_height+pad_y))
 
 def draw_subbar():
+	"""
+		Draws the little subbar on the bottom of the screen
+		with the level title, the last error and cursor coordinates
+	"""
 	r = (0,580,w,20)
 	myfont = pygame.font.SysFont("Arial", 14)
 
@@ -145,6 +155,11 @@ def draw_objects():
 		pygame.draw.rect(window,red,r)
 
 def draw_selection():
+	"""
+		In the case that there's an object selected
+		draws a red Line in its perimeter to highlight
+		the selection
+	"""
 	item = DC.get_selected_square()
 
 	if item != None:
@@ -211,6 +226,10 @@ def popup_message_yesnocancel(title,text):
 ############################################
 
 def action_set_title():
+	"""
+		Opens a basic input dialog, and if the user presses OK 
+		saves a new name for the level
+	"""
 	try:
 		newtitle = input_text_dialog("Level Title","Level title")
 		if newtitle != None:
@@ -219,6 +238,11 @@ def action_set_title():
 		pass
 
 def action_openbackgroundimage():
+	"""
+		Opens a file chooser and sets the background image with it
+		NOTE: The background image does not appear in PLB, it's simply
+		the background draw for pykurin.
+	"""
 	try:
 		filepath = open_file_chooser("image");
 		if filepath != None:			
@@ -227,6 +251,9 @@ def action_openbackgroundimage():
 		pass
 
 def action_openimage():
+	"""
+		Opens a file chooser and sets the level image with it.
+	"""
 	try:
 		filepath = open_file_chooser("image");
 		if filepath != None:
@@ -236,6 +263,9 @@ def action_openimage():
 		pass
 
 def action_opencolisionimage():
+	"""
+		Opens a file chooser and sets the colison image with it.
+	"""
 	try:
 		filepath = open_file_chooser("image");
 		if filepath != None:			
@@ -245,6 +275,9 @@ def action_opencolisionimage():
 		pass
 
 def action_openprop():
+	"""
+		Opens a file chooser to load a properties image
+	"""
 	try:
 		filepath = open_file_chooser("Properties",".prop");
 		if filepath != None:
@@ -255,6 +288,11 @@ def action_openprop():
 		pass
 
 def action_saveprop():
+	"""
+		To save the current level.
+		If a filepath was already defined it asks for overwrite, if user
+		does not want to overwrite, opens a file dialog
+	"""
 	try:
 		filepath = DC.file_prop_path
 		if filepath != None:
@@ -294,11 +332,19 @@ def action_saveprop():
 #
 ############################
 def handle_event(evt):
+	"""
+		All the mouse events handling, firing ACTION CONTROLLERS
+		and selecting/unelecting/deleting etc
+	"""
 	global move_screen
 	global move_object
 	global pad_x
 	global pad_y
 
+
+	#
+	# Fantastic delete an object
+	#
 	if evt.type == pygame.KEYDOWN:
 		if evt.key == pygame.K_DELETE:
 			if DC.isItemSelected():
@@ -309,7 +355,7 @@ def handle_event(evt):
 		y = evt.pos[1]
 
 		#
-		# Sub bar
+		# Sub bar firing events
 		#
 		sub = SB.touched_bar(x,y)
 		if sub!= None:
@@ -317,9 +363,9 @@ def handle_event(evt):
 				action_set_title()
 
 		#
-		# UPPER MENU
+		# UPPER MENU firing events or modifying status
 		#
-		action = MB.click_action(x,y)
+		action = MB.click_action(x,y) #if click action it will highlight that actin
 		if action != None and action !=-1:
 			if action == 0:
 				action_openimage()
@@ -334,7 +380,9 @@ def handle_event(evt):
 		
 		
 		#
-		# Canvas
+		# Canvas. 
+		# Basically moving the screen and objects
+		# or adding an object if a proper flag is set on MB
 		#
 		elif action == -1: #clicked on canvas
 			if MB.selectedicon!=None: #there's an action to do 
@@ -384,11 +432,15 @@ def handle_event(evt):
 #
 ############################################
 def show_disclaimer():
+	"""
+		Show a disclaimer saying that this software is shit
+	"""
+	
 	popup_message("BorinotGames Note","This program is provided AS IS :-P\n\
 It is just a helper utility, don't expect to be beautiful or bug free in Exotic cases")
 
 def main():
-	show_disclaimer()
+	#show_disclaimer() #Add this on publication
 	while True: 
 		window.fill(gray)
 		for event in pygame.event.get(): 
