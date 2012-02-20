@@ -2,15 +2,16 @@ import sys, pygame
 from colors import *
 from icons import *
 from Tkinter import *
-import tkFileDialog
+import tkFileDialog, tkSimpleDialog, tkMessageBox
 import menubar
 import datacontainer
-import tkSimpleDialog
 
 
 MB = menubar.menubar()
 SB = menubar.subbar()
 DC = datacontainer.datacontainer()
+TKroot = Tk()
+TKroot.withdraw()
 
 pygame.init()
 
@@ -172,27 +173,27 @@ def draw_selection():
                                                                
 def open_file_chooser(naming,ftype="*"):
 	try:
-		root = Tk()
-		root.withdraw()
 		somefile = tkFileDialog.askopenfilename(filetypes=[(naming, ftype)],multiple=False)
 		return somefile
 	except:
 		return None
 
-def save_file_chooser(naming,ftype="*"):
+def save_file_chooser(naming,ftype=".prop"):
 	try:
-		root = Tk()
-		root.withdraw()
-		somefile = tkFileDialog.asksaveasfilename()
+		somefile = tkFileDialog.asksaveasfilename(filetypes=[(naming, ftype)])
 		return somefile
 	except:
 		return None		
 
 def input_text_dialog(title,question):
-	root = Tk()
-	root.withdraw()
 	return tkSimpleDialog.askstring(title, question)
 
+def popup_message(title,text):
+	return tkMessageBox.showinfo(title,text)
+
+def popup_message_yesnocancel(title,text):
+	return tkMessageBox.askyesnocancel(title,text)
+		
 
 ############################################
 #
@@ -255,9 +256,24 @@ def action_openprop():
 
 def action_saveprop():
 	try:
-		filepath = save_file_chooser("PROPETIES");
+		filepath = DC.file_prop_path
 		if filepath != None:
-			DC.save_to_file(filepath)
+			ret = popup_message_yesnocancel("Overwrite","overwrite:"+filepath+"?")
+			
+			if ret: #yes
+				DC.save_to_file(filepath)
+			if ret == False: #No
+				filepath = save_file_chooser("Provide FileName");
+				if filepath != None:
+					DC.save_to_file(filepath)
+			else: #Cancel
+				pass
+
+		else:
+			filepath = save_file_chooser("FileName");
+			if filepath != None:
+				DC.save_to_file(filepath)
+			
 	except:
 		pass
 	
@@ -323,6 +339,7 @@ def handle_event(evt):
 		elif action == -1: #clicked on canvas
 			if MB.selectedicon!=None: #there's an action to do 
 				DC.add_item(MB.selectedicon,x-pad_x,y-pad_y)
+
 			else: #no item selected on menu, let's work on the canvas
 				#if DC.isItemSelected(): #is a item on canvas selected? do something
 				if DC.touched_selected_item(x-pad_x,y-pad_y):
@@ -366,7 +383,12 @@ def handle_event(evt):
  #   #  #   #  ###    #  #  
 #
 ############################################
+def show_disclaimer():
+	popup_message("BorinotGames Note","This program is provided AS IS :-P\n\
+It is just a helper utility, don't expect to be beautiful or bug free in Exotic cases")
+
 def main():
+	show_disclaimer()
 	while True: 
 		window.fill(gray)
 		for event in pygame.event.get(): 

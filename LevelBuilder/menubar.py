@@ -38,6 +38,10 @@ class menubar:
 					self.selectedicon = i
 				
 				return i
+	
+	def unselect_icon(self):
+		self.selectedicon = None
+	
 
 class subbar(menubar):
 	icons = []

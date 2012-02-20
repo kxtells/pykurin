@@ -24,12 +24,17 @@ class datacontainer:
 	items_pack = [bashers,bouncers,lives,goals,sticks,bashers_end]
 	selecteditem = None
 
+	#
+	file_prop_path = None
+
+	#File Metadata
 	colimg_filename = None
 	img_filename = None
 	background_filename = None
 	title = "NO TITLE"
 	uuid = None
 
+	#working data
 	last_error = None
 	
 	def set_image(self,imagepath):
@@ -176,7 +181,7 @@ class datacontainer:
 	#
 	#
 	def load_from_file(self,full_path,xpadding=0,ypadding=64):
-		#clear_everything()
+		#clear_everything()		
 
 		parser = SafeConfigParser()
 		parser.read(full_path)
@@ -206,6 +211,9 @@ class datacontainer:
 		self.retrieve_start(parser,xpadding,ypadding)
 		self.retrieve_bashers_list(parser,xpadding,ypadding)
 	
+		#everything went as expected, save current editing filename
+		self.file_prop_path = full_path
+
 	def retrieve_bashers_list(self,parser,xp,yp):
 
 		del self.bashers[:]
