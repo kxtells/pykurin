@@ -1,14 +1,16 @@
 [options]
-name: 11 - I have to think a title for that
-collision: levels/lvl11col.png
-background: levels/lvl11.png
-background2: backgrounds/wood.jpg
-startx: 106
-starty: 200
-endx: 1790
-endy: 300
-stick: sticks/stick.png
+name:11 - I have to think a title for that
+collision:levels/lvl11col.png
+background:levels/lvl11.png
+background2:backgrounds/wood.jpg
+startx:133
+starty:234
+endx:1824
+endy:331
+stick:sticks/stick.png
 uuid:02d93330-5a83-11e1-b86c-0800200c9a66
 [bouncers]
 [recovers]
-1169:211
+1184:242
+[bashers]
+[flies]

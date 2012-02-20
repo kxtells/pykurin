@@ -1,14 +1,14 @@
 [options]
-name: 1- Testing Level, so easy that sucks
-collision: levels/lvl1col.png
-background: levels/lvl1.png
-background2: backgrounds/wood.jpg
-startx: 50
-starty: 60
-endx: 200
-endy: 475
-stick: sticks/stick.png
-uuid:a577e740-3e2b-11e1-b86c-0800200c9a66
+name:1 - Welcome Level
+collision:levels/lvl1col.png
+background:levels/lvl1.png
+background2:backgrounds/wood.jpg
+startx:98
+starty:119
+endx:196
+endy:502
+stick:sticks/stick.png
+uuid:29931bf6-1b61-4690-8b18-93cb50ce2052
 [bouncers]
 [recovers]
 [bashers]

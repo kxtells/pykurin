@@ -1,0 +1,13 @@
+[options]
+name: 0- Train Using Holes!
+collision: levels/learn3col.png
+background: levels/learn3.png
+background2: backgrounds/wood.jpg
+startx: 470
+starty: 300
+endx: 460
+endy: 520
+stick: sticks/stick.png
+uuid:e626e6c0-3ed9-11e1-b86c-0800200c9a66
+
+

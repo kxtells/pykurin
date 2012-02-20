@@ -1,13 +1,13 @@
 [options]
-name: 8- Time Your Moves
-collision: levels/lvl8col.png
-background: levels/lvl8.png
-background2: backgrounds/wood.jpg
-startx: 320
-starty: 340
-endx: 1630
-endy: 775
-stick: sticks/stick.png
+name:8- Time Your Moves
+collision:levels/lvl8col.png
+background:levels/lvl8.png
+background2:backgrounds/wood.jpg
+startx:343
+starty:357
+endx:1630
+endy:775
+stick:sticks/stick.png
 uuid:aeea8a70-3fc1-11e1-b86c-0800200c9a66
 [bouncers]
 866:316
@@ -15,9 +15,11 @@ uuid:aeea8a70-3fc1-11e1-b86c-0800200c9a66
 626:576
 658:576
 966:296
+[recovers]
 [bashers]
-490,200:490,350;1
-660,420:660,280;1
-920,570:1050,570;1
-920,440:1050,440;1
-920,345:1050,345;1
+521,230:521,385;1
+693,442:693,279;1
+1125,607:955,607;1
+956,472:1157,472;1
+1137,380:941,380;1
+[flies]

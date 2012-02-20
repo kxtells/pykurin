@@ -1,17 +1,17 @@
 [options]
-name: 13 - no name, again
-collision: levels/lvl13col.png
-background: levels/lvl13.png
-background2: backgrounds/wood.jpg
-startx: 94
-starty: 377
-endx: 465
-endy: 958
-stick: sticks/stick.png
+name:13 - no name, again
+collision:levels/lvl13col.png
+background:levels/lvl13.png
+background2:backgrounds/wood.jpg
+startx:123
+starty:403
+endx:465
+endy:958
+stick:sticks/stick.png
 uuid:ef4c4860-5b0a-11e1-b86c-0800200c9a66
 [bouncers]
-180:290
-760:1042
+174:297
+751:1043
 [recovers]
 [bashers]
 145,1090:145,1280;1
@@ -21,7 +21,7 @@ uuid:ef4c4860-5b0a-11e1-b86c-0800200c9a66
 350,1270:350,1100;1
 400,1090:400,1280;1
 450,1090:450,1280;1
-500,1200:500,1100;1
-550,1200:550,1100;1
+500,1263:500,1100;1
+550,1267:550,1100;1
 600,1090:600,1280;1
-
+[flies]

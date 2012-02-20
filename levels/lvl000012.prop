@@ -1,14 +1,16 @@
 [options]
-name: 12 - no name, again
-collision: levels/lvl12col.png
-background: levels/lvl12.png
-background2: backgrounds/wood.jpg
-startx: 141
-starty: 256
-endx: 570
-endy: 320
-stick: sticks/stick.png
+name:12 - no name, again
+collision:levels/lvl12col.png
+background:levels/lvl12.png
+background2:backgrounds/wood.jpg
+startx:156
+starty:292
+endx:565
+endy:312
+stick:sticks/stick.png
 uuid:fce6cbd0-5b0a-11e1-b86c-0800200c9a66
 [bouncers]
-489:119
+482:109
 [recovers]
+[bashers]
+[flies]

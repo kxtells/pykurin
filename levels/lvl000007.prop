@@ -1,28 +1,15 @@
 [options]
-name: 7- Something is MOVING!
-collision: levels/lvl7col.png
-background: levels/lvl7.png
-background2: backgrounds/wood.jpg
-startx: 330
-starty: 250
-endx: 725
-endy: 875
-stick: sticks/stick.png
+name:7- Something is MOVING!
+collision:levels/lvl7col.png
+background:levels/lvl7.png
+background2:backgrounds/wood.jpg
+startx:353
+starty:243
+endx:725
+endy:875
+stick:sticks/stick.png
 uuid:0543bad0-3fb9-11e1-b86c-0800200c9a66
 [bouncers]
+[recovers]
+[bashers]
 [flies]
-600:600
-650:650
-300:300
-400:350
-600:250
-420:420
-600:220
-501:630
-521:620
-622:230
-623:240
-524:632
-525:630
-526:640
-527:651

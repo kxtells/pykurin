@@ -1,12 +1,15 @@
 [options]
-name: 2- Turbo Needed!
-collision: levels/lvl2col.png
-background: levels/lvl2.png
-background2: backgrounds/wood.jpg
-startx: 100
-starty: 100
-endx: 620
-endy: 480
-stick: sticks/stick.png
+name:2- Turbo Needed!
+collision:levels/lvl2col.png
+background:levels/lvl2.png
+background2:backgrounds/wood.jpg
+startx:136
+starty:146
+endx:620
+endy:480
+stick:sticks/stick.png
 uuid:9c13e190-3e2b-11e1-b86c-0800200c9a66
 [bouncers]
+[recovers]
+[bashers]
+[flies]

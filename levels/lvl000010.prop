@@ -1,14 +1,18 @@
 [options]
-name: 10 - Messed
-collision: levels/lvl10col.png
-background: levels/lvl10.png
-background2: backgrounds/wood.jpg
-startx: 169
-starty: 142
-endx: 1129
-endy: 160
-stick: sticks/stick.png
+name:10 - Messed
+collision:levels/lvl10col.png
+background:levels/lvl10.png
+background2:backgrounds/wood.jpg
+startx:176
+starty:154
+endx:1129
+endy:160
+stick:sticks/stick.png
 uuid:1b322240-597d-11e1-b86c-0800200c9a66
 [bouncers]
+[recovers]
 [bashers]
-300,300:400,400
+656,561:654,307;1
+910,867:1250,867;1
+1413,696:1309,867;1
+[flies]
