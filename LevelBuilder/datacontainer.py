@@ -291,7 +291,7 @@ class datacontainer:
 
 		#How to generate a UUID from python easily?
 		if self.uuid == None:
-			self.generated_uuid()
+			self.generate_uuid()
 		f.write("uuid:"+str(self.uuid)+"\n")
 
 		f.write("[bouncers]\n")
