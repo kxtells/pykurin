@@ -9,12 +9,14 @@ import tkSimpleDialog
 
 
 MB = menubar.menubar()
+SB = menubar.subbar()
 DC = datacontainer.datacontainer()
 
 pygame.init()
 
 #Map screen movement
 move_screen = False
+move_object = False
 pad_x = 0
 pad_y = 0
 
@@ -90,7 +92,23 @@ def draw_menu():
 
 def draw_image():
 	if DC.image != None:
-		window.blit(DC.image,DC.image.get_rect().move(pad_x,menu_height+pad_y))			
+		window.blit(DC.image,DC.image.get_rect().move(pad_x,menu_height+pad_y))
+
+def draw_subbar():
+	r = (0,580,w,20)
+	myfont = pygame.font.SysFont("Arial", 14)
+
+	pygame.draw.rect(window, white, pygame.Rect(r))
+	
+	pstring = ""
+	if len(DC.get_title())>32: pstring = "..."
+
+	title = myfont.render(DC.get_title()[0:32]+pstring, 1, black)
+	cursor = myfont.render(SB.get_cursor_text(), 1, black)
+	window.blit(title, (0, 580))
+	window.blit(cursor, (740, 580))
+
+
 
 def draw_objects():
 	for bouncer_rect in DC.bouncers:
@@ -156,7 +174,7 @@ def save_file_chooser(naming,ftype="*"):
 def input_text_dialog(title,question):
 	root = Tk()
 	root.withdraw()
-	string = tkSimpleDialog.askstring(title, question)
+	return tkSimpleDialog.askstring(title, question)
 
 
 ############################################
@@ -173,6 +191,14 @@ def input_text_dialog(title,question):
 #
 #
 ############################################
+
+def action_set_title():
+	try:
+		newtitle = input_text_dialog("Level Title","Level title")
+		if newtitle != None:
+			DC.set_title(newtitle)
+	except:
+		pass
 
 def action_openbackgroundimage():
 	try:
@@ -236,15 +262,21 @@ def action_saveprop():
 ############################
 def handle_event(evt):
 	global move_screen
+	global move_object
 	global pad_x
 	global pad_y
+
+	if evt.type == pygame.KEYDOWN:
+		if evt.key == pygame.K_DELETE:
+			if DC.isItemSelected():
+				DC.delete_selected_item()
 
 	if evt.type == pygame.MOUSEBUTTONDOWN:
 		x = evt.pos[0]
 		y = evt.pos[1]
 
 		#
-		# MENU
+		# UPPER MENU
 		#
 		action = MB.click_action(x,y)
 		if action != None and action !=-1:
@@ -258,32 +290,45 @@ def handle_event(evt):
 				action_opencolisionimage()
 			if action == MB.LOADBG:
 				action_openbackgroundimage()
-
-			#else:
-			#	MB.selectedicon = action			
+		
+		if SB.touched_bar(x,y): action_set_title()
 		
 		#
 		# Canvas
 		#
 		elif action == -1: #clicked on canvas
-			if not MB.selectedicon==None: #there's an action to do 
+			if MB.selectedicon!=None: #there's an action to do 
 				DC.add_item(MB.selectedicon,x-pad_x,y-pad_y)
 			else: #no item selected on menu, let's work on the canvas
-				if DC.isItemSelected(): #is a item on canvas selected? do something
-					if DC.touched_selected_item(x-pad_x,y-pad_y):
-						DC.unselect_item()
-					DC.move_current_item(x-pad_x,y-pad_y)
-				else: #nothing selected, you may be selecting or moving the screen!
-					if not DC.touched_item(x-pad_x,y-pad_y):
-						move_screen = True
+				#if DC.isItemSelected(): #is a item on canvas selected? do something
+				if DC.touched_selected_item(x-pad_x,y-pad_y):
+					print "properties of icon"
+					move_object = True
+						#DC.unselect_item()
+				else:
+					DC.unselect_item()
+					#DC.move_current_item(x-pad_x,y-pad_y)
+				#else: #nothing selected, you may be selecting or moving the screen!
+				if not DC.touched_item(x-pad_x,y-pad_y):
+					move_screen = True
+				else:
+					move_object = True
 	
 	if evt.type == pygame.MOUSEBUTTONUP:
 		move_screen = False
+		move_object = False
 	
 	if evt.type == pygame.MOUSEMOTION:
+		x = evt.pos[0]
+		y = evt.pos[1]
+		
+		SB.set_cursor(x-pad_x,y-pad_y-menu_height)
+
 		if move_screen:
 			pad_x+=evt.rel[0]
 			pad_y+=evt.rel[1]
+		if DC.isItemSelected() and move_object:
+			DC.move_current_item(x-pad_x,y-pad_y)
 
 
 ############################################
@@ -313,6 +358,7 @@ def main():
 		draw_objects()
 		draw_selection()
 		draw_menu()
+		draw_subbar()
 		pygame.display.flip()
 
 if __name__ == '__main__': main()  

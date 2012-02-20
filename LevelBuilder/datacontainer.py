@@ -5,14 +5,16 @@ import uuid
 
 class datacontainer:
 	#
-	# basher = 1
-	# bouncer = 2
-	# lives = 3
+	# basher = 0
+	# bouncer = 1
+	# lives = 2
+	# goals = 3
+	# sticks = 4
 	#
 	#
 	#
 	image = None
-	bashers =[]
+	bashers = []
 	bouncers = []
 	lives = []
 	goals = []
@@ -24,16 +26,24 @@ class datacontainer:
 	colimg_filename = None
 	img_filename = None
 	background_filename = None
+	title = "NO TITLE"
 	
 	def set_image(self,imagepath):
 		self.image = image.load(imagepath)
 		
 		#store only the last part
-		part = imagepath.rpartition('/')
-		self.img_filename = "levels/"+part[-1]
+		#part = imagepath.rpartition('/')
+		#self.img_filename = "levels/"+part[-1]
+		self.img_filename = imagepath
 
 	def get_image(self,img):
 		return self.image
+
+	def get_title(self):
+		return self.title
+
+	def set_title(self,text):
+		self.title = text
 
 	def set_col_image(self,imagepath):
 		self.colimg_filename = imagepath
@@ -85,14 +95,13 @@ class datacontainer:
 				if item_rect.contains((mx-2,my-2,4,4)):
 					touched = i,j						
 		
-		if touched == self.selecteditem:
-			self.selecteditem = None
-		else:
-			self.selecteditem = touched
+
+		self.selecteditem = touched
 
 		return self.selecteditem!=None
 	
 	def touched_selected_item(self,mx,my):
+		if self.selecteditem==None: return
 		ident = self.selecteditem[0]
 		obj = self.selecteditem[1]
 
@@ -108,6 +117,14 @@ class datacontainer:
 			st = self.selecteditem[0]
 			si = self.selecteditem[1]
 			return self.items_pack[st][si]
+	
+	def delete_selected_item(self):
+		if self.selecteditem != None:
+			st = self.selecteditem[0]
+			si = self.selecteditem[1]
+			self.items_pack[st].pop(si)
+			self.selecteditem = None
+
 
 	#
 	# Checkers
@@ -147,6 +164,8 @@ class datacontainer:
 		self.colimg_filename = colfilename
 		bgfilename = parser.get('options','background2')
 		self.background_filename = bgfilename
+		title = parser.get('options','name')
+		self.title = title
 
 
 		#print imagefile
@@ -212,10 +231,15 @@ class datacontainer:
 
 		f = open(filepath, 'w')
 		f.write("[options]\n");
-		f.write("name: MISSING TITLE\n")
-		f.write("collision: "+self.colimg_filename+"\n")
-		f.write("background:"+self.img_filename+"\n")
-		f.write("background2:"+self.background_filename+"\n")
+		f.write("name:"+self.title+"\n")
+		
+		colimg = "levels/"+self.colimg_filename.rpartition("/")[-1]
+		img = "levels/"+self.img_filename.rpartition("/")[-1]
+		bg = "backgrounds/"+self.background_filename.rpartition("/")[-1]
+		f.write("collision: "+colimg+"\n")
+		f.write("background:"+img+"\n")
+		f.write("background2:"+bg+"\n")
+
 		stickx = self.sticks[0][0] +32 -xpadding
 		sticky = self.sticks[0][1] +32 -ypadding
 		f.write("startx:"+str(stickx)+"\n")
@@ -237,11 +261,11 @@ class datacontainer:
 			f.write(str(bx)+":"+str(by)+"\n")
 
 		f.write("[recovers]\n")
-		for b in self.recovers:
+		for b in self.lives:
 			bx = b[0] +16 -xpadding
 			by = b[1] +16 -ypadding
 			f.write(str(bx)+":"+str(by)+"\n")
-		
+
 		f.write("[bashers]\n")
 			 #still to implement
 		f.write("[flies]\n")

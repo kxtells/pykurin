@@ -7,13 +7,12 @@ class menubar:
 
 	GOAL = 4
 	STICK = 5
-	LOADBG = 6
-	LOADCOL = 7
+	LOADCOL = 6
+	LOADBG = 7
 	LOAD = 8 #reminder where's loadiocn
 	SAVE = 9 #reminder where's loadiocn
 
 	separator = 64
-
 	selectedicon = None
 
 	def __init__(self):
@@ -39,6 +38,27 @@ class menubar:
 					self.selectedicon = i
 				
 				return i
+
+class subbar(menubar):
+	icons = []
+	rects = []
+	cx = 0
+	cy = 0
+
+
+	def __init__(self):
+		self.a = "a2"
+	
+	def touched_bar(self,mx,my):
+		if my > 580: return True
+		else: return False
+	
+	def set_cursor(self,x,y):
+		self.cx = x
+		self.cy = y
+	
+	def get_cursor_text(self):
+		return str(self.cx)+":"+str(self.cy)
 
 
 
