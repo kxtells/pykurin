@@ -60,6 +60,7 @@ TRANSITION = cTransition(window)
 #
 ###
 FONT = pygame.font.Font("ttf/Tusj.ttf", 25)
+TIMERFONT = pygame.font.Font("ttf/Tusj.ttf", 80)
 
 #######################################
 #
@@ -369,10 +370,10 @@ def load_level(level_num):
 def records_menu_selection():
 	if records_menu.current == 0:
 		status.current_level += 1
-                load_level(status.current_level)
+		load_level(status.current_level)
 
 	elif records_menu.current == 1:
-                load_level(status.current_level)
+		load_level(status.current_level)
 	
 	elif records_menu.current == 2:
 		status.set_game_status(cStatus._STAT_LEVELSEL)
@@ -686,15 +687,15 @@ def update_scene():
 	window.blit(stick.image,stick.rect.move(dx,dy))
         
 
-#Updates all the gui sprites
-def update_gui():
-	#LifeBar status
-	window.blit(status.lifebar_image,status.lifebar_rect)
-        
+def update_gui_timer_CF():
+	"""
+		Draw the timer using custom fonts
+	"""
+
 	#TIMING
 	seconds         = int(status.get_elapsed_time())
 	millis          = str(seconds - status.get_elapsed_time()).partition(".")[2]
-
+	
 	if seconds > 999: 
 		seconds = "999"
 		millis = "00"
@@ -702,15 +703,13 @@ def update_gui():
 	seconds_images = number_gen.parse_number(int(seconds))
 	millis_images = number_gen.parse_number(int(millis[0:2]))
 
-	if seconds_images == None or millis_images == None: return
-
-	nw = seconds_images[0].get_rect().width
+	nw = seconds_images[0].get_rect().width	
 
 	#Bg Zeros (avoid a flickr)
 	zero = number_gen.parse_number(0)[0]
 	window.blit(pygame.transform.rotate(zero,-10),zero.get_rect().move((1+4)*nw,height-zero.get_rect().height - 15))
-	
-	#Trailing zeros
+
+#Trailing zeros
 	while len(seconds_images) < 3:
 		zero = number_gen.parse_number(0)[0]
 		seconds_images.insert(0,zero)
@@ -724,6 +723,36 @@ def update_gui():
 
 	for i,s in enumerate(millis_images):
 		window.blit(pygame.transform.rotate(s,-10),s.get_rect().move((i+4)*nw,height-s.get_rect().height - 15))
+
+def update_gui_timer_TTF():
+	"""
+		updates the timer using a TTF font
+		@TODO::Check another font than the dafault font for menus,
+		this font here, generates bouncing numbers not good 
+		for my eye
+	"""
+	time = round(status.get_elapsed_time(),3)
+	
+	#traling zeros space
+	if time < 10:t = 2
+	elif time < 100:t = 1
+	else:t = 0
+
+	timertxt = TIMERFONT.render(str(time), 1, black)
+	window.blit(timertxt, (10+t*25, height-100))
+
+#Updates all the gui sprites
+def update_gui():
+	#LifeBar status
+	window.blit(status.lifebar_image,status.lifebar_rect)
+
+	#timer
+	update_gui_timer_CF()
+	#update_gui_timer_TTF()
+
+	
+	
+	
 
 #A fancy rotozoom for the stick death
 def fancy_stick_death_animation():
