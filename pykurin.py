@@ -518,9 +518,7 @@ def handle_item_monster_colision(item,cx,cy,sprite_id=0):
 	item.col_anim.draw = True
 	item.onCollision(stick,status) #different item handlers
 	status.set_invincible()
-	tsprite = SPRITE_FAC.get_sprite_by_id(item.rect.center[0],
-											item.rect.center[1]-item.rect.height,
-											sprite_id)
+	tsprite = SPRITE_FAC.get_sprite_by_id(cx,cy,sprite_id)
 	ANIM_SPRITES.append(tsprite)
 	
 def item_colisions():
@@ -534,7 +532,7 @@ def monster_colisions():
 	for m in status.level.monsters:
 		colision,xc,yc = stick.collides(m)
 		if colision and not status.invincible:
-			handle_item_monster_colision(m,xc,yc,SPRITE_FAC.BOING)
+			handle_item_monster_colision(m,xc,yc,SPRITE_FAC.OUCH)
 
 def monster_logic():
 	for m in status.level.monsters:

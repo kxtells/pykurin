@@ -8,6 +8,7 @@ class cAnimSpriteFactory():
 	ouchs = []
 
 	all_sprites = [explosions,boings,ouchs]
+	sprite_fps = [20,10,10]
 
 	# Sprite id definitions
 	EXPLOSION = 0
@@ -15,6 +16,10 @@ class cAnimSpriteFactory():
 	OUCH = 2
 
 	def __init__(self):
+		"""
+			Load all the possible sprites at the beginning :-)
+		"""
+
 		for x in range(6): 
 			explosion_imgset = BF.load_and_slice_sprite(32,32,'explosion'+str(x)+'.png');
 			self.explosions.append(explosion_imgset)
@@ -23,7 +28,7 @@ class cAnimSpriteFactory():
 			boing_imgset = BF.load_and_slice_sprite(100,50,'boing'+str(x)+'.png');
 			self.boings.append(boing_imgset)
 
-		for x in range(1): 
+		for x in range(3): 
 			boing_imgset = BF.load_and_slice_sprite(100,50,'ouch'+str(x)+'.png');
 			self.ouchs.append(boing_imgset)			
 	
@@ -33,7 +38,7 @@ class cAnimSpriteFactory():
 			create a Animation Sprite and return it
 		"""
 		rand = random.randint(0,len(self.all_sprites[spritetype])-1)
-		tsprite = cAnimSprite(self.all_sprites[spritetype][rand],20)
+		tsprite = cAnimSprite(self.all_sprites[spritetype][rand],self.sprite_fps[spritetype])
 		tsprite.move(x,y) #out of view
 		tsprite.draw = True
 		return tsprite
