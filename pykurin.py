@@ -124,12 +124,12 @@ levels_menu.set_background("backgrounds/squared_paper_title.png")
 levels_menu.background_scroll = True
 
 #Game Over Menu
-gover_menu_texts = 'Try again' , 'Return to level Select' , 'Exit game'
+gover_menu_texts = 'Try again' , 'Return to level Select' , 'Main Menu'
 gover_menu = cMenu(gover_menu_texts,0,black,red)
 gover_menu.set_background("backgrounds/piece_paper.png")
 
 #Pause Over Menu
-pause_menu_texts = 'Continue', 'Restart Level' , 'Return to level Select' , 'Exit game'
+pause_menu_texts = 'Continue', 'Restart Level' , 'Return to level Select' , 'Main Menu'
 pause_menu = cMenu(pause_menu_texts,0,black,red)
 pause_menu.set_background("backgrounds/piece_paper.png")
 
@@ -402,10 +402,9 @@ def game_over_menu_selection():
 	elif gover_menu.current == 1:
 		status.set_game_status(cStatus._STAT_LEVELSEL)
         
-        #Exit Application
+        #Return to Main Menu
 	elif gover_menu.current == 2:
-		pygame.quit()
-		sys.exit()
+		status.set_game_status(cStatus._STAT_MAINMENU)
         
 	TRANSITION.setActive()
 
@@ -417,22 +416,21 @@ def level_menu_selection():
 
 #Pause Menu selection Function
 def pause_menu_selection():
-        #Continue, change to game mode
-        if pause_menu.current == 0:
+	#Continue, change to game mode
+	if pause_menu.current == 0:
 		status.unpause_game()
 
 	#Reset Level
-        elif pause_menu.current == 1:
-                load_level(status.current_level)
+	elif pause_menu.current == 1:
+		load_level(status.current_level)
 	
 	#Return to Level Select Menu
-        elif pause_menu.current == 2:
-        	status.set_game_status(cStatus._STAT_LEVELSEL)
+	elif pause_menu.current == 2:
+		status.set_game_status(cStatus._STAT_LEVELSEL)
         
-        #Exit Application
-        elif pause_menu.current == 3:
-                pygame.quit()
-                sys.exit()
+	#Return to Main Menu
+	elif pause_menu.current == 3:
+		status.set_game_status(cStatus._STAT_MAINMENU)
 
 def main_menu_selection():
         #Go to level selection to start the game
