@@ -26,8 +26,10 @@ w = 800
 h = 600
 window =  pygame.display.set_mode((w, h)) 
 
-pygame.display.flip()
-
+#pygame.display.flip()
+icon   = pygame.image.load("icons/iconlogo.png").convert_alpha()
+pygame.display.set_icon(icon)
+pygame.display.set_caption("PyKurin Level Builder")
 
 def clear_paddings():
 	global pad_x
