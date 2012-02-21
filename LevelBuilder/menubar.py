@@ -2,16 +2,24 @@ from icons import *
 
 class menubar:
 	#this order is fucking important because this program is not general :-P
-	icons = [openicon,bashericon,bouncericon,livesicon,goalicon,stickicon,colimgicon,bgimgicon,loadicon,saveicon]
+	icons = [bashericon,bouncericon,livesicon,goalicon,stickicon,openicon,colimgicon,bgimgicon,loadicon,saveicon]
 	rects = []
 
-	GOAL = 4
-	STICK = 5
+
+	BASHER = 0
+	BOUNCER = 1
+	LIVES = 2
+
+	GOAL = 3
+	STICK = 4
+	LOADIMG = 5
 	LOADCOL = 6
 	LOADBG = 7
 	LOAD = 8 #reminder where's loadiocn
 	SAVE = 9 #reminder where's loadiocn
 
+	item_icon_num = 5
+	menu_height = 64
 	separator = 64
 	selectedicon = None
 
@@ -19,7 +27,7 @@ class menubar:
 
 		for i,icon in enumerate(self.icons):
 			self.rects.append(icon.get_rect())
-			self.rects[i].move_ip(self.separator*i,0)
+			self.rects[i].move_ip(self.menu_height*i,0)
 
 	def click_action(self,mx,my):
 		"""
@@ -34,13 +42,19 @@ class menubar:
 				if i == self.selectedicon: 
 					self.selectedicon = None #if already selected, unselect
 				
-				elif i!=0 and i!=self.LOAD and i!=self.SAVE and i!=self.LOADCOL and i!=self.LOADBG: #not opening files
+				elif i<5: #not opening files
 					self.selectedicon = i
 				
 				return i
 	
 	def unselect_icon(self):
 		self.selectedicon = None
+	
+	def get_height(self):
+		return self.menu_height
+
+	def get_separator(self):
+		return self.separator
 	
 
 class subbar(menubar):

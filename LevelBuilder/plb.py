@@ -1,4 +1,4 @@
-import sys, pygame
+import sys, pygame, os
 from colors import *
 from icons import *
 from Tkinter import *
@@ -26,9 +26,6 @@ w = 800
 h = 600
 window =  pygame.display.set_mode((w, h)) 
 
-#
-menu_height = 64
-
 pygame.display.flip()
 
 
@@ -54,36 +51,42 @@ def draw_feedback_on_icons():
 	"""
 	w = 50
 	h = 10
-	r = (MB.LOADCOL*MB.separator,51,w,h)
+	r = (MB.LOADCOL*MB.get_separator(),51,w,h)
 	if DC.isColisionDefined():
 		pygame.draw.rect(window, green, pygame.Rect(r))
 	else:
 		pygame.draw.rect(window, red, pygame.Rect(r))
 	
-	r = (MB.LOADBG*MB.separator,51,w,h)
+	r = (MB.LOADBG*MB.get_separator(),51,w,h)
 	if DC.isBgDefined():
 		pygame.draw.rect(window, green, pygame.Rect(r))
 	else:
 		pygame.draw.rect(window, red, pygame.Rect(r))
 	
-	r = (MB.GOAL*MB.separator,51,w,h)
+	r = (MB.GOAL*MB.get_separator(),51,w,h)
 	if DC.isGoalDefined():
 		pygame.draw.rect(window, green, pygame.Rect(r))
 	else:
 		pygame.draw.rect(window, red, pygame.Rect(r))
 
-	r = (MB.STICK*MB.separator,51,w,h)
+	r = (MB.STICK*MB.get_separator(),51,w,h)
 	if DC.isStartDefined():
 		pygame.draw.rect(window, green, pygame.Rect(r))
 	else:
 		pygame.draw.rect(window, red, pygame.Rect(r))
+
+	r = (MB.LOADIMG*MB.get_separator(),51,w,h)
+	if DC.isImageDefined():
+		pygame.draw.rect(window, green, pygame.Rect(r))
+	else:
+		pygame.draw.rect(window, red, pygame.Rect(r))		
 
 
 def draw_menu():
 	"""
 		Draws the ontop menu with the various icons
 	"""
-	r = (0,0,w,menu_height)
+	r = (0,0,w,MB.get_height())
 	pygame.draw.rect(window, gray, pygame.Rect(r))
 
 	for i,icon in enumerate(MB.icons):
@@ -92,7 +95,14 @@ def draw_menu():
 	if MB.selectedicon != None:
 		window.blit(selectmask,MB.rects[MB.selectedicon])
 	
+	
 	draw_feedback_on_icons()
+
+	item_num = MB.item_icon_num	
+	r = (item_num*MB.get_separator()-10,0,5,MB.get_height())
+	
+	pygame.draw.rect(window, black, pygame.Rect(r))
+
 
 
 def draw_image():
@@ -100,7 +110,7 @@ def draw_image():
 		Draws the level image
 	"""
 	if DC.image != None:
-		window.blit(DC.image,DC.image.get_rect().move(pad_x,menu_height+pad_y))
+		window.blit(DC.image,DC.image.get_rect().move(pad_x,MB.get_height()+pad_y))
 
 def draw_subbar():
 	"""
@@ -112,10 +122,15 @@ def draw_subbar():
 
 	pygame.draw.rect(window, white, pygame.Rect(r))
 	
+	if DC.isTitleDefined():
+		titletext = DC.get_title()
+		if len(DC.get_title())>32: pstring = "..."
+	else:
+		titletext = "click to define title"
+	
 	pstring = ""
-	if len(DC.get_title())>32: pstring = "..."
 
-	title = myfont.render(DC.get_title()[0:32]+pstring, 1, black)
+	title = myfont.render(titletext[0:32]+pstring, 1, black)
 	cursor = myfont.render(SB.get_cursor_text(), 1, black)
 	window.blit(title, (0, 580))
 	window.blit(cursor, (740, 580))
@@ -207,6 +222,9 @@ def input_text_dialog(title,question):
 def popup_message(title,text):
 	return tkMessageBox.showinfo(title,text)
 
+def popup_error_message(title,text):
+	return tkMessageBox.showerror(title,text)	
+
 def popup_message_yesnocancel(title,text):
 	return tkMessageBox.askyesnocancel(title,text)
 		
@@ -246,7 +264,7 @@ def action_openbackgroundimage():
 	"""
 	try:
 		filepath = open_file_chooser("image");
-		if filepath != None:			
+		if os.path.isfile(filepath):			
 			DC.set_bg_image(filepath)
 	except:
 		pass
@@ -257,7 +275,7 @@ def action_openimage():
 	"""
 	try:
 		filepath = open_file_chooser("image");
-		if filepath != None:
+		if os.path.isfile(filepath):
 			DC.set_image(filepath)
 
 	except:
@@ -269,7 +287,7 @@ def action_opencolisionimage():
 	"""
 	try:
 		filepath = open_file_chooser("image");
-		if filepath != None:			
+		if os.path.isfile(filepath):			
 			DC.set_col_image(filepath)
 
 	except:
@@ -281,10 +299,9 @@ def action_openprop():
 	"""
 	try:
 		filepath = open_file_chooser("Properties",".prop");
-		if filepath != None:
+		if os.path.isfile(filepath):
 			clear_paddings()			
-			DC.load_from_file(filepath,xpadding=0,ypadding=menu_height)
-
+			DC.load_from_file(filepath,xpadding=0,ypadding=MB.get_height())
 	except:
 		pass
 
@@ -294,25 +311,30 @@ def action_saveprop():
 		If a filepath was already defined it asks for overwrite, if user
 		does not want to overwrite, opens a file dialog
 	"""
+
 	try:
-		filepath = DC.file_prop_path
-		if filepath != None:
-			ret = popup_message_yesnocancel("Overwrite","overwrite:"+filepath+"?")
-			
-			if ret: #yes
-				DC.save_to_file(filepath)
-			if ret == False: #No
-				filepath = save_file_chooser("Provide FileName");
+		save_possible,errtext = DC.isSaveable()		
+		if not save_possible:
+			popup_error_message("Dragons!",errtext)
+		else:
+			filepath = DC.file_prop_path
+			if filepath != None:
+				ret = popup_message_yesnocancel("Overwrite","overwrite:"+filepath+"?")
+				
+				if ret: #yes
+					DC.save_to_file(filepath)
+				if ret == False: #No
+					filepath = save_file_chooser("Provide FileName");
+					if filepath != None:
+						DC.save_to_file(filepath)
+				else: #Cancel
+					pass
+
+			else:
+				filepath = save_file_chooser("FileName");
 				if filepath != None:
 					DC.save_to_file(filepath)
-			else: #Cancel
-				pass
-
-		else:
-			filepath = save_file_chooser("FileName");
-			if filepath != None:
-				DC.save_to_file(filepath)
-				DB.set_file_prop_path(filepath)
+					DB.set_file_prop_path(filepath)
 			
 	except:
 		pass
@@ -369,7 +391,7 @@ def handle_event(evt):
 		#
 		action = MB.click_action(x,y) #if click action it will highlight that actin
 		if action != None and action !=-1:
-			if action == 0:
+			if action == MB.LOADIMG:
 				action_openimage()
 			if action == MB.LOAD:
 				action_openprop()
@@ -412,7 +434,7 @@ def handle_event(evt):
 		x = evt.pos[0]
 		y = evt.pos[1]
 		
-		SB.set_cursor(x-pad_x,y-pad_y-menu_height)
+		SB.set_cursor(x-pad_x,y-pad_y-MB.get_height())
 
 		if move_screen:
 			pad_x+=evt.rel[0]

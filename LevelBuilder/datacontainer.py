@@ -31,7 +31,7 @@ class datacontainer:
 	colimg_filename = None
 	img_filename = None
 	background_filename = None
-	title = "NO TITLE"
+	title = None
 	uuid = None
 
 	#working data
@@ -79,19 +79,19 @@ class datacontainer:
 		self.uuid = uuid.uuid4()
 
 	def add_item(self,ident,mx,my):
-		if ident==0:
-			return True
-		elif ident == 1: #basher
+		#if ident==0:
+		#	return True
+		if ident == 0: #basher
 			self.bashers.append(Rect(mx-32,my-32,64,64))
 			self.bashers_end.append(Rect(mx-8 -64,my-8 -64,16,16)) #where basher moves
-		elif ident == 2: #bouncer
+		elif ident == 1: #bouncer
 			self.bouncers.append(Rect(mx-16,my-16,32,32))
-		elif ident == 3: #lives
+		elif ident == 2: #lives
 			self.lives.append(Rect(mx-16,my-16,32,32))
-		elif ident == 4: #Goal
+		elif ident == 3: #Goal
 			if len(self.goals)<1: #only one goal ma friend
 				self.goals.append(Rect(mx-50,my-50,100,100))
-		elif ident == 5: #Start
+		elif ident == 4: #Start
 			if len(self.sticks)<1: #only one goal ma friend
 				self.sticks.append(Rect(mx-32,my-32,64,64))							
 	
@@ -175,6 +175,46 @@ class datacontainer:
 	def isStartDefined(self):
 		return len(self.sticks) > 0
 
+	def isImageDefined(self):
+		return self.image !=None
+	
+	def isTitleDefined(self):
+		return self.title !=None
+
+	def isSaveable(self):
+		"""
+			Returns True or False + an explanation of what is missing
+		"""
+		ret = True
+		text = ""
+		if not self.isBgDefined():
+			ret = False
+			text += " - Background Image\n"
+		
+		if not self.isColisionDefined():
+			ret = False
+			text += " - Colision Image\n"
+
+		if not self.isStartDefined():
+			ret = False
+			text += " - Start\n"
+
+		if not self.isGoalDefined():
+			ret = False
+			text += " - Goal\n"
+
+		if not self.isImageDefined():
+			ret = False
+			text += " - Base Image\n"
+		
+		if not self.isTitleDefined():
+			ret = False
+			text += " - Title\n"
+
+		if not ret:
+			text = "I cannot let you proceed my friend \nYour level is Missing some stuff:\n"+text
+		
+		return ret,text
 	
 	#
 	#
