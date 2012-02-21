@@ -17,6 +17,7 @@ from cStatus import cStatus
 from cMenu import cMenu
 from cLevelList import cLevelList
 from cSettings import cSettings
+from cTransition import cTransition
 
 pygame.init()
 
@@ -30,6 +31,7 @@ green = 0,255,0
 blue = 0,0,150
 red = 255,0,0
 white = 255,255,255
+gray = 125,125,125
 
 ###########################################################################################
 
@@ -50,6 +52,7 @@ pygame.display.set_caption("PYKURIN Alpha")
 pygame.display.set_icon(icon)
 
 INPUT_KEYS = cInputKeys.cInputKeys()
+TRANSITION = cTransition(window)
 
 ###
 #
@@ -373,6 +376,8 @@ def records_menu_selection():
 	
 	elif records_menu.current == 2:
 		status.set_game_status(cStatus._STAT_LEVELSEL)
+	
+	TRANSITION.setActive()
 
 def settings_menu_selection():
 	if settings_menu.current == 0:
@@ -384,26 +389,31 @@ def settings_menu_selection():
 
 	elif settings_menu.current == 2:
 		status.set_game_status(cStatus._STAT_MAINMENU)
+	
+	TRANSITION.setActive()
 
 #Game over menu selection function
 def game_over_menu_selection():
-        #Try again. Reload everything and return to game mode
-        if gover_menu.current == 0:
-                load_level(status.current_level)
+    #Try again. Reload everything and return to game mode
+	if gover_menu.current == 0:
+		load_level(status.current_level)
 
         #Return to Level Select Menu
-        elif gover_menu.current == 1:
-        		status.set_game_status(cStatus._STAT_LEVELSEL)
+	elif gover_menu.current == 1:
+		status.set_game_status(cStatus._STAT_LEVELSEL)
         
         #Exit Application
-        elif gover_menu.current == 2:
-                pygame.quit()
-                sys.exit()
+	elif gover_menu.current == 2:
+		pygame.quit()
+		sys.exit()
+        
+	TRANSITION.setActive()
 
 #Level Menu Selection Function
 def level_menu_selection():
         load_level(levels_menu.current)
         status.set_game_status(cStatus._STAT_GAMING)
+        TRANSITION.setActive()
 
 #Pause Menu selection Function
 def pause_menu_selection():
@@ -438,6 +448,8 @@ def main_menu_selection():
 	elif main_menu.current == 2:
 		pygame.quit()
 		sys.exit()
+	
+	TRANSITION.setActive()
 
 #MENU BINDINGS
 gover_menu.action_function = game_over_menu_selection
@@ -576,6 +588,13 @@ def debug_onscreen(colides):
                 deathOnOff      = myfont.render("DEATH OFF",1,red)
                 window.blit(deathOnOff, (400, 20))
 
+def draw_transition():
+	if TRANSITION.isActive():
+		if TRANSITION.isDrawBG():
+			window.blit(TRANSITION.getBG(),TRANSITION.getBG().get_rect())
+		for r in TRANSITION.getRects():
+			pygame.draw.rect(window,black,r)
+		TRANSITION.logic_update()
 
 #Updates all the needed images/sprites for goal Screen
 def update_scene_goal():
@@ -718,6 +737,7 @@ def fancy_stick_death_animation():
                 pygame.display.update()
                 clock.tick(FPS)
 
+
 ##################################################################
 
  ######   ######  ########  ######## ######## ##    ##  ######  
@@ -805,8 +825,9 @@ def goal_screen():
 		if gtext_sprite.out_of_screen():
 			status.SUBSTAT = 2
 			gtext_sprite.move(800,250) #return to begining
-	
+
 	elif status.SUBSTAT == 2:
+		TRANSITION.setActive()
 		status.SUBSTAT = 0     #reset to original
 		status.set_game_status(cStatus._STAT_LEVELRECORD)
 
@@ -907,6 +928,9 @@ def main():
 		for event in pygame.event.get(): event_handler(event)
 		window.fill(white)
 
+		
+		
+
 		#Playing Level
 		if status.GAME_STAT == cStatus._STAT_GAMING:
 
@@ -969,6 +993,8 @@ def main():
 		elif status.GAME_STAT == cStatus._STAT_NEWNAME: 
 			newname_screen()
 		
+		draw_transition() #transition always on top
+
 		pygame.display.update()
 		clock.tick(FPS) 
 
