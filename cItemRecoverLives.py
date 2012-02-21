@@ -4,7 +4,7 @@ from cAnimSprite import cAnimSprite
 import functions as BF
 
 class cItemRecoverLives(cMonster.cMonster):
-
+	BSPRITEFAC = 3 #this is a little dirty. References the value assigned in cAnimSpriteFactory
 	def __init__(self,x,y):
 		cMonster.cMonster.__init__(self,x,y,0)
         #Get the base circle because i

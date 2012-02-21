@@ -4,7 +4,7 @@ from cAnimSprite import cAnimSprite
 import functions as BF
 
 class cItemBouncer(cMonster.cMonster):
-
+	BSPRITEFAC = 1 #this is a little dirty. References the value assigned in cAnimSpriteFactory
 	def __init__(self,x,y,rot):
 		cMonster.cMonster.__init__(self,x,y,rot)
 		self.image      = pygame.image.load("sprites/bouncer.png").convert_alpha()
