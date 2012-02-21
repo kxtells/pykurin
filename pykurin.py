@@ -526,7 +526,7 @@ def item_colisions():
 		colision,xc,yc = stick.collides(m)
 		if colision:
 			if not status.invincible:
-				handle_item_monster_colision(m,xc,yc,SPRITE_FAC.BOING)
+				handle_item_monster_colision(m,xc,yc,m.BSPRITEFAC)
 
 def monster_colisions():
 	for m in status.level.monsters:
