@@ -6,14 +6,16 @@ class cAnimSpriteFactory():
 	explosions = []
 	boings = []
 	ouchs = []
+	livesup = []
 
-	all_sprites = [explosions,boings,ouchs]
-	sprite_fps = [20,10,10]
+	all_sprites = [explosions,boings,ouchs,livesup]
+	sprite_fps = [20,10,10,10]
 
 	# Sprite id definitions
 	EXPLOSION = 0
 	BOING = 1
 	OUCH = 2
+	LIVES = 3
 
 	def __init__(self):
 		"""
@@ -29,8 +31,12 @@ class cAnimSpriteFactory():
 			self.boings.append(boing_imgset)
 
 		for x in range(3): 
-			boing_imgset = BF.load_and_slice_sprite(100,50,'ouch'+str(x)+'.png');
-			self.ouchs.append(boing_imgset)			
+			imgset = BF.load_and_slice_sprite(100,50,'ouch'+str(x)+'.png');
+			self.ouchs.append(imgset)
+		
+		for x in range(1): 
+			imgset = BF.load_and_slice_sprite(100,50,'livesup'+str(x)+'.png');
+			self.livesup.append(imgset)				
 	
 	def create_sprite(self,x=-5000,y=-5000,spritetype=0):
 		"""
