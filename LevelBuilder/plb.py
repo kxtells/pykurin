@@ -312,6 +312,7 @@ def action_saveprop():
 			filepath = save_file_chooser("FileName");
 			if filepath != None:
 				DC.save_to_file(filepath)
+				DB.set_file_prop_path(filepath)
 			
 	except:
 		pass

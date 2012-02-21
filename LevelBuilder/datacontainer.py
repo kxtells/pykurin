@@ -45,6 +45,8 @@ class datacontainer:
 		#self.img_filename = "levels/"+part[-1]
 		self.img_filename = imagepath
 	
+	def set_file_prop_path(self,text):
+		self.file_prop_path = text
 
 	def set_last_error(self,text):
 		self.last_error = text
