@@ -105,34 +105,34 @@ ANIM_SPRITES.append(tsprite)
 #######################################
 # Level Selection Menu
 level_list = cLevelList("levels")
-levels_menu = cMenu(level_list.get_levelnames(),0,blue,red)
+levels_menu = cMenu(level_list.get_levelnames(),0,black,red)
 levels_menu.set_background("backgrounds/squared_paper_title.png")
 levels_menu.background_scroll = True
 
 #Game Over Menu
 gover_menu_texts = 'Try again' , 'Return to level Select' , 'Exit game'
-gover_menu = cMenu(gover_menu_texts,0,blue,red)
+gover_menu = cMenu(gover_menu_texts,0,black,red)
 gover_menu.set_background("backgrounds/piece_paper.png")
 
 #Pause Over Menu
 pause_menu_texts = 'Continue', 'Restart Level' , 'Return to level Select' , 'Exit game'
-pause_menu = cMenu(pause_menu_texts,0,blue,red)
+pause_menu = cMenu(pause_menu_texts,0,black,red)
 pause_menu.set_background("backgrounds/piece_paper.png")
 
 
 #Records Menu
 records_menu_texts = 'Next Level', 'Repeat' , 'Level Select'
-records_menu = cMenu(records_menu_texts,0,blue,red)
+records_menu = cMenu(records_menu_texts,0,black,red)
 records_menu.set_background("backgrounds/records_screen.png")
 
 #Records Menu
 main_menu_texts = 'Main Game', 'Settings' , 'Say Goodbye'
-main_menu = cMenu(main_menu_texts,0,blue,red)
+main_menu = cMenu(main_menu_texts,0,black,red)
 main_menu.set_background("backgrounds/squared_paper_maintitle.png")
 
 #Settings Menu
 settings_menu_texts = ['Player Name: '+str(settings.get_username()), 'Fullscreen', 'Go Back' ]
-settings_menu = cMenu(settings_menu_texts,0,blue,red)
+settings_menu = cMenu(settings_menu_texts,0,black,red)
 settings_menu.set_background("backgrounds/squared_paper_settings.png")
 
 INPUT_KEYS_BG = pygame.image.load("backgrounds/squared_paper_wun.png")
@@ -561,10 +561,10 @@ def update_scene_records():
 		else:
 			bgcolor = None
 
-		timefont	= FONT.render(timestr, 1, blue,bgcolor)
-		namefont	= FONT.render(player, 1, blue,bgcolor)
+		timefont	= FONT.render(timestr, 1, black,bgcolor)
+		namefont	= FONT.render(player, 1, black,bgcolor)
         	
-		window.blit(namefont, (200, 50*(i+3)))
+		window.blit(namefont, (150, 50*(i+3)))
 		window.blit(timefont, (50, 50*(i+3)))
 
 	if player_index > -1:
@@ -706,10 +706,12 @@ def newname_screen():
 	
 	window.blit(INPUT_KEYS_BG,INPUT_KEYS_BG.get_rect())
 	
-	namefont    = FONT.render(INPUT_KEYS.text, 1, blue)
-	errorfont    = FONT.render(INPUT_KEYS.get_error(), 1, red)
-	window.blit(namefont, (200, 200))
-	window.blit(errorfont, (200, 250))
+	namefont    = FONT.render(INPUT_KEYS.text, 1, black)
+	window.blit(namefont, (100, 200))
+
+	for i,err in enumerate(INPUT_KEYS.get_error()):
+		errorfont = FONT.render(err, 1, red)
+		window.blit(errorfont, (100, 250+i*40))
 
 #Game Over Screen
 
@@ -763,7 +765,7 @@ def records_screen():
 	status.SUBSTAT = 1 #Skip the first stat (saved for further animation)
 	
 	if status.SUBSTAT == 1:
-		draw_menu(records_menu,width-200,height-200)
+		draw_menu(records_menu,width-200,height-210)
 		update_scene_records()
 
 #
@@ -870,7 +872,7 @@ def main():
 		
 		elif status.GAME_STAT == cStatus._STAT_GAMEOVER: 
 			stick.fancy_rotation_death(0,10)
-			ingame_menu_screen(gover_menu)
+			ingame_menu_screen(gover_menu,y=175)
                 
 			#Level Selection
 		elif status.GAME_STAT == cStatus._STAT_LEVELSEL:

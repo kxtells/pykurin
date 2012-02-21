@@ -10,13 +10,13 @@ class cInputKeys():
 
 	def __init__(self):
 		self.text = ""
-		self.error_text = ""
+		self.error_texts = []
 
 	def get_error(self):
-		return self.error_text
+		return self.error_texts
 
 	def clear_error(self):
-		self.error_text = ""
+		self.error_texts = []
 
 	def sanitize_input(self):
 		"""
@@ -25,11 +25,11 @@ class cInputKeys():
 			if not, sets self.error_text
 		"""
 		if len(self.text)<3:
-			self.error_text = 'At least three letters on your name'
+			self.error_texts = ['At least three letters on your name']
 			return False
 
 		if not all(ord(c) < 128 for c in self.text):
-			self.error_text = 'Invalid characters'
+			self.error_texts = ['Invalid characters, sorry for that' , 'But it makes my life easier']
 			return False
 		
 		return True
