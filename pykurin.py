@@ -71,7 +71,6 @@ TIMERFONT = pygame.font.Font("ttf/Tusj.ttf", 80)
 SPRITE_FAC = cAnimSpriteFactory.cAnimSpriteFactory()
 
 
-tsprite = SPRITE_FAC.get_explosion_sprite()
 
 #Goal Text
 imgset = BF.load_and_slice_sprite(300,150,'goal_text.png');
@@ -110,7 +109,6 @@ ANIM_SPRITES=[]
 
 BASIC_SPRITES.append(status.level)
 BASIC_SPRITES.append(stick)
-ANIM_SPRITES.append(tsprite)
 
 
 #######################################
@@ -485,7 +483,7 @@ def colision_handler(cx,cy):
         """   
         
 	#Create a 'collision' animated sprite
-	tsprite = SPRITE_FAC.get_explosion_sprite(cx,cy)
+	tsprite = SPRITE_FAC.get_sprite_by_id(cx,cy,SPRITE_FAC.EXPLOSION)
 	ANIM_SPRITES.append(tsprite)        
 
 
@@ -503,15 +501,8 @@ def colision_handler(cx,cy):
 			status.decrease_lives()
 
 
-def item_colisions():
-	for m in status.level.items:
-		colision,xc,yc = stick.collides(m)
-		if colision:
-			if not status.invincible:
-				handle_item_monster_colision(m,xc,yc)
 
-
-def handle_item_monster_colision(item,cx,cy):
+def handle_item_monster_colision(item,cx,cy,sprite_id=0):
 	"""
 		- Applies the animation on collision for the item
 		- calls the onCollision handler of item
@@ -527,15 +518,23 @@ def handle_item_monster_colision(item,cx,cy):
 	item.col_anim.draw = True
 	item.onCollision(stick,status) #different item handlers
 	status.set_invincible()
-	tsprite = SPRITE_FAC.get_boing_sprite(item.rect.center[0],item.rect.center[1]-item.rect.height)
+	tsprite = SPRITE_FAC.get_sprite_by_id(item.rect.center[0],
+											item.rect.center[1]-item.rect.height,
+											sprite_id)
 	ANIM_SPRITES.append(tsprite)
 	
+def item_colisions():
+	for m in status.level.items:
+		colision,xc,yc = stick.collides(m)
+		if colision:
+			if not status.invincible:
+				handle_item_monster_colision(m,xc,yc,SPRITE_FAC.BOING)
 
 def monster_colisions():
 	for m in status.level.monsters:
 		colision,xc,yc = stick.collides(m)
 		if colision and not status.invincible:
-			handle_item_monster_colision(m,xc,yc)
+			handle_item_monster_colision(m,xc,yc,SPRITE_FAC.BOING)
 
 def monster_logic():
 	for m in status.level.monsters:

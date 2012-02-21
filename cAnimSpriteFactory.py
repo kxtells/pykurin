@@ -5,6 +5,14 @@ import random
 class cAnimSpriteFactory():
 	explosions = []
 	boings = []
+	ouchs = []
+
+	all_sprites = [explosions,boings,ouchs]
+
+	# Sprite id definitions
+	EXPLOSION = 0
+	BOING = 1
+	OUCH = 2
 
 	def __init__(self):
 		for x in range(6): 
@@ -14,25 +22,25 @@ class cAnimSpriteFactory():
 		for x in range(4): 
 			boing_imgset = BF.load_and_slice_sprite(100,50,'boing'+str(x)+'.png');
 			self.boings.append(boing_imgset)
+
+		for x in range(1): 
+			boing_imgset = BF.load_and_slice_sprite(100,50,'ouch'+str(x)+'.png');
+			self.ouchs.append(boing_imgset)			
 	
-	def get_explosion_sprite(self,x=-5000,y=-5000):
+	def create_sprite(self,x=-5000,y=-5000,spritetype=0):
 		"""
-			Get a random imageset for a explosion
+			Get a random imageset for a spritetype
 			create a Animation Sprite and return it
 		"""
-		rand = random.randint(0,len(self.explosions)-1)
-		tsprite = cAnimSprite(self.explosions[rand],20)
+		rand = random.randint(0,len(self.all_sprites[spritetype])-1)
+		tsprite = cAnimSprite(self.all_sprites[spritetype][rand],20)
 		tsprite.move(x,y) #out of view
 		tsprite.draw = True
 		return tsprite
 	
-	def get_boing_sprite(self,x=-5000,y=-5000):
+	def get_sprite_by_id(self,x=-5000,y=-5000,id=0):
 		"""
-			Get a random imageset for a Boing
-			create a Animation Sprite and return it
+			Function to call from outside
 		"""
-		rand = random.randint(0,len(self.boings)-1)
-		tsprite = cAnimSprite(self.boings[rand],10)
-		tsprite.move(x,y) #out of view
-		tsprite.draw = True
-		return tsprite
+		return self.create_sprite(x,y,id)
+
