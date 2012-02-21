@@ -389,8 +389,6 @@ def settings_menu_selection():
 
 	elif settings_menu.current == 2:
 		status.set_game_status(cStatus._STAT_MAINMENU)
-	
-	TRANSITION.setActive()
 
 #Game over menu selection function
 def game_over_menu_selection():
