@@ -9,6 +9,7 @@ class cTransition:
 	rw = 20
 	rh = 20
 	window = None
+	ttype = 1
 
 	def __init__(self,window):
 		rw = self.rw
@@ -60,8 +61,11 @@ class cTransition:
 	def getRects(self):
 		return self.rects
 
-	
 	def logic_update(self):
+		if self.ttype==1:
+			self.logic_update_1()
+	
+	def logic_update_1(self):
 		if self.isActive():
 			if self.isGrowing():
 				for f in self.rects: f.inflate_ip(1,1)
