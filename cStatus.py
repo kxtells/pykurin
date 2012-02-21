@@ -66,18 +66,18 @@ class cStatus:
 		self.invincible = False
 		self.invincible_start_time = 0
 
-                #
-                # Elapsed Time Information
-                #
-                self.start_time = time.time()
+		#
+		# Elapsed Time Information
+		#
+		self.start_time = time.time()
 		self.pause_stime = time.time()
 		self.pause_time_diff = 0
 		self.penalty_seconds = 0
 
-                #
-                # Listen KeyStrokes
-                #
-                self.LISTEN_KEYS = True
+		#
+		# Listen KeyStrokes
+		#
+		self.LISTEN_KEYS = True
 
 
 
@@ -109,15 +109,18 @@ class cStatus:
 		else:
 			return time.time() - self.start_time - self.pause_time_diff + self.penalty_seconds
 
-        def reset_timer(self):
-                self.start_time = time.time()
+	def reset_timer(self):
+		self.start_time = time.time()
+		self.pause_stime = time.time()
+		self.pause_time_diff = 0
+		self.penalty_seconds = 0
+	
+	def enable_disable_keyboard(self):
+		if self.LISTEN_KEYS: self.LISTEN_KEYS = False
+		else: self.LISTEN_KEYS = True
 
-        def enable_disable_keyboard(self):
-                if self.LISTEN_KEYS: self.LISTEN_KEYS = False
-                else: self.LISTEN_KEYS = True
-
-        def is_keyboard_enabled(self):
-                return self.LISTEN_KEYS
+	def is_keyboard_enabled(self):
+		return self.LISTEN_KEYS
 
 	def set_invincible(self):
 		"""Sets the invincible flag and the start invincibility time if is not already set"""
