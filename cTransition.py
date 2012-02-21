@@ -1,4 +1,5 @@
-from pygame import Rect, image
+from pygame import Rect, image, transform
+from random import randint
 
 class cTransition:
 	rects = []
@@ -6,12 +7,13 @@ class cTransition:
 	growing = True
 	background = None
 	draw_background = True
-	rw = 20
-	rh = 20
+	rw = 15
+	rh = 15
 	window = None
 	ttype = 1
 
 	def __init__(self,window):
+
 		rw = self.rw
 		rh = self.rh
 		rx = 0
@@ -42,7 +44,7 @@ class cTransition:
 		height = self.window.get_height()
 		self.background = image.frombuffer(image.tostring(self.window,"RGB"),(width,height),"RGB")
 		self.active = True
-
+	
 	def setInactive(self):
 		self.active = False
 
@@ -81,4 +83,3 @@ class cTransition:
 				self.setInactive()
 				self.setGrowing(True)
 				self.setDrawBackground(True)									
-			
