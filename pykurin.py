@@ -40,6 +40,13 @@ pygame.display.set_icon(icon)
 
 INPUT_KEYS = cInputKeys.cInputKeys()
 
+###
+#
+# Font loading
+#
+###
+FONT = pygame.font.Font("ttf/Tusj.ttf", 25)
+
 #######################################
 #
 # BASIC SPRITE LOADING
@@ -114,7 +121,7 @@ pause_menu.set_background("backgrounds/piece_paper.png")
 
 
 #Records Menu
-records_menu_texts = 'Next Level', 'Repeat' , 'Return to level Select'
+records_menu_texts = 'Next Level', 'Repeat' , 'Level Select'
 records_menu = cMenu(records_menu_texts,0,blue,red)
 records_menu.set_background("backgrounds/records_screen.png")
 
@@ -554,8 +561,8 @@ def update_scene_records():
 		else:
 			bgcolor = None
 
-		timefont	= myfont.render(timestr, 1, blue,bgcolor)
-		namefont	= myfont.render(player, 1, blue,bgcolor)
+		timefont	= FONT.render(timestr, 1, blue,bgcolor)
+		namefont	= FONT.render(player, 1, blue,bgcolor)
         	
 		window.blit(namefont, (200, 50*(i+3)))
 		window.blit(timefont, (50, 50*(i+3)))
@@ -634,6 +641,8 @@ def update_gui():
 	seconds_images = number_gen.parse_number(int(seconds))
 	millis_images = number_gen.parse_number(int(millis[0:2]))
 
+	if seconds_images == None or millis_images == None: return
+
 	nw = seconds_images[0].get_rect().width
 
 	#Bg Zeros (avoid a flickr)
@@ -694,12 +703,11 @@ def menu_screen(menu,rotate=True,x=200,y=200):
 #
 def newname_screen():
 	window.fill(white)
-	myfont = pygame.font.SysFont("Arial", 20)
 	
 	window.blit(INPUT_KEYS_BG,INPUT_KEYS_BG.get_rect())
 	
-	namefont    = myfont.render(INPUT_KEYS.text, 1, blue)
-	errorfont    = myfont.render(INPUT_KEYS.get_error(), 1, red)
+	namefont    = FONT.render(INPUT_KEYS.text, 1, blue)
+	errorfont    = FONT.render(INPUT_KEYS.get_error(), 1, red)
 	window.blit(namefont, (200, 200))
 	window.blit(errorfont, (200, 250))
 
@@ -776,9 +784,6 @@ def level_select_menu():
 			sy = levels_menu.current * increment_px_y
                 window.blit(levels_menu.background,levels_menu.background.get_rect().move(0,-sy))
 
-        # pick a font you have and set its size
-        myfont = pygame.font.SysFont("Arial", 25)
-
         y = 285 - (levels_menu.current * increment_px_y)
         x = 150
         color = yellow
@@ -787,7 +792,7 @@ def level_select_menu():
                 if levels_menu.current == index: color = levels_menu.select_color
                 else: color = levels_menu.color
 
-                render_font = myfont.render(me, 1, color) 
+                render_font = FONT.render(me, 1, color) 
                 window.blit(render_font, (x, y))
                 y += increment_px_y
 
@@ -796,8 +801,6 @@ def level_select_menu():
 # - menu (the menu to draw)
 #
 def draw_menu(menu,sx=200,sy=160):
-        # pick a font you have and set its size
-        myfont = pygame.font.SysFont("Arial", menu.get_font_size())
         
 	if menu.background != None:
 		window.blit(menu.background,menu.background.get_rect())
@@ -809,7 +812,7 @@ def draw_menu(menu,sx=200,sy=160):
                 if menu.current == index: color = menu.select_color
                 else: color = menu.color
 
-                render_font = myfont.render(me, 1, color) 
+                render_font = FONT.render(me, 1, color) 
                 window.blit(render_font, (x, y))
                 y += 39
 
