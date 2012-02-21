@@ -421,14 +421,16 @@ def pause_menu_selection():
 	#Reset Level
 	elif pause_menu.current == 1:
 		load_level(status.current_level)
-	
+		TRANSITION.setActive()
 	#Return to Level Select Menu
 	elif pause_menu.current == 2:
 		status.set_game_status(cStatus._STAT_LEVELSEL)
+		TRANSITION.setActive()
         
 	#Return to Main Menu
 	elif pause_menu.current == 3:
 		status.set_game_status(cStatus._STAT_MAINMENU)
+		TRANSITION.setActive()
 
 def main_menu_selection():
         #Go to level selection to start the game

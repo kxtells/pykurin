@@ -62,27 +62,23 @@ class cTransition:
 		return self.rects
 
 	def logic_update(self):
-		if self.ttype==1:
-			self.logic_update_1()
+		if self.isActive():
+			if self.ttype==1:
+				self.logic_update_1()
 	
 	def logic_update_1(self):
-		if self.isActive():
-			if self.isGrowing():
-				for f in self.rects: f.inflate_ip(1,1)
-				fr_curr_width = self.rects[0][2]
-				if fr_curr_width == self.rw: 
-					self.setGrowing(False)
-					self.setDrawBackground(False)
-			else:
-				for f in self.rects: f.inflate_ip(-1,-1)					
-		
-				fr_curr_width = self.rects[0][2]
-				if fr_curr_width == 0:
-					self.setInactive()
-					self.setGrowing(True)
-					self.setDrawBackground(True)
-
-								
+		if self.isGrowing():
+			for f in self.rects: f.inflate_ip(1,1)
+			fr_curr_width = self.rects[0][2]
+			if fr_curr_width == self.rw: 
+				self.setGrowing(False)
+				self.setDrawBackground(False)
 		else:
-			pass					
+			for f in self.rects: f.inflate_ip(-1,-1)					
+	
+			fr_curr_width = self.rects[0][2]
+			if fr_curr_width == 0:
+				self.setInactive()
+				self.setGrowing(True)
+				self.setDrawBackground(True)									
 			
