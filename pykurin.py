@@ -60,7 +60,7 @@ TRANSITION = cTransition(window)
 #
 ###
 FONT = pygame.font.Font("ttf/Tusj.ttf", 25)
-TIMERFONT = pygame.font.Font("ttf/Tusj.ttf", 80)
+TIMERFONT = pygame.font.Font("ttf/NATWR.ttf", 55)
 
 #######################################
 #
@@ -76,6 +76,10 @@ SPRITE_FAC = cAnimSpriteFactory.cAnimSpriteFactory()
 imgset = BF.load_and_slice_sprite(300,150,'goal_text.png');
 gtext_sprite = cAnimSprite(imgset)
 gtext_sprite.move(800,250)
+
+#timer bg
+imgset = BF.load_and_slice_sprite(250,123,'timer_bg.png');
+bg_timer_image = imgset[0]
 
 #New Record Text
 imgset = BF.load_and_slice_sprite(230,100,'newrecord.png');
@@ -728,15 +732,26 @@ def update_gui_timer_TTF():
 		this font here, generates bouncing numbers not good 
 		for my eye
 	"""
-	time = round(status.get_elapsed_time(),3)
-	
-	#traling zeros space
-	if time < 10:t = 2
-	elif time < 100:t = 1
-	else:t = 0
+	window.blit(bg_timer_image,bg_timer_image.get_rect().move(0,400))
+	time = round(status.get_elapsed_time(),2)
+
+	if time > 999: 
+		time = "too much"
+		t=0
+	else:
+		ypad = 55
+		xpad = 26
+		#traling zeros space
+		if time < 10:t = 2
+		elif time < 100:t = 1
+		else:t = 0
+
+		for zero in range(t):
+			timertxt = TIMERFONT.render(str("0"), 1, black)
+			window.blit(timertxt, (10+zero*xpad, height-ypad))
 
 	timertxt = TIMERFONT.render(str(time), 1, black)
-	window.blit(timertxt, (10+t*25, height-100))
+	window.blit(timertxt, (10+t*xpad, height-ypad))
 
 #Updates all the gui sprites
 def update_gui():
@@ -744,8 +759,8 @@ def update_gui():
 	window.blit(status.lifebar_image,status.lifebar_rect)
 
 	#timer
-	update_gui_timer_CF()
-	#update_gui_timer_TTF()
+	#update_gui_timer_CF()
+	update_gui_timer_TTF()
 
 	
 	
@@ -973,7 +988,7 @@ def main():
 
 			monster_logic()
 			playing_screen()                        
-			debug_onscreen(colision)
+			#debug_onscreen(colision)
 			#Unset invincibility when needed
 			status.unset_invincible_by_time()
 
