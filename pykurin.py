@@ -374,6 +374,7 @@ def records_menu_selection():
 		load_level(status.current_level)
 	
 	elif records_menu.current == 2:
+		levels_menu.set_current(status.current_level)
 		status.set_game_status(cStatus._STAT_LEVELSEL)
 	
 	TRANSITION.setActive()
@@ -389,6 +390,8 @@ def settings_menu_selection():
 	elif settings_menu.current == 2:
 		status.set_game_status(cStatus._STAT_MAINMENU)
 
+	TRANSITION.setActive()		
+
 #Game over menu selection function
 def game_over_menu_selection():
     #Try again. Reload everything and return to game mode
@@ -397,6 +400,7 @@ def game_over_menu_selection():
 
         #Return to Level Select Menu
 	elif gover_menu.current == 1:
+		levels_menu.set_current(status.current_level)
 		status.set_game_status(cStatus._STAT_LEVELSEL)
         
         #Return to Main Menu
@@ -423,6 +427,7 @@ def pause_menu_selection():
 		TRANSITION.setActive()
 	#Return to Level Select Menu
 	elif pause_menu.current == 2:
+		levels_menu.set_current(status.current_level)
 		status.set_game_status(cStatus._STAT_LEVELSEL)
 		TRANSITION.setActive()
         
@@ -488,8 +493,9 @@ def colision_handler(cx,cy):
 
 
 	#Move the Stick back from the collision place
+	#and temporary change the rotation
 	stick.jump_back(cx,cy)
-    	stick.flip_rotation_tmp()
+	stick.flip_rotation_tmp()
 
 	#Add 3 seconds to the total time
 	status.add_seconds(3)
@@ -736,13 +742,13 @@ def update_gui_timer_TTF():
 	"""
 	window.blit(bg_timer_image,bg_timer_image.get_rect().move(0,400))
 	time = round(status.get_elapsed_time(),2)
+	ypad = 55
+	xpad = 26
 
 	if time > 999: 
-		time = "too much"
-		t=0
+		time = "A Lot!"
+		t=0	
 	else:
-		ypad = 55
-		xpad = 26
 		#traling zeros space
 		if time < 10:t = 2
 		elif time < 100:t = 1

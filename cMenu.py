@@ -30,3 +30,8 @@ class cMenu:
 
 	def get_font_size(self):
 		return self.font_size
+
+	def set_current(self,num):
+		if num > len(self.options): return False
+		else: self.current = num
+		return True
