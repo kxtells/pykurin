@@ -1,5 +1,6 @@
-from pygame import Rect, image, transform
+from pygame import Rect, image, transform, draw
 from random import randint
+from colors import *
 
 class cTransition:
 	background = None
@@ -125,3 +126,20 @@ class cTransition:
 				self.setInactive()
 				self.setGrowing(True)
 				self.setDrawBackground(True)
+
+
+
+	def draw_transition(self):
+		if self.isActive():
+			if self.isDrawBG():
+				self.window.blit(self.getBG(),self.getBG().get_rect())
+			
+			if self.getType() == self.SQUARES:
+				for r in self.getRects():
+					draw.rect(self.window,black,r)
+			elif self.getType() == self.CIRCLE:
+				width = self.window.get_width()
+				height = self.window.get_height()
+				draw.circle(self.window, black, (width/2,height/2), self.getRadius())
+			
+			self.logic_update()
