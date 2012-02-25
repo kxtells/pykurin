@@ -1,6 +1,7 @@
 import pygame
 from cLevel import cLevel
 import time
+from colors import *
 
 class cStatus:
 	"""All the status information to control the game"""
@@ -104,12 +105,13 @@ class cStatus:
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
 
 	def get_elapsed_time(self):
-		if self.GAME_STAT == cStatus._STAT_PAUSE:
+		if self.GAME_STAT == cStatus._STAT_PAUSE or self.GAME_STAT == self._STAT_GAMEOVER:
 			return time.time() - self.start_time - (time.time() - self.pause_stime) + self.penalty_seconds
 		else:
 			return time.time() - self.start_time - self.pause_time_diff + self.penalty_seconds
 
 	def reset_timer(self):
+		print "reset"
 		self.start_time = time.time()
 		self.pause_stime = time.time()
 		self.pause_time_diff = 0
