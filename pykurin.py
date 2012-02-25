@@ -18,20 +18,13 @@ from cMenu import cMenu
 from cLevelList import cLevelList
 from cSettings import cSettings
 from cTransition import cTransition
+from colors import *
 
 pygame.init()
 
 size = width, height = 640, 480
 FPS = 45
 
-#some colors definitions
-black = 0, 0, 0
-yellow = 255, 255, 0
-green = 0,255,0
-blue = 0,0,150
-red = 255,0,0
-white = 255,255,255
-gray = 125,125,125
 
 ###########################################################################################
 
@@ -279,10 +272,13 @@ def input_name_keyhandler(event):
 	"""
 		Input handler when reading a username
 	"""
-	if event.key == pygame.K_ESCAPE: status.set_game_status(cStatus._STAT_SETTINGS)
+	if event.key == pygame.K_ESCAPE: 
+		TRANSITION.setActive()
+		status.set_game_status(cStatus._STAT_SETTINGS)
 	
 	if INPUT_KEYS.process_keystroke(event): #process the keystrokes, and if keystroke is ENTER finish
 		if INPUT_KEYS.sanitize_input():
+			TRANSITION.setActive()
 			settings.set_username(INPUT_KEYS.text)
 			update_settings_menu_texts()
 			status.set_game_status(cStatus._STAT_SETTINGS)
@@ -589,11 +585,17 @@ def debug_onscreen(colides):
                 window.blit(deathOnOff, (400, 20))
 
 def draw_transition():
+	TRANSITION.draw_transition()
+	return
 	if TRANSITION.isActive():
 		if TRANSITION.isDrawBG():
 			window.blit(TRANSITION.getBG(),TRANSITION.getBG().get_rect())
-		for r in TRANSITION.getRects():
-			pygame.draw.rect(window,black,r)
+		
+		if TRANSITION.getType() == TRANSITION.SQUARES:
+			for r in TRANSITION.getRects():
+				pygame.draw.rect(window,black,r)
+		elif TRANSITION.getType() == TRANSITION.CIRCLE:
+			pygame.draw.circle(window, black, (width/2,height/2), TRANSITION.getRadius())
 		TRANSITION.logic_update()
 
 #Updates all the needed images/sprites for goal Screen
