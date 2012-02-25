@@ -116,7 +116,6 @@ class cTransition:
 		height = self.window.get_height()
 		if self.isGrowing():
 			self.radius += self.step
-			print self.radius
 			if self.radius >= max(width/2,height/2):
 				self.setGrowing(False)
 				self.setDrawBackground(False)
