@@ -2,15 +2,26 @@ from pygame import Rect, image, transform
 from random import randint
 
 class cTransition:
+	background = None
+	draw_background = True
+
+	#transition T1
 	rects = []
 	active = False
 	growing = True
-	background = None
-	draw_background = True
 	rw = 15
 	rh = 15
 	window = None
 	ttype = 1
+
+	#Transition t2
+	radius = 0
+	step = 10
+
+	#Trans Types
+	SQUARES = 1
+	CIRCLE = 2
+	TOTALTYPES = 2
 
 	def __init__(self,window):
 
@@ -43,6 +54,7 @@ class cTransition:
 		width = self.window.get_width()
 		height = self.window.get_height()
 		self.background = image.frombuffer(image.tostring(self.window,"RGB"),(width,height),"RGB")
+		self.ttype = randint(1,self.TOTALTYPES)
 		self.active = True
 	
 	def setInactive(self):
@@ -57,16 +69,30 @@ class cTransition:
 	def setGrowing(self,boolval):
 		self.growing = boolval
 
+	#
+	# GETTERS
+	#
 	def getBG(self):
 		return self.background
 
 	def getRects(self):
 		return self.rects
 
+	def getType(self):
+		return self.ttype
+
+	def getRadius(self):
+		return self.radius		
+
+	#
+	# LOGIC
+	#
 	def logic_update(self):
 		if self.isActive():
 			if self.ttype==1:
 				self.logic_update_1()
+			elif self.ttype==2:
+				self.logic_update_2()
 	
 	def logic_update_1(self):
 		if self.isGrowing():
@@ -83,3 +109,19 @@ class cTransition:
 				self.setInactive()
 				self.setGrowing(True)
 				self.setDrawBackground(True)									
+
+	def logic_update_2(self):
+		width = self.window.get_width()
+		height = self.window.get_height()
+		if self.isGrowing():
+			self.radius += self.step
+			print self.radius
+			if self.radius >= max(width/2,height/2):
+				self.setGrowing(False)
+				self.setDrawBackground(False)
+		else:
+			self.radius -= self.step
+			if self.radius <= 0:
+				self.setInactive()
+				self.setGrowing(True)
+				self.setDrawBackground(True)
