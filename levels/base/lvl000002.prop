@@ -1,7 +1,7 @@
 [options]
 name:2- Turbo Needed!
-collision:levels/lvl2col.png
-background:levels/lvl2.png
+collision:levels/base/lvl2col.png
+background:levels/base/lvl2.png
 background2:backgrounds/wood.jpg
 startx:136
 starty:146

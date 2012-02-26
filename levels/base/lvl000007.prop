@@ -1,7 +1,7 @@
 [options]
 name:7- Something is MOVING!
-collision:levels/lvl7col.png
-background:levels/lvl7.png
+collision:levels/base/lvl7col.png
+background:levels/base/lvl7.png
 background2:backgrounds/wood.jpg
 startx:353
 starty:243

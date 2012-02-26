@@ -1,7 +1,7 @@
 [options]
 name:11 - I have to think a title for that
-collision:levels/lvl11col.png
-background:levels/lvl11.png
+collision:levels/base/lvl11col.png
+background:levels/base/lvl11.png
 background2:backgrounds/wood.jpg
 startx:133
 starty:234

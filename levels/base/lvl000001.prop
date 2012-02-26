@@ -1,7 +1,7 @@
 [options]
 name:1 - Welcome Level
-collision:levels/lvl1col.png
-background:levels/lvl1.png
+collision:levels/base/lvl1col.png
+background:levels/base/lvl1.png
 background2:backgrounds/wood.jpg
 startx:98
 starty:119

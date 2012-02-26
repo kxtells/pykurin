@@ -1,7 +1,7 @@
 [options]
 name:6- Curves and Holes
-collision:levels/lvl6col.png
-background:levels/lvl6.png
+collision:levels/base/lvl6col.png
+background:levels/base/lvl6.png
 background2:backgrounds/wood.jpg
 startx:201
 starty:294

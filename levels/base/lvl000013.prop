@@ -1,7 +1,7 @@
 [options]
 name:13 - no name, again
-collision:levels/lvl13col.png
-background:levels/lvl13.png
+collision:levels/base/lvl13col.png
+background:levels/base/lvl13.png
 background2:backgrounds/wood.jpg
 startx:123
 starty:403

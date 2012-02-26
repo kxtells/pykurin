@@ -1,7 +1,7 @@
 [options]
 name:12 - no name, again
-collision:levels/lvl12col.png
-background:levels/lvl12.png
+collision:levels/base/lvl12col.png
+background:levels/base/lvl12.png
 background2:backgrounds/wood.jpg
 startx:156
 starty:292

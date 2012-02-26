@@ -1,7 +1,7 @@
 [options]
 name:8- Time Your Moves
-collision:levels/lvl8col.png
-background:levels/lvl8.png
+collision:levels/base/lvl8col.png
+background:levels/base/lvl8.png
 background2:backgrounds/wood.jpg
 startx:343
 starty:357

@@ -1,7 +1,7 @@
 [options]
 name:9- Easy?
-collision:levels/lvl9col.png
-background:levels/lvl9.png
+collision:levels/base/lvl9col.png
+background:levels/base/lvl9.png
 background2:backgrounds/wood.jpg
 startx:740
 starty:324

@@ -1,7 +1,7 @@
 [options]
 name:11-bashing around
-collision:levels/lvlX.png
-background:levels/lvlX.png
+collision:levels/base/lvlX.png
+background:levels/base/lvlX.png
 background2:backgrounds/wood.jpg
 startx:112
 starty:203

@@ -1,7 +1,7 @@
 [options]
 name:3- You're being watched
-collision:levels/lvl3col.png
-background:levels/lvl3.png
+collision:levels/base/lvl3col.png
+background:levels/base/lvl3.png
 background2:backgrounds/wood.jpg
 startx:73
 starty:65
