@@ -368,8 +368,6 @@ def action_saveprop():
 #
 #
 #
-#
-#
 ############################
 def handle_event(evt):
 	"""

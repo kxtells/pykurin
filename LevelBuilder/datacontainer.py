@@ -224,7 +224,7 @@ class datacontainer:
 	#
 	def load_from_file(self,full_path,xpadding=0,ypadding=64):
 		#clear_everything()		
-
+		print "a"
 		parser = SafeConfigParser()
 		parser.read(full_path)
 
@@ -243,6 +243,7 @@ class datacontainer:
 		#print imagefile
 		part = full_path.rpartition('/')
 		part2 = imagefile.rpartition('/')
+
 		imagepath =  part[0]+"/"+part2[2]
 		self.set_image(imagepath)
 
@@ -327,8 +328,10 @@ class datacontainer:
 		f.write("[options]\n");
 		f.write("name:"+self.title+"\n")
 		
-		colimg = "levels/"+self.colimg_filename.rpartition("/")[-1]
-		img = "levels/"+self.img_filename.rpartition("/")[-1]
+		colimgtuple = self.colimg_filename.rpartition('levels')
+		imgtuple = self.img_filename.rpartition('levels')
+		colimg = colimgtuple[1]+colimgtuple[2]
+		img = imgtuple[1]+imgtuple[2] 
 		bg = "backgrounds/"+self.background_filename.rpartition("/")[-1]
 		f.write("collision:"+colimg+"\n")
 		f.write("background:"+img+"\n")
