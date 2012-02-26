@@ -114,10 +114,20 @@ BASIC_SPRITES.append(stick)
 #
 #######################################
 # Level Selection Menu
-level_list = cLevelList("levels")
+#level_list = cLevelList("levels/training")
+level_list = cLevelList()
+level_list.load_leveldir('levels')
+
 levels_menu = cMenu(level_list.get_levelnames(),0,black,red)
 levels_menu.set_background("backgrounds/squared_paper_title.png")
 levels_menu.background_scroll = True
+
+packlist = cLevelList()
+packlist.load_packdir('levelpacks')
+packs_menu = cMenu(packlist.get_packnames(),0,black,red)
+packs_menu.set_background("backgrounds/squared_paper_title.png")
+packs_menu.background_scroll = True
+
 
 #Game Over Menu
 gover_menu_texts = 'Try again' , 'Return to level Select' , 'Main Menu'
@@ -292,7 +302,15 @@ def pause_menu_events(event):
 
 #Also used by settings menu
 def level_menu_events(event):
-	if event.key == pygame.K_ESCAPE: status.set_game_status(cStatus._STAT_MAINMENU)
+	if event.key == pygame.K_ESCAPE: 
+		status.set_game_status(cStatus._STAT_PACKSEL)
+		TRANSITION.setActive()
+
+#Also used by settings menu
+def pack_menu_events(event):
+	if event.key == pygame.K_ESCAPE: 
+		status.set_game_status(cStatus._STAT_MAINMENU)
+		TRANSITION.setActive()
 
 #
 # MAIN ENTRANCE FOR EVENT HANDLING 
@@ -302,35 +320,39 @@ def event_handler(event):
                 Different handlers for different events in different status
         	Check cStatus class for status definitions
 	"""
-        if event.type == pygame.QUIT: pygame.quit();sys.exit()
+	if event.type == pygame.QUIT: pygame.quit();sys.exit()
         
-        #Gaming
-        if status.GAME_STAT == cStatus._STAT_GAMING:
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_handler(event)
+	#Gaming
+	if status.GAME_STAT == cStatus._STAT_GAMING:
+		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_handler(event)
         
-        #Game Over Screen
-        elif status.GAME_STAT == cStatus._STAT_GAMEOVER:
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,gover_menu)
+	#Game Over Screen
+	elif status.GAME_STAT == cStatus._STAT_GAMEOVER:
+		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,gover_menu)
 
-        #PAUSE Screen
-        elif status.GAME_STAT == cStatus._STAT_PAUSE:
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,pause_menu)
+	#PAUSE Screen
+	elif status.GAME_STAT == cStatus._STAT_PAUSE:
+		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,pause_menu)
+
+	#Select PACK Screen
+	elif status.GAME_STAT == cStatus._STAT_PACKSEL:
+		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,packs_menu)
 
 	#Select level Screen
-        elif status.GAME_STAT == cStatus._STAT_LEVELSEL:
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,levels_menu)
+	elif status.GAME_STAT == cStatus._STAT_LEVELSEL:
+		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,levels_menu)
 
 	#Records level Screen
-        elif status.GAME_STAT == cStatus._STAT_LEVELRECORD:
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,records_menu)
+	elif status.GAME_STAT == cStatus._STAT_LEVELRECORD:
+		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,records_menu)
 
 	#MAIN Menu Screen
-        elif status.GAME_STAT == cStatus._STAT_MAINMENU:
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,main_menu)
+	elif status.GAME_STAT == cStatus._STAT_MAINMENU:
+		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,main_menu)
 
 	#SETTINGS Menu Screen
-        elif status.GAME_STAT == cStatus._STAT_SETTINGS:
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,settings_menu)
+	elif status.GAME_STAT == cStatus._STAT_SETTINGS:
+		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,settings_menu)
 
 	#TEXT INPUT
 	elif status.GAME_STAT == status._STAT_NEWNAME:
@@ -364,6 +386,18 @@ def load_level(level_num):
 	status.reset_timer()
 	status.clear_penalty_seconds()
 
+def load_levellist_with_pack(pack_num):	
+	"""
+		Fills the level menu with the levels of a packlist
+	"""
+
+	basedir = packlist.get_pack_basedir(pack_num)
+	#levels_menu references to level list so just modify level list
+	#and set level_menu current to 0
+	level_list = cLevelList()
+	level_list.load_leveldir(basedir)
+	levels_menu.set_current(0)
+	
 #Records menu selection function
 def records_menu_selection():
 	if records_menu.current == 0:
@@ -415,6 +449,12 @@ def level_menu_selection():
         status.set_game_status(cStatus._STAT_GAMING)
         TRANSITION.setActive()
 
+#Level Menu Selection Function
+def pack_menu_selection():
+        load_levellist_with_pack(packs_menu.current)
+        status.set_game_status(cStatus._STAT_LEVELSEL)
+        TRANSITION.setActive()        
+
 #Pause Menu selection Function
 def pause_menu_selection():
 	#Continue, change to game mode
@@ -439,7 +479,7 @@ def pause_menu_selection():
 def main_menu_selection():
         #Go to level selection to start the game
 	if main_menu.current == 0:
-		status.set_game_status(cStatus._STAT_LEVELSEL)
+		status.set_game_status(cStatus._STAT_PACKSEL)
 
 	#Settings
 	elif main_menu.current == 1:
@@ -460,9 +500,11 @@ pause_menu.action_function = pause_menu_selection
 records_menu.action_function = records_menu_selection
 main_menu.action_function = main_menu_selection
 settings_menu.action_function = settings_menu_selection
+packs_menu.action_function = pack_menu_selection
 
-levels_menu.event_function = level_menu_events
-settings_menu.event_function = level_menu_events
+levels_menu.event_function = level_menu_events #return to packs menu on escape
+settings_menu.event_function = pack_menu_events #return to main menu on escape
+packs_menu.event_function = pack_menu_events #return to main menu on escape
 pause_menu.event_function = pause_menu_events
 
 
@@ -718,7 +760,7 @@ def update_gui_timer_CF():
 	zero = number_gen.parse_number(0)[0]
 	window.blit(pygame.transform.rotate(zero,-10),zero.get_rect().move((1+4)*nw,height-zero.get_rect().height - 15))
 
-#Trailing zeros
+	#Trailing zeros
 	while len(seconds_images) < 3:
 		zero = number_gen.parse_number(0)[0]
 		seconds_images.insert(0,zero)
@@ -769,10 +811,6 @@ def update_gui():
 	#timer
 	#update_gui_timer_CF()
 	update_gui_timer_TTF()
-
-	
-	
-	
 
 #A fancy rotozoom for the stick death
 def fancy_stick_death_animation():
@@ -839,8 +877,10 @@ def newname_screen():
 
 
 def level_selection_screen():
-        level_select_menu()
+	level_select_menu()
 
+def pack_selection_screen():
+	pack_select_menu()
 
 def goal_screen():
 	"""
@@ -903,23 +943,50 @@ def level_select_menu():
         '''
 	increment_px_y = 29
 
-        if levels_menu.background != None:
+	if levels_menu.background != None:
 		sy = 0
 		if levels_menu.background_scroll == True:
 			sy = levels_menu.current * increment_px_y
-                window.blit(levels_menu.background,levels_menu.background.get_rect().move(0,-sy))
+			window.blit(levels_menu.background,levels_menu.background.get_rect().move(0,-sy))
 
-        y = 285 - (levels_menu.current * increment_px_y)
-        x = 150
-        color = yellow
+		y = 285 - (levels_menu.current * increment_px_y)
+		x = 150
+		color = yellow
 
-        for index,me in enumerate(levels_menu.options):
-                if levels_menu.current == index: color = levels_menu.select_color
-                else: color = levels_menu.color
+		for index,me in enumerate(levels_menu.options):
+			if levels_menu.current == index: color = levels_menu.select_color
+			else: color = levels_menu.color
 
-                render_font = FONT.render(me, 1, color) 
-                window.blit(render_font, (x, y))
-                y += increment_px_y
+			render_font = FONT.render(me, 1, color) 
+			window.blit(render_font, (x, y))
+			y += increment_px_y
+
+def pack_select_menu():
+        '''
+                pack_select_menu:
+                Actually does the same as level_select_menu
+                But the idea is to do that a little bit different
+        '''
+	increment_px_y = 29
+
+	if packs_menu.background != None:
+		sy = 0
+		if packs_menu.background_scroll == True:
+			sy = packs_menu.current * increment_px_y
+			window.blit(packs_menu.background,packs_menu.background.get_rect().move(0,-sy))
+
+		y = 285 - (packs_menu.current * increment_px_y)
+		x = 150
+		color = yellow
+
+		for index,me in enumerate(packs_menu.options):
+			if packs_menu.current == index: color = packs_menu.select_color
+			else: color = packs_menu.color
+
+			render_font = FONT.render(me, 1, color) 
+			window.blit(render_font, (x, y))
+			y += increment_px_y
+
 
 #
 # Draws a menu on screen 
@@ -1016,6 +1083,9 @@ def main():
 			#Level Selection
 		elif status.GAME_STAT == cStatus._STAT_LEVELSEL:
 			level_selection_screen()
+
+		elif status.GAME_STAT == cStatus._STAT_PACKSEL:
+			pack_selection_screen()			
 
 		#Goal
 		elif status.GAME_STAT == cStatus._STAT_GOAL:
