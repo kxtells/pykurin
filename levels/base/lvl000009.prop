@@ -1,0 +1,15 @@
+[options]
+name:9- Easy?
+collision:levels/lvl9col.png
+background:levels/lvl9.png
+background2:backgrounds/wood.jpg
+startx:740
+starty:324
+endx:895
+endy:825
+stick:sticks/stick.png
+uuid:732f6180-597b-11e1-b86c-0800200c9a66
+[bouncers]
+[recovers]
+[bashers]
+[flies]

@@ -1,0 +1,17 @@
+[options]
+name:6- Curves and Holes
+collision:levels/lvl6col.png
+background:levels/lvl6.png
+background2:backgrounds/wood.jpg
+startx:201
+starty:294
+endx:233
+endy:721
+stick:sticks/stick.png
+uuid:c001ea60-3ed6-11e1-b86c-0800200c9a66
+[bouncers]
+536:677
+741:150
+[recovers]
+[bashers]
+[flies]
