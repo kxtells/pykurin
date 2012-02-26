@@ -87,6 +87,13 @@ imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
 imgset_numbers = BF.load_and_slice_sprite(50,50,'numbers.png');
 number_gen = cCustomFont.cCustomFont(imgset_numbers)
 
+#Locked sprite
+locked_sprite = pygame.image.load('sprites/locked.png')
+openlock_sprite = pygame.image.load('sprites/openlock.png')
+
+#LevelDone
+tick_sprite = pygame.image.load('sprites/tick.png')
+
 
 #######################################
 #
@@ -402,7 +409,11 @@ def load_levellist_with_pack(pack_num):
 def records_menu_selection():
 	if records_menu.current == 0:
 		status.current_level += 1
-		load_level(status.current_level)
+		if level_list.level_exists(status.current_level):
+			load_level(status.current_level)
+		else:
+			status.set_game_status(cStatus._STAT_PACKSEL)			
+			
 
 	elif records_menu.current == 1:
 		load_level(status.current_level)
@@ -963,6 +974,9 @@ def level_select_menu():
 			if levels_menu.current == index: color = levels_menu.select_color
 			else: color = levels_menu.color
 
+			if settings.isLevelCompleted(level_list.level_uuid(index)):
+				window.blit(tick_sprite,tick_sprite.get_rect().move(x-20,y))
+
 			render_font = FONT.render(me, 1, color) 
 			window.blit(render_font, (x, y))
 			y += increment_px_y
@@ -985,17 +999,32 @@ def pack_select_menu():
 		x = 150
 		color = yellow
 
+		#assuming that lock and openlock are of the same size
+		lock_rect = locked_sprite.get_rect();
+		lock_rect_w = lock_rect[2]
+
 		for index,me in enumerate(packs_menu.options):
+			draw_lock = True
 			if packs_menu.current == index: 
 					if packlist.isPackOpen(packs_menu.current,settings.total_levels_cleared()):
 						color = packs_menu.select_color
+						draw_lock = False
 					else:
 						color = dimred
 			else:
-				if not packlist.isPackOpen(index,settings.total_levels_cleared()):
-					color = gray
-				else:
+				if packlist.isPackOpen(index,settings.total_levels_cleared()):
 					color = packs_menu.color
+					draw_lock = False
+				else:
+					color = gray
+
+			if draw_lock:
+				window.blit(locked_sprite,lock_rect.move(x-lock_rect_w,y))
+			else:
+				window.blit(openlock_sprite,lock_rect.move(x-lock_rect_w,y))
+				
+
+					
 
 			render_font = FONT.render(me, 1, color) 
 			window.blit(render_font, (x, y))
