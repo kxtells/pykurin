@@ -237,7 +237,6 @@ if settings.get_fullscreen(): set_fullscreen()
 #Debug Options
 def key_debug_actions(event):
 #the global var collision may be modified
-
 	if event.key == pygame.K_F1:
 		if status._DEBUG_COLLISION: status._DEBUG_COLLISION = False
 		else: status._DEBUG_COLLISION = True
@@ -252,30 +251,26 @@ def key_debug_actions(event):
 
 #Main Key Handler For the GAMING STATUS
 def key_handler(event):
-        #Do not listen keystrokes is keyboard is disabled
-        if not status.is_keyboard_enabled(): return
         
-        if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN: stick.move_down();
-                elif event.key == pygame.K_UP: stick.move_up();
-                elif event.key == pygame.K_LEFT: stick.move_left();
-                elif event.key == pygame.K_RIGHT: stick.move_right();
-                elif event.key == pygame.K_LCTRL: stick.turbo_on();
+	if event.type == pygame.KEYDOWN:
+		if event.key == pygame.K_DOWN: stick.move_down();
+		elif event.key == pygame.K_UP: stick.move_up();
+		elif event.key == pygame.K_LEFT: stick.move_left();
+		elif event.key == pygame.K_RIGHT: stick.move_right();
+		elif event.key == pygame.K_LCTRL: stick.turbo_on();
 
 		#Pause Button
-                elif event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.pause_game()
+		elif event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.pause_game()
                 
 		#Debug Handlers
-                key_debug_actions(event)
+		key_debug_actions(event)
         
-        elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_DOWN: stick.move_up();
-                elif event.key == pygame.K_UP: stick.move_down();
-                elif event.key == pygame.K_LEFT: stick.move_right();
-                elif event.key == pygame.K_RIGHT: stick.move_left();
-                elif event.key == pygame.K_LCTRL: stick.turbo_off();
-
-        #print event
+	elif event.type == pygame.KEYUP:
+		if event.key == pygame.K_DOWN: stick.move_up();
+		elif event.key == pygame.K_UP: stick.move_down();
+		elif event.key == pygame.K_LEFT: stick.move_right();
+		elif event.key == pygame.K_RIGHT: stick.move_left();
+		elif event.key == pygame.K_LCTRL: stick.turbo_off();
 
 #Game Over Menu Handler
 def key_menu_handler(event,menu):
@@ -1108,7 +1103,7 @@ def main():
 
 			monster_logic()
 			playing_screen()                        
-			debug_onscreen(colision)
+			#debug_onscreen(colision)
 			#Unset invincibility when needed
 			status.unset_invincible_by_time()
 
