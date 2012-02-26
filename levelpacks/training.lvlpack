@@ -1,5 +1,5 @@
 [options]
 name:Training
 basedir:levels/training/
-icon:levels/learn1.png
+icon:None
 levels2open:3

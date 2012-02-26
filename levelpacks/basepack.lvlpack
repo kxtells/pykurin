@@ -1,5 +1,5 @@
 [options]
 name:Let's Start
-basedir:levels/
-icon:levels/learn1.png
+basedir:levels/base
+icon:None
 levels2open:3
