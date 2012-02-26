@@ -125,13 +125,13 @@ BASIC_SPRITES.append(stick)
 level_list = cLevelList()
 
 levels_menu = cMenu(level_list.get_levelnames(),0,black,red)
-levels_menu.set_background("backgrounds/squared_paper_title.png")
+levels_menu.set_background("backgrounds/squared_paper_lsel.png")
 levels_menu.background_scroll = True
 
 packlist = cLevelList()
 packlist.load_packdir('levelpacks')
 packs_menu = cMenu(packlist.get_packnames(),0,black,red)
-packs_menu.set_background("backgrounds/squared_paper_title.png")
+packs_menu.set_background("backgrounds/squared_paper_psel.png")
 packs_menu.background_scroll = True
 
 
@@ -325,9 +325,9 @@ def pack_menu_events(event):
 # MAIN ENTRANCE FOR EVENT HANDLING 
 #
 def event_handler(event):
-        """ 
-                Different handlers for different events in different status
-        	Check cStatus class for status definitions
+	""" 
+		Different handlers for different events in different status
+		Check cStatus class for status definitions
 	"""
 	if event.type == pygame.QUIT: pygame.quit();sys.exit()
 
@@ -970,7 +970,7 @@ def level_select_menu():
 			sy = levels_menu.current * increment_px_y
 			window.blit(levels_menu.background,levels_menu.background.get_rect().move(0,-sy))
 
-		y = 285 - (levels_menu.current * increment_px_y)
+		y = 228 - (levels_menu.current * increment_px_y)
 		x = 150
 		color = yellow
 
@@ -999,7 +999,7 @@ def pack_select_menu():
 			sy = packs_menu.current * increment_px_y
 			window.blit(packs_menu.background,packs_menu.background.get_rect().move(0,-sy))
 
-		y = 285 - (packs_menu.current * increment_px_y)
+		y = 228 - (packs_menu.current * increment_px_y)
 		x = 150
 		color = yellow
 
