@@ -6,6 +6,7 @@ class cSettings:
 	fullscreen = None
 	settings_file = "db/settings.set"
 	loaded = False
+	cleared_levels_uuid_list = []
 
 	#def __init__(self,file):
 		
@@ -30,6 +31,17 @@ class cSettings:
 		self.fullscreen = newbool
 		self.save_settings_file()
 
+	def total_levels_cleared(self):
+		return len(self.cleared_levels_uuid_list)
+
+	def add_cleared_level(self,uuid):
+		"""
+			Adds a levels to the cleared list if is not already there
+		"""
+		if not uuid in self.cleared_levels_uuid_list:
+			self.cleared_levels_uuid_list.append(uuid)
+			self.save_settings_file()
+
 	def load_settings_file(self):
 		"""
 			Loads the settings file and
@@ -42,6 +54,7 @@ class cSettings:
 			db = shelve.open(self.settings_file)
 			self.username = db["username"]
 			self.fullscreen = db["fullscreen"]
+			self.cleared_levels_uuid_list = db["clearedlevelslist"]
 			db.close()
 			self.loaded = True
 		except:
@@ -55,6 +68,7 @@ class cSettings:
 		db = shelve.open(self.settings_file)
 		db["username"] = self.username
 		db["fullscreen"] = self.fullscreen
+		db["clearedlevelslist"] = self.cleared_levels_uuid_list
 		db.close()
 
 
