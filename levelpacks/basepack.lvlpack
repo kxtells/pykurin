@@ -1,0 +1,5 @@
+[options]
+name:Let's Start
+basedir:levels/
+icon:levels/learn1.png
+levels2open:3
