@@ -19,6 +19,7 @@ class cLevelList:
 		"""	
 		del self.levelfiles[:]
 		del self.levelnames[:]
+		del self.levelsuuid[:]		
 
 		for infile in glob.glob( os.path.join(path, '*.prop') ):
 			self.levelfiles.append(infile)
