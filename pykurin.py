@@ -330,6 +330,9 @@ def event_handler(event):
         	Check cStatus class for status definitions
 	"""
 	if event.type == pygame.QUIT: pygame.quit();sys.exit()
+
+	#if transition ongoing do not listen the events
+	if TRANSITION.isActive(): return 
         
 	#Gaming
 	if status.GAME_STAT == cStatus._STAT_GAMING:
