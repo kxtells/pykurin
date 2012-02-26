@@ -9,6 +9,7 @@ class cLevelList:
 	packfiles = []
 	packnames = []
 	packdirs = []
+	packscoretoopen = []
 
 
 	def load_leveldir(self,path):
@@ -41,6 +42,7 @@ class cLevelList:
 		for infile in self.packfiles:
 			self.packnames.append(self.get_specific_option(infile,'name'))
 			self.packdirs.append(self.get_specific_option(infile,'basedir'))
+			self.packscoretoopen.append(self.get_specific_option(infile,'levels2open'))
 				
 	def get_level_name_from_file(self,path):
 		parser = SafeConfigParser()
@@ -61,3 +63,6 @@ class cLevelList:
 
 	def get_pack_basedir(self,id):
 		return self.packdirs[id]
+
+	def isPackOpen(self,id):
+		return self.packscoretoopen[id] > 0
