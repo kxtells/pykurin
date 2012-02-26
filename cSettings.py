@@ -34,6 +34,9 @@ class cSettings:
 	def total_levels_cleared(self):
 		return len(self.cleared_levels_uuid_list)
 
+	def isLevelCompleted(self,uuid):
+		return uuid in self.cleared_levels_uuid_list
+
 	def add_cleared_level(self,uuid):
 		"""
 			Adds a levels to the cleared list if is not already there

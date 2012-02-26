@@ -5,6 +5,7 @@ from ConfigParser import SafeConfigParser
 class cLevelList:
 	levelfiles = []
 	levelnames = []
+	levelsuuid = []
 
 	packfiles = []
 	packnames = []
@@ -26,6 +27,7 @@ class cLevelList:
 		
 		for infile in self.levelfiles:
 			self.levelnames.append(self.get_level_name_from_file(infile))
+			self.levelsuuid.append(self.get_specific_option(infile,'uuid'))
 	
 	def load_packdir(self,path):
 		"""
@@ -66,3 +68,9 @@ class cLevelList:
 
 	def isPackOpen(self,id,total):
 		return self.packscoretoopen[id] <= total
+
+	def level_exists(self,lnum):
+		return lnum>0 and lnum < len(self.levelfiles)
+
+	def level_uuid(self,lnum):
+		return self.levelsuuid[lnum]
