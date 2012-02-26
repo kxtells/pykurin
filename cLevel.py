@@ -16,27 +16,27 @@ class cLevel:
 		parser.read(file)
 
 		self.name 	= parser.get('options','name')
-		self.startx 	= int(parser.get('options','startx'))-32 #stick is 64 in size
-		self.starty 	= int(parser.get('options','starty'))-32
-		self.imgcol 	= pygame.image.load(parser.get('options','collision')).convert_alpha();
+		self.startx = int(parser.get('options','startx'))-32 #stick is 64 in size
+		self.starty = int(parser.get('options','starty'))-32
+		self.imgcol	= pygame.image.load(parser.get('options','collision')).convert_alpha();
 		self.image 	= pygame.image.load(parser.get('options','background')).convert_alpha();
 		self.bg 	= pygame.image.load(parser.get('options','background2')).convert_alpha();
-		self.mask       = pygame.mask.from_surface(self.imgcol);
+		self.mask   = pygame.mask.from_surface(self.imgcol);
 		self.rect	= self.image.get_rect();
-		self.stick      = parser.get('options','stick')
+		self.stick  = parser.get('options','stick')
 		self.uuid	= parser.get('options','uuid')
 
-                #Load the Goal sprite
-                gx = int(parser.get('options','endx'))
-                gy = int(parser.get('options','endy'))
+		#Load the Goal sprite
+		gx = int(parser.get('options','endx'))
+		gy = int(parser.get('options','endy'))
 		goal_images     =  BF.load_and_slice_sprite(100,100,'goal.png');
-                self.goal_sprite=  cAnimSprite(goal_images,5)
-                self.goal_sprite.move(gx,gy)
+		self.goal_sprite=  cAnimSprite(goal_images,5)
+		self.goal_sprite.move(gx,gy)
                 
 		#ITEMS LOADING
 		bouncers	=  self.retrieve_bouncer_list(parser)
 		recovers	=  self.retrieve_recover_list(parser)
-		self.items		=  []
+		self.items	=  []
 		self.items += bouncers
 		self.items += recovers
 
@@ -73,6 +73,7 @@ class cLevel:
                 """
                         Check if a given stick collides with one of the
                         level walls
+                        Returns Boolean + x,y of colision point
                 """
 		i,j = 0,0
 		try:
@@ -87,6 +88,25 @@ class cLevel:
 			pass
 
 		return False,i,j
+
+	def stick_collides_mask(self,stick):
+                """
+                        Check if a given stick collides with one of the
+                        level walls
+                """
+		i,j = 0,0
+		try:
+			tmask = pygame.mask.from_surface(self.imgcol.subsurface(stick.rect))
+
+                	col = stick.mask.overlap(tmask,(0,0))
+                
+                	if col == None: return False,0,0
+                	else: return True,col[0]+stick.rect.x,col[1]+stick.rect.y
+		
+		except: 
+			pass
+
+		return False,i,j		
 
 	def stick_in_goal(self,stick):
                 """
@@ -205,7 +225,6 @@ class cLevel:
 
 		self.records = dbrecords
 		self.player_record_index = user_index
-		print user_index
 		return dbrecords,user_index
 
 	def load_records(self):
@@ -222,5 +241,10 @@ class cLevel:
 		self.records = dbrecords
 
 		return dbrecords
+
+
+
+	def get_uuid(self):
+		return self.uuid
 
 
