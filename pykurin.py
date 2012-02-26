@@ -445,15 +445,18 @@ def game_over_menu_selection():
 
 #Level Menu Selection Function
 def level_menu_selection():
-        load_level(levels_menu.current)
-        status.set_game_status(cStatus._STAT_GAMING)
-        TRANSITION.setActive()
+	load_level(levels_menu.current)
+	status.set_game_status(cStatus._STAT_GAMING)
+	TRANSITION.setActive()
 
 #Level Menu Selection Function
 def pack_menu_selection():
-        load_levellist_with_pack(packs_menu.current)
-        status.set_game_status(cStatus._STAT_LEVELSEL)
-        TRANSITION.setActive()        
+	if packlist.isPackOpen(packs_menu.current,settings.total_levels_cleared()):
+		load_levellist_with_pack(packs_menu.current)
+		status.set_game_status(cStatus._STAT_LEVELSEL)
+		TRANSITION.setActive()
+	else:
+		print "pack not opened yet"
 
 #Pause Menu selection Function
 def pause_menu_selection():
@@ -983,8 +986,16 @@ def pack_select_menu():
 		color = yellow
 
 		for index,me in enumerate(packs_menu.options):
-			if packs_menu.current == index: color = packs_menu.select_color
-			else: color = packs_menu.color
+			if packs_menu.current == index: 
+					if packlist.isPackOpen(packs_menu.current,settings.total_levels_cleared()):
+						color = packs_menu.select_color
+					else:
+						color = dimred
+			else:
+				if not packlist.isPackOpen(index,settings.total_levels_cleared()):
+					color = gray
+				else:
+					color = packs_menu.color
 
 			render_font = FONT.render(me, 1, color) 
 			window.blit(render_font, (x, y))
