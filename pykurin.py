@@ -123,7 +123,6 @@ BASIC_SPRITES.append(stick)
 # Level Selection Menu
 #level_list = cLevelList("levels/training")
 level_list = cLevelList()
-level_list.load_leveldir('levels')
 
 levels_menu = cMenu(level_list.get_levelnames(),0,black,red)
 levels_menu.set_background("backgrounds/squared_paper_title.png")
@@ -239,14 +238,17 @@ if settings.get_fullscreen(): set_fullscreen()
 def key_debug_actions(event):
 #the global var collision may be modified
 
-        if event.key == pygame.K_F1:
-                if status._DEBUG_COLLISION: status._DEBUG_COLLISION = False
-                else: status._DEBUG_COLLISION = True
-        elif event.key == pygame.K_F2:
-                if status._DEBUG_DEATH: status._DEBUG_DEATH = False
-                else: status._DEBUG_DEATH = True
-        elif event.key == pygame.K_f:
+	if event.key == pygame.K_F1:
+		if status._DEBUG_COLLISION: status._DEBUG_COLLISION = False
+		else: status._DEBUG_COLLISION = True
+	elif event.key == pygame.K_F2:
+		if status._DEBUG_DEATH: status._DEBUG_DEATH = False
+		else: status._DEBUG_DEATH = True
+	elif event.key == pygame.K_f:
 		stick.flip_rotation()
+	elif event.key == pygame.K_F12:
+		print level_list.levelfiles
+		print level_list.levelsuuid
 
 #Main Key Handler For the GAMING STATUS
 def key_handler(event):
@@ -401,7 +403,6 @@ def load_levellist_with_pack(pack_num):
 	basedir = packlist.get_pack_basedir(pack_num)
 	#levels_menu references to level list so just modify level list
 	#and set level_menu current to 0
-	level_list = cLevelList()
 	level_list.load_leveldir(basedir)
 	levels_menu.set_current(0)
 	
