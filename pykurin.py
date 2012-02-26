@@ -616,6 +616,7 @@ def debug_onscreen(colides):
         stickinvincib   = myfont.render("invincib:"+str(status.invincible), 1, red)
         fps             = myfont.render("FPS:"+str(clock.get_fps()),1,red)
         elapsed_time    = myfont.render("TIME:"+timestr,1,red)
+        levels_cleared  = myfont.render("LEVELS:"+str(settings.total_levels_cleared()),1,red)
         
         # put the label objects on the screen
         window.blit(title, (0, 0))
@@ -624,6 +625,7 @@ def debug_onscreen(colides):
         window.blit(stickinvincib, (0, 60))
         window.blit(fps, (0, 80))
         window.blit(elapsed_time, (0, 100))
+        window.blit(levels_cleared, (0, 120))
 
         if status._DEBUG_COLLISION == True:
                 colisionOnOff   = myfont.render("COLLISION OFF",1,red)
@@ -631,6 +633,7 @@ def debug_onscreen(colides):
         if status._DEBUG_DEATH == True:
                 deathOnOff      = myfont.render("DEATH OFF",1,red)
                 window.blit(deathOnOff, (400, 20))
+
 
 def draw_transition():
 	TRANSITION.draw_transition()
@@ -1019,6 +1022,7 @@ def playing_screen():
 
 
 def finish_level():
+	settings.add_cleared_level(status.level.get_uuid())
 	time = status.get_elapsed_time()
 	status.set_game_status(cStatus._STAT_GOAL)
 	records = status.level.save_record(settings.get_username(),time)
@@ -1042,9 +1046,6 @@ def main():
 		for event in pygame.event.get(): event_handler(event)
 		window.fill(white)
 
-		
-		
-
 		#Playing Level
 		if status.GAME_STAT == cStatus._STAT_GAMING:
 
@@ -1063,7 +1064,7 @@ def main():
 
 			monster_logic()
 			playing_screen()                        
-			#debug_onscreen(colision)
+			debug_onscreen(colision)
 			#Unset invincibility when needed
 			status.unset_invincible_by_time()
 
