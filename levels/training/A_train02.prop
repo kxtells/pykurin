@@ -1,7 +1,7 @@
 [options]
 name:0- Training Curves
-collision:levels/learn2col.png
-background:levels/learn2.png
+collision:levels/training/learn2col.png
+background:levels/training/learn2.png
 background2:backgrounds/wood.jpg
 startx:147
 starty:123

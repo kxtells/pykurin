@@ -1,7 +1,7 @@
 [options]
 name:0- Training One
-collision:levels/learn1col.png
-background:levels/learn1.png
+collision:levels/training/learn1col.png
+background:levels/training/learn1.png
 background2:backgrounds/wood.jpg
 startx:288
 starty:171

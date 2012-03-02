@@ -1,7 +1,7 @@
 [options]
 name:0- Train Using Holes!
-collision:levels/learn3col.png
-background:levels/learn3.png
+collision:levels/training/learn3col.png
+background:levels/training/learn3.png
 background2:backgrounds/wood.jpg
 startx:488
 starty:345
