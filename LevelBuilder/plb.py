@@ -128,6 +128,18 @@ def draw_image():
 	if DC.image != None:
 		window.blit(DC.image,DC.image.get_rect().move(pad_x,MB.get_height()+pad_y))
 
+def draw_origin():
+	"""
+		Draw a cross into the origin
+	"""
+	linesize = 5
+	p11 = pad_x,pad_y-linesize+MB.get_height()
+	p12 = pad_x,pad_y+linesize+MB.get_height()
+	p21 = pad_x-linesize,pad_y + MB.get_height()
+	p22 = pad_x+linesize,pad_y + MB.get_height()
+	pygame.draw.line(window, red, p11,p12)
+	pygame.draw.line(window, red, p21,p22)
+
 def draw_subbar():
 	"""
 		Draws the little subbar on the bottom of the screen
@@ -492,6 +504,8 @@ def main():
 		draw_image()
 		draw_objects()
 		draw_selection()
+		draw_origin()
+				
 		draw_menu()
 		draw_subbar()
 		pygame.display.flip()
