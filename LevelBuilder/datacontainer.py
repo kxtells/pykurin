@@ -13,7 +13,9 @@ class datacontainer:
 	#
 	#
 	#
+	base_pykurin_directory = None
 	image = None
+	bgimage = None
 	bashers = []
 	bouncers = []
 	lives = []
@@ -37,13 +39,16 @@ class datacontainer:
 	#working data
 	last_error = None
 	
+	def set_base_dir(self,path):
+		self.base_pykurin_directory = path
+
 	def set_image(self,imagepath):
 		self.image = image.load(imagepath)
-		
-		#store only the last part
-		#part = imagepath.rpartition('/')
-		#self.img_filename = "levels/"+part[-1]
 		self.img_filename = imagepath
+	
+	def set_bg_image(self,imagepath):
+		self.bgimage = image.load(imagepath)
+		self.background_filename = imagepath		
 	
 	def set_file_prop_path(self,text):
 		self.file_prop_path = text
@@ -63,14 +68,14 @@ class datacontainer:
 	def get_title(self):
 		return self.title
 
+	def get_basepath(self):
+		return self.base_pykurin_directory
+
 	def set_title(self,text):
 		self.title = text
 
 	def set_col_image(self,imagepath):
 		self.colimg_filename = imagepath
-
-	def set_bg_image(self,imagepath):
-		self.background_filename = imagepath
 
 	def set_uuid(self,uuid):
 		self.uuid = uuid
@@ -223,8 +228,8 @@ class datacontainer:
 	#
 	#
 	def load_from_file(self,full_path,xpadding=0,ypadding=64):
-		#clear_everything()		
-		print "a"
+		#clear_everything()
+		print "LOAd"	
 		parser = SafeConfigParser()
 		parser.read(full_path)
 
@@ -240,12 +245,15 @@ class datacontainer:
 		uuid = parser.get('options','uuid')
 		self.uuid = uuid
 
-		#print imagefile
 		part = full_path.rpartition('/')
 		part2 = imagefile.rpartition('/')
 
 		imagepath =  part[0]+"/"+part2[2]
+		bgimagepath = self.base_pykurin_directory+"/"+self.background_filename
+		print bgimagepath
 		self.set_image(imagepath)
+		self.set_bg_image(bgimagepath)
+
 
 		#Fill the things
 		self.retrieve_bouncer_list(parser,xpadding,ypadding)

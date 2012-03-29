@@ -26,8 +26,9 @@ SB = menubar.subbar()
 DC = datacontainer.datacontainer()
 TKroot = Tk()
 TKroot.withdraw()
-
 pygame.init()
+
+
 
 #Map screen movement
 move_screen = False
@@ -125,8 +126,11 @@ def draw_image():
 	"""
 		Draws the level image
 	"""
+	if DC.bgimage != None:
+		window.blit(DC.bgimage,DC.bgimage.get_rect().move(0,MB.get_height()))		
 	if DC.image != None:
 		window.blit(DC.image,DC.image.get_rect().move(pad_x,MB.get_height()+pad_y))
+
 
 def draw_origin():
 	"""
@@ -232,10 +236,17 @@ def draw_selection():
                                                                
 def open_file_chooser(naming,ftype="*"):
 	try:
-		somefile = tkFileDialog.askopenfilename(filetypes=[(naming, ftype)],multiple=False)
+		somefile = tkFileDialog.askopenfilename(filetypes=[(naming, ftype)],initialdir=DC.get_basepath(),multiple=False)
 		return somefile
 	except:
 		return None
+
+def open_dir_chooser(naming,ftype="*"):
+	try:
+		somedir = tkFileDialog.askdirectory(title=naming,mustexist=True)
+		return somedir
+	except:
+		return None		
 
 def save_file_chooser(naming,ftype=".prop"):
 	try:
@@ -255,6 +266,10 @@ def popup_error_message(title,text):
 
 def popup_message_yesnocancel(title,text):
 	return tkMessageBox.askyesnocancel(title,text)
+
+def toolbar():
+	return
+
 		
 
 ############################################
@@ -491,6 +506,11 @@ It is just a helper utility, don't expect to be beautiful or bug free in Exotic 
 
 def main():
 	#show_disclaimer() #Add this on publication
+	while DC.base_pykurin_directory == None:
+		bdir = open_dir_chooser("Choose Pykurin Base Directory")
+		DC.set_base_dir(bdir)
+		
+
 	while True: 
 		window.fill(gray)
 		for event in pygame.event.get(): 
@@ -505,7 +525,7 @@ def main():
 		draw_objects()
 		draw_selection()
 		draw_origin()
-				
+
 		draw_menu()
 		draw_subbar()
 		pygame.display.flip()
