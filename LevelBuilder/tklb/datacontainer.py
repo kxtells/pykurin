@@ -300,7 +300,6 @@ class datacontainer:
 
         imagepath =  part[0]+"/"+part2[2]
         bgimagepath = self.base_pykurin_directory+"/"+self.background_filename
-        print bgimagepath
         self.set_image(imagepath)
         self.set_bg_image(bgimagepath)
 
