@@ -91,30 +91,69 @@ class AppUI(Frame):
         self.canvas.bind("<B2-Motion>", self.pan_motion)
         self.canvas.bind("<Button-2>", self.pan_start)
 
+        self.canvas.bind("<Button-1>", self.canvas_left_click)
+        self.canvas.bind("<B1-Motion>", self.canvas_left_click_motion)
+        self.canvas.bind("<ButtonRelease-1>", self.canvas_left_click_release)
+
         #PAN
         self.panx  = 0
         self.pany  = 0
         self.ppx   = None
         self.ppy   = None
 
+        #Selected item
+        self.sitem = None
+
+        #ID dictionary between GUI and datacontainer
+        self.dataids = {}
+
+    #
+    # Panning
+    #
     def mouse_motion(self, event):
-        self.statusbar.set("%s : %s" % (event.x + self.panx, event.y + self.pany))
+        self.statusbar.set("%s : %s" % (event.x - self.panx, event.y - self.pany))
 
     def pan_start(self, event):
         self.ppx = event.x
         self.ppy = event.y
 
     def pan_motion(self, event):
+        canvas = self.canvas
         px = self.ppx - event.x
         py = self.ppy - event.y
 
         self.panx -= px
         self.pany -= py
 
+        #Pan the objects tagged as PAN.
+        for item in canvas.find_withtag("pan"):
+            canvas.move(item, -px, -py)
+
         self.pan_start(event)
 
-        self._create_canvas_with_DC()
 
+    #
+    # Item selection
+    #
+    def canvas_left_click(self, event):
+        x = event.x
+        y = event.y
+        c = self.canvas
+        items = self.canvas.find_overlapping(x-2,y-2,x+2,y+2)
+
+        #Just interested in the movable items
+        pitems = []
+        for i in items:
+            if "select" in c.gettags(i):
+                pitems.append(i)
+
+        self.sitem = pitems[0]
+
+    def canvas_left_click_motion(self, event):
+        print event
+
+    def canvas_left_click_release(self, event):
+        print event
 
     #
     # LEVEL LOADING AND SAVING
@@ -143,36 +182,70 @@ class AppUI(Frame):
         pass
 
     def f_exit(self):
-        pass
+        self.master.destroy()
 
     def _create_canvas_with_DC(self):
-        self.canvas.delete(ALL)
-        px = self.panx
-        py = self.pany
-        self.canvas.create_image((0,0),
+        """
+            Create a canvas from the DC.
+        """
+        canvas = self.canvas
+        canvas.delete(ALL)
+        self.panx = self.pany = 0
+
+        canvas.create_image((0,0),
                                 image=self.DC.get_bgimage(), anchor=NW)
-        self.canvas.create_image((0+px,0+py),
-                                image=self.DC.get_image(), anchor=NW)
+        canvas.create_image((0,0),
+                            image=self.DC.get_image(), anchor=NW,
+                            tags = ("pan"))
 
         #Filled with pygame RECTS
         for r in self.DC.bouncers:
-            self.canvas.create_image((r.x + px, r.y + py),image=self.DC.get_bouncer_image(), anchor=NW)
+            canvas.create_image((r.x, r.y),
+                                image=self.DC.get_bouncer_image(), anchor=NW,
+                                tags=("select", "move", "bouncer", "delete", "pan"))
 
         for r in self.DC.lives:
-            self.canvas.create_image((r.x + px, r.y + py),image=self.DC.get_live_image(), anchor=NW)
+            canvas.create_image((r.x, r.y),
+                                image=self.DC.get_live_image(), anchor=NW,
+                                tags=("select", "move", "delete", "lives", "pan"))
 
         for r in self.DC.goals:
-            self.canvas.create_image((r.x + px, r.y + py),image=self.DC.get_goal_image(), anchor=NW)
+            canvas.create_image((r.x, r.y),
+                                image=self.DC.get_goal_image(), anchor=NW,
+                                tags=("select", "move", "goal", "pan"))
 
         for r in self.DC.sticks:
-            self.canvas.create_image((r.x + px, r.y + py),image=self.DC.get_stick_image(), anchor=NW)
+            canvas.create_image((r.x, r.y),
+                                image=self.DC.get_stick_image(), anchor=NW,
+                                tags=("select", "move", "stick", "pan")
+                                )
 
         for i,r in enumerate(self.DC.bashers):
             r1 = r
             r2 = self.DC.bashers_end[i]
 
-            self.canvas.create_line(r1.x + r1.w/2 + px, r1.y + r1.h/2 + py, r2.x + px, r2.y + py, arrow=LAST)
-            self.canvas.create_image((r1.x + px,r1.y + py),image=self.DC.get_basher_image(), anchor=NW)
+            arrow_startx = r1.x + r1.w/2
+            arrow_starty = r1.y + r1.h/2
+            arrow_endx   = r2.x
+            arrow_endy   = r2.y
+            canvas.create_line(arrow_startx,
+                               arrow_starty,
+                               arrow_endx,
+                               arrow_endy,
+                               tags = ("pan")
+                               )
+
+            canvas.create_rectangle(arrow_endx-5, arrow_endy-5,
+                                    arrow_endx+5, arrow_endy+5,
+                                    tags=("select", "move", "delete", "basher",
+                                          "pan"))
+            canvas.create_image((r1.x, r1.y),
+                                image=self.DC.get_basher_image(), anchor=NW,
+                                tags=("select", "move", "pan"))
+
+        # Draw the 0,0 cross
+            canvas.create_line(10, 0, -10, 0, fill="red", tags=("pan"))
+            canvas.create_line(0, 10, 0, -10, fill="red", tags=("pan"))
 
 root = Tk()
 
