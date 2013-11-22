@@ -15,17 +15,14 @@ class datacontainer:
     #
     #
     #
-    base_pykurin_directory = None
-    image = None
-    bgimage = None
-    bashers = []
-    bouncers = []
-    lives = []
-    goals = []
-    sticks = []
-    bashers_end = []
 
-    items_pack = [bashers,bouncers,lives,goals,sticks,bashers_end]
+    BASHER      = 0
+    BOUNCER     = 1
+    LIVES       = 2
+    GOALS       = 3
+    STICKS      = 4
+    BASHER_END  = 5
+
     selecteditem = None
 
     #
@@ -44,6 +41,23 @@ class datacontainer:
     def __init__(self):
         """Loads all the needed common images"""
         self.__load_images()
+
+        self.base_pykurin_directory = None
+        self.image = None
+        self.bgimage = None
+        self.bashers = []
+        self.bouncers = []
+        self.lives = []
+        self.goals = []
+        self.sticks = []
+        self.bashers_end = []
+
+        #References to everything
+        self.items = [self.bashers, self.bouncers, self.lives, self.goals, self.sticks, self.bashers_end]
+
+        #LEGACY
+        self.items_pack = [self.bashers,self.bouncers,self.lives,self.goals,self.sticks,self.bashers_end]
+
 
 
     def __load_images(self):
@@ -132,6 +146,15 @@ class datacontainer:
 
     def get_goal_image(self):
         return self.images["goal"]
+
+    #
+    # Object Handling
+    #
+    def remove_item(self, itype, index):
+        del self.items[itype][index]
+        #A basher needs to remove also its end
+        if itype == self.BASHER:
+            del self.items[self.BASHER_END][index]
 
     def add_item(self,ident,mx,my):
         #if ident==0:
