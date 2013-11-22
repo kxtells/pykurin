@@ -110,6 +110,8 @@ class AppUI(Frame):
             #clear_paddings()
             self.DC.load_from_file(filepath)
 
+        self._update_canvas_with_DC()
+
     def f_save_level(self):
         pass
 
@@ -118,6 +120,26 @@ class AppUI(Frame):
 
     def f_exit(self):
         pass
+
+    def _update_canvas_with_DC(self):
+        self.canvas.create_image((0,0),image=self.DC.get_bgimage(), anchor=NW)
+        self.canvas.create_image((0,0),image=self.DC.get_image(), anchor=NW)
+
+        #Filled with pygame RECTS
+        for r in self.DC.bouncers:
+            self.canvas.create_image((r.x,r.y),image=self.DC.get_bouncer_image(), anchor=NW)
+
+        for r in self.DC.bashers:
+            self.canvas.create_image((r.x,r.y),image=self.DC.get_basher_image(), anchor=NW)
+
+        for r in self.DC.lives:
+            self.canvas.create_image((r.x,r.y),image=self.DC.get_live_image(), anchor=NW)
+
+        for r in self.DC.goals:
+            self.canvas.create_image((r.x,r.y),image=self.DC.get_goal_image(), anchor=NW)
+
+        for r in self.DC.sticks:
+            self.canvas.create_image((r.x,r.y),image=self.DC.get_stick_image(), anchor=NW)
 
 root = Tk()
 
