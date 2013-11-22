@@ -1,6 +1,7 @@
 from Tkinter import *
 import datacontainer
 import tkFileDialog, tkSimpleDialog, tkMessageBox
+from tksimplestatusbar import StatusBar
 
 import os
 
@@ -19,7 +20,6 @@ def open_dir_chooser(naming,ftype="*"):
 		return somedir
 	except:
 		return None
-
 
 def popup_message(title,text):
     return tkMessageBox.showinfo(title,text)
@@ -68,11 +68,13 @@ class AppUI(Frame):
         menu.add_command(label="Lifeup")
         menu.add_command(label="Basher")
 
+        # Status bar with the x y information
+        self.statusbar = StatusBar(self.master)
+        self.statusbar.pack(side=BOTTOM, fill=X)
+
         while self.DC.base_pykurin_directory == None:
             bdir = open_dir_chooser("Choose Pykurin Base Directory")
             self.DC.set_base_dir(bdir)
-
-
 
         try:
             self.master.config(menu=self.menubar)
@@ -87,9 +89,8 @@ class AppUI(Frame):
         #Bind Mouseover on Canvas
         self.canvas.bind("<Motion>", self.mouse_motion)
 
-
     def mouse_motion(self, event):
-        print "Mouse at", event.x, event.y
+        self.statusbar.set("%s : %s" % (event.x, event.y))
 
     #
     # LEVEL LOADING AND SAVING
