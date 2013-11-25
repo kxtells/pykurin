@@ -57,8 +57,8 @@ class PykurinLevelEditorUI(Frame):
         self.DC = datacontainer.datacontainer()
         Frame.__init__(self, master, relief=SUNKEN, bd=2)
 
+        #The Menu bar
         self.menubar = Menu(self)
-
         menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="File", menu=menu)
         menu.add_command(label="New Level",     command=self.f_new_level)
@@ -77,17 +77,30 @@ class PykurinLevelEditorUI(Frame):
         menu.add_command(label="Edit")
 
         menu = Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label="Objects", menu=menu)
-        menu.add_command(label="Start")
-        menu.add_command(label="Finish")
-        menu.add_command(label="Bouncer")
-        menu.add_command(label="Lifeup")
-        menu.add_command(label="Basher")
-
-        menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Test", menu=menu)
         menu.add_command(label="Run Level", command=self.run_level)
 
+        # The toolbar to create things
+        toolbar = Frame(self.master)
+
+        self.buttons = []
+
+        b = Button(toolbar, text="Bouncer", width=6, command=lambda: self.button(self.DC.BOUNCER,0))
+        b.pack(side=LEFT, padx=2, pady=2)
+        self.buttons.append(b)
+
+        b = Button(toolbar, text="lifeup", width=6, command=lambda: self.button(self.DC.LIVES,1))
+        b.pack(side=LEFT, padx=2, pady=2)
+        self.buttons.append(b)
+
+        b = Button(toolbar, text="basher", width=6, command=lambda: self.button(self.DC.BASHER,2))
+        b.pack(side=LEFT, padx=2, pady=2)
+        self.buttons.append(b)
+
+        #Contains the currently pressed button. Not the index but the type of the item to create
+        #DC.BASHER (for example)
+        self.buttonpressed = None
+        toolbar.pack(side=TOP, fill=X)
 
 
         # Status bar with the x y information
@@ -144,6 +157,24 @@ class PykurinLevelEditorUI(Frame):
     def isBasherEnd(self, itemid):
         return self.get_item_type(itemid) == self.DC.BASHER_END
 
+    #
+    # Toolbar selection handling
+    #
+    def unsunken_all(self):
+        for b in self.buttons:
+            b.config(relief=RAISED)
+
+    def isButtonPressed(self):
+        return self.buttonpressed != None
+
+    def button(self, code, buttonid):
+        self.unsunken_all()
+        if self.buttonpressed == code:
+            self.buttons[buttonid].config(relief=RAISED)
+            self.buttonpressed = None
+        else:
+            self.buttons[buttonid].config(relief=SUNKEN)
+            self.buttonpressed = code
 
     #
     # Running a level
@@ -181,9 +212,19 @@ class PykurinLevelEditorUI(Frame):
         self.pan_start(event)
 
     #
-    # Item selection
+    # Item selection and creating
     #
     def canvas_left_click(self, event):
+        """ May select/unselect an Item.
+            If any creation tool is active may create one of the selected items
+
+        """
+        if self.isButtonPressed():
+            self.adding_item_to_canvas(event)
+        else:
+            self.selecting_items(event)
+
+    def selecting_items(self, event):
         #Once clicked, give keyboard focus to canvas (in case it wasn't set)
         self.canvas.focus_set()
 
@@ -196,6 +237,15 @@ class PykurinLevelEditorUI(Frame):
 
         #Create a new selection
         self.select_item(x,y)
+
+
+    def adding_item_to_canvas(self, event):
+        if self.buttonpressed == self.DC.BASHER:
+            self._create_basher(event.x, event.y, new=True)
+        elif self.buttonpressed == self.DC.BOUNCER:
+            self._create_bouncer(event.x, event.y, new=True)
+        elif self.buttonpressed == self.DC.LIVES:
+            self._create_lives(event.x, event.y, new=True)
 
     def select_item(self, x, y):
         """Selects an item, setting the sitem attribute"""
@@ -213,8 +263,6 @@ class PykurinLevelEditorUI(Frame):
         if pitems:
             self.sitem = pitems[0]
 
-        print self.sitem, "Is now selected"
-
         if self.sitem:
             c.create_rectangle(c.bbox(self.sitem), tags=("pan","selection"),
                                                    outline="red", width=2)
@@ -228,7 +276,10 @@ class PykurinLevelEditorUI(Frame):
             return
 
         #If item selected Move that item
-        self.canvas.coords(self.sitem, (event.x, event.y))
+        bbox  = self.canvas.bbox(self.sitem)
+        w     = abs(bbox[0] - bbox[2])
+        h     = abs(bbox[1] - bbox[3])
+        self.canvas.coords(self.sitem, (event.x -w/2, event.y -h/2))
 
         #Move the selection
         for item in self.canvas.find_withtag("selection"):
@@ -241,10 +292,25 @@ class PykurinLevelEditorUI(Frame):
             basher_id = self.dataids[self.sitem][2]
             self.update_basher_arrow(basher_id)
 
+    def unpan_bbox(self, bbox):
+        """Return a bbox without the panning movements"""
+        return (bbox[0] - self.panx, bbox[1] - self.pany, bbox[2] - self.panx, bbox[3] - self.pany)
+
     def canvas_left_click_release(self, event):
-        print "lc release"
+        if not self.sitem:
+            return
+
+        itype = self.dataids[self.sitem][0]
+        iid   = self.dataids[self.sitem][1]
+        bbox  = self.unpan_bbox(self.canvas.bbox(self.sitem))
+
+        self.DC.move_item(itype, iid, bbox[0], bbox[1])
 
     def update_basher_arrow(self, basherid):
+        """Update the arrow representing the path of the BASHER.
+            This needs updating everytime the basher or basher end changes
+            position
+        """
         basher_line   = self.dataids[basherid][3]
         basher_end    = self.dataids[basherid][2]
         basher_coords = self.canvas.bbox(basherid)
@@ -262,30 +328,13 @@ class PykurinLevelEditorUI(Frame):
                           end_coords[1]    + eheight / 2
                         )
 
-        print lbbox
         self.canvas.coords(basher_line, lbbox)
-
-
-
-#        arrow_startx = r1.x + r1.w/2
-#        arrow_starty = r1.y + r1.h/2
-#        arrow_endx   = r2.x + 5
-#        arrow_endy   = r2.y + 5
-#
-#        idl = canvas.create_line(arrow_startx,
-#                           arrow_starty,
-#                           arrow_endx,
-#                           arrow_endy,
-#                           tags = ("pan")
-#                           )
-#
-#
-#        self.canvas.coords(basher_line, bcoords)
 
     #
     # Remove items
     #
     def delete_item(self, event):
+        """Deletes the current selected item"""
         if not self.sitem:
             print "No item selected"
             return
@@ -380,6 +429,74 @@ class PykurinLevelEditorUI(Frame):
     def f_exit(self):
         self.master.destroy()
 
+    #
+    # Item Creation
+    #
+    def _create_bouncer(self, x, y, dcid=None, new=False):
+        canvas = self.canvas
+        dc     = self.DC
+        if new:
+            dcid = dc.add_item(self.DC.BOUNCER, x, y)
+
+        id = canvas.create_image((x, y),
+                            image=dc.get_bouncer_image(), anchor=NW,
+                            tags=("select", "move", "bouncer", "delete", "pan"))
+
+        self.dataids[id] = (dc.BOUNCER, dcid)
+
+    def _create_lives(self, x, y, dcid=None, new=False):
+        canvas = self.canvas
+        dc     = self.DC
+
+        if new:
+            dcid = dc.add_item(self.DC.LIVES, x, y)
+
+
+        id = canvas.create_image((x, y),
+                            image=dc.get_live_image(), anchor=NW,
+                            tags=("select", "move", "delete", "lives", "pan"))
+
+        self.dataids[id] = (dc.LIVES, dcid)
+
+
+    def _create_basher(self, x, y, rx=None, ry=None, dcid=None, new=False):
+        """
+            Create a basher to add to the canvas and Datacontainer.
+            By default the basher is only created in the canvas, to be
+            saved in the datacontainer the new flag has to be set to true
+        """
+        canvas = self.canvas
+        dc     = self.DC
+
+        if not rx:
+            rx = x + 100
+        if not ry:
+            ry = y
+
+        #If its new, it can't have an dcid. Create and get the dcid first
+        if new:
+            dcid = dc.add_item(self.DC.BASHER, x, y)
+            dc.add_item(self.DC.BASHER_END, rx, ry)
+
+
+        idl = canvas.create_line(0,0,0,0,tags = ("pan"))
+
+        ids = canvas.create_image((rx, ry),
+                            image=dc.get_basher_goto_image(), anchor=NW,
+                            tags=("select", "move", "pan", "basher"))
+
+        idb = canvas.create_image((x, y),
+                            image=dc.get_basher_image(), anchor=NW,
+                            tags=("select", "move", "pan"))
+
+
+        self.dataids[idb] = (dc.BASHER, dcid, ids, idl)
+        self.dataids[ids] = (dc.BASHER_END, dcid, idb, idl)
+        self.dataids[idl] = (-1, dcid)
+
+        self.update_basher_arrow(idb)
+
+
     def _create_canvas_with_DC(self):
         """
             Create a canvas from the DC.
@@ -397,18 +514,10 @@ class PykurinLevelEditorUI(Frame):
 
         #Filled with pygame RECTS
         for idx,r in enumerate(dc.bouncers):
-            id = canvas.create_image((r.x, r.y),
-                                image=dc.get_bouncer_image(), anchor=NW,
-                                tags=("select", "move", "bouncer", "delete", "pan"))
-
-            self.dataids[id] = (dc.BOUNCER, idx)
+            self._create_bouncer(r.x, r.y, dcid=idx)
 
         for idx,r in enumerate(dc.lives):
-            id = canvas.create_image((r.x, r.y),
-                                image=dc.get_live_image(), anchor=NW,
-                                tags=("select", "move", "delete", "lives", "pan"))
-
-            self.dataids[id] = (dc.LIVES, idx)
+            self._create_lives(r.x, r.y, dcid=idx)
 
         for idx,r in enumerate(dc.goals):
             id = canvas.create_image((r.x, r.y),
@@ -423,34 +532,12 @@ class PykurinLevelEditorUI(Frame):
                                 tags=("select", "move", "stick", "pan")
                                 )
 
-            self.dataids[id] = (dc.GOALS, idx)
+            self.dataids[id] = (dc.STICKS, idx)
 
         for idx,r in enumerate(dc.bashers):
             r1 = r
             r2 = dc.bashers_end[idx]
-
-            arrow_startx = r1.x + r1.w/2
-            arrow_starty = r1.y + r1.h/2
-            arrow_endx   = r2.x + 5
-            arrow_endy   = r2.y + 5
-            idl = canvas.create_line(arrow_startx,
-                               arrow_starty,
-                               arrow_endx,
-                               arrow_endy,
-                               tags = ("pan")
-                               )
-
-            ids = canvas.create_image((arrow_endx-5, arrow_endy-5),
-                                image=dc.get_basher_goto_image(), anchor=NW,
-                                tags=("select", "move", "pan", "basher"))
-
-            idb = canvas.create_image((r1.x, r1.y),
-                                image=dc.get_basher_image(), anchor=NW,
-                                tags=("select", "move", "pan"))
-
-            self.dataids[idb] = (dc.BASHER, idx, ids, idl)
-            self.dataids[ids] = (dc.BASHER_END, idx, idb, idl)
-            self.dataids[idl] = (-1, idx)
+            self._create_basher(r1.x, r1.y, rx=r2.x, ry=r2.y, dcid=idx)
 
         # Draw the 0,0 cross
         canvas.create_line(10, 0, -10, 0, fill="red", tags=("pan"))
