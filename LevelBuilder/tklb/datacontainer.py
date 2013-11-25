@@ -400,9 +400,9 @@ class datacontainer:
     # Save to file
     #
     #
-    def save_to_file(self,filepath,xpadding=0,ypadding=64):
-        if len(self.sticks)!=1: return False,"Need a start Stick Position"
-        if len(self.goals)!=1: return False,"Need a GOAL Position"
+    def save_to_file(self,filepath,xpadding=0,ypadding=0):
+        if len(self.sticks)!=1: return False, "Need a start Stick Position"
+        if len(self.goals)!=1: return False, "Need a GOAL Position"
 
         f = open(filepath, 'w')
         f.write("[options]\n");

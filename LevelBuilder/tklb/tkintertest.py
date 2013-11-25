@@ -21,6 +21,13 @@ def open_dir_chooser(naming,ftype="*"):
 	except:
 		return None
 
+def save_file_chooser(naming, ftype=".prop"):
+	try:
+		somefile = tkFileDialog.asksaveasfilename(filetypes=[(naming, ftype)])
+		return somefile
+	except:
+		return None
+
 def popup_message(title,text):
     return tkMessageBox.showinfo(title,text)
 
@@ -263,7 +270,15 @@ class AppUI(Frame):
         pass
 
     def f_save_level_as(self):
-        pass
+        fname = save_file_chooser("Save As")
+        if fname:
+            ret, msg = self.DC.save_to_file(fname)
+            if ret:
+                popup_message("SUCCESS","%s saved" % fname)
+            else:
+                popup_message("ERROR","File %s NOT saved\n %s" % (fname, msg))
+        else:
+            popup_message("ERROR","Invalid Filename %s" % None)
 
     def f_exit(self):
         self.master.destroy()
@@ -319,8 +334,8 @@ class AppUI(Frame):
 
             arrow_startx = r1.x + r1.w/2
             arrow_starty = r1.y + r1.h/2
-            arrow_endx   = r2.x
-            arrow_endy   = r2.y
+            arrow_endx   = r2.x + 5
+            arrow_endy   = r2.y + 5
             idl = canvas.create_line(arrow_startx,
                                arrow_starty,
                                arrow_endx,
@@ -341,8 +356,8 @@ class AppUI(Frame):
             self.dataids[idl] = (-1, idx)
 
         # Draw the 0,0 cross
-            canvas.create_line(10, 0, -10, 0, fill="red", tags=("pan"))
-            canvas.create_line(0, 10, 0, -10, fill="red", tags=("pan"))
+        canvas.create_line(10, 0, -10, 0, fill="red", tags=("pan"))
+        canvas.create_line(0, 10, 0, -10, fill="red", tags=("pan"))
 
 root = Tk()
 
