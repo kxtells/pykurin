@@ -3,10 +3,10 @@ name:7- Something is MOVING!
 collision:levels/base/lvl7col.png
 background:levels/base/lvl7.png
 background2:backgrounds/wood.jpg
-startx:353
-starty:243
-endx:725
-endy:875
+startx:326
+starty:212
+endx:676
+endy:816
 stick:sticks/stick.png
 uuid:0543bad0-3fb9-11e1-b86c-0800200c9a66
 [bouncers]

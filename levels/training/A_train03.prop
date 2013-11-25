@@ -3,10 +3,10 @@ name:0- Train Using Holes!
 collision:levels/training/learn3col.png
 background:levels/training/learn3.png
 background2:backgrounds/wood.jpg
-startx:488
-starty:345
-endx:460
-endy:520
+startx:458
+starty:292
+endx:431
+endy:476
 stick:sticks/stick.png
 uuid:e626e6c0-3ed9-11e1-b86c-0800200c9a66
 [bouncers]

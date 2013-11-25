@@ -3,10 +3,10 @@ name:1 - Welcome Level
 collision:levels/base/lvl1col.png
 background:levels/base/lvl1.png
 background2:backgrounds/wood.jpg
-startx:98
-starty:119
-endx:196
-endy:502
+startx:87
+starty:95
+endx:156
+endy:427
 stick:sticks/stick.png
 uuid:29931bf6-1b61-4690-8b18-93cb50ce2052
 [bouncers]

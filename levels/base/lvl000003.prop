@@ -3,10 +3,10 @@ name:3- You're being watched
 collision:levels/base/lvl3col.png
 background:levels/base/lvl3.png
 background2:backgrounds/wood.jpg
-startx:73
-starty:65
-endx:670
-endy:170
+startx:55
+starty:35
+endx:605
+endy:124
 stick:sticks/stick.png
 uuid:96279d80-3e2b-11e1-b86c-0800200c9a66
 [bouncers]
