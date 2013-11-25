@@ -3,6 +3,8 @@ import datacontainer
 import tkFileDialog, tkSimpleDialog, tkMessageBox
 from tksimplestatusbar import StatusBar
 
+from lbdialogs import tkLevelDialog
+
 import os
 
 #
@@ -74,7 +76,7 @@ class PykurinLevelEditorUI(Frame):
 
         menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Level", menu=menu)
-        menu.add_command(label="Edit")
+        menu.add_command(label="Edit", command=self.e_edit_level_attributes)
 
         menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Test", menu=menu)
@@ -148,6 +150,9 @@ class PykurinLevelEditorUI(Frame):
         #ID dictionary between GUI and datacontainer
         self.dataids = {}
 
+		#Window title
+        self.changeWindowTitle("TK pykurin Level builder")
+
     def get_item_type(self, itemid):
         return self.dataids[itemid][0]
 
@@ -156,6 +161,9 @@ class PykurinLevelEditorUI(Frame):
 
     def isBasherEnd(self, itemid):
         return self.get_item_type(itemid) == self.DC.BASHER_END
+
+    def changeWindowTitle(self, title):
+        self.master.wm_title(title)
 
     #
     # Toolbar selection handling
@@ -388,6 +396,7 @@ class PykurinLevelEditorUI(Frame):
     # LEVEL LOADING AND SAVING
     #
     def f_new_level(self):
+        """ Creates a new level with no file associated to it """
         print "NEW LEVEL"
         pass
 
@@ -429,6 +438,9 @@ class PykurinLevelEditorUI(Frame):
     def f_exit(self):
         self.master.destroy()
 
+
+    def e_edit_level_attributes(self):
+        d = tkLevelDialog(self.master, datacontainer=self.DC)
     #
     # Item Creation
     #
@@ -542,6 +554,7 @@ class PykurinLevelEditorUI(Frame):
         # Draw the 0,0 cross
         canvas.create_line(10, 0, -10, 0, fill="red", tags=("pan"))
         canvas.create_line(0, 10, 0, -10, fill="red", tags=("pan"))
+
 
 root = Tk()
 

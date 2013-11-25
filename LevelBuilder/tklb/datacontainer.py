@@ -2,6 +2,7 @@ from pygame import Rect
 from pygame import image
 from ConfigParser import SafeConfigParser
 import uuid
+import os
 
 from PIL import Image, ImageTk
 
@@ -28,7 +29,6 @@ class datacontainer:
 
     #File Metadata
     colimg_filename = None
-    img_filename = None
     background_filename = None
     title = None
     uuid = None
@@ -43,7 +43,11 @@ class datacontainer:
         self.base_pykurin_directory = None
         self.current_level_filename = None
         self.image = None
+        self.img_filename = None
         self.bgimage = None
+        self.background_filename = None
+        self.colimage = None
+        self.colimg_filename= None
         self.bashers = []
         self.bouncers = []
         self.lives = []
@@ -91,10 +95,27 @@ class datacontainer:
         self.image = ImageTk.PhotoImage(image)
         self.img_filename = imagepath
 
+    def get_image_fname(self):
+        return self.img_filename
+
+    def get_background_fname(self):
+        return self.background_filename
+
+    def get_colision_fname(self):
+        return self.collision_filename
+
+    def get_background_fname(self):
+        return self.background_filename
+
     def set_bg_image(self, imagepath):
         image = Image.open(imagepath)
         self.bgimage= ImageTk.PhotoImage(image)
         self.background_filename = imagepath
+
+    def set_col_image(self,imagepath):
+        image = Image.open(imagepath)
+        self.colimage= ImageTk.PhotoImage(image)
+        self.collision_filename  = imagepath
 
     def set_current_level_filename(self,text):
         self.current_level_filename = text
@@ -126,8 +147,6 @@ class datacontainer:
     def set_title(self,text):
         self.title = text
 
-    def set_col_image(self,imagepath):
-        self.colimg_filename = imagepath
 
     def set_uuid(self,uuid):
         self.uuid = uuid
@@ -278,9 +297,10 @@ class datacontainer:
         part2 = imagefile.rpartition('/')
 
         imagepath =  part[0]+"/"+part2[2]
-        bgimagepath = self.base_pykurin_directory+"/"+self.background_filename
+        colfilename = self.base_pykurin_directory+"/"+colfilename
         self.set_image(imagepath)
-        self.set_bg_image(bgimagepath)
+        self.set_bg_image(os.path.join(self.base_pykurin_directory, self.background_filename))
+        self.set_col_image(os.path.join(self.base_pykurin_directory, colfilename))
 
 
         #Fill the things
