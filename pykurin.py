@@ -28,13 +28,13 @@ FPS = 45
 
 ###########################################################################################
 
-########  ######## ######## #### ##    ## #### ######## ####  #######  ##    ##  ######  
-##     ## ##       ##        ##  ###   ##  ##     ##     ##  ##     ## ###   ## ##    ## 
-##     ## ##       ##        ##  ####  ##  ##     ##     ##  ##     ## ####  ## ##       
-##     ## ######   ######    ##  ## ## ##  ##     ##     ##  ##     ## ## ## ##  ######  
-##     ## ##       ##        ##  ##  ####  ##     ##     ##  ##     ## ##  ####       ## 
-##     ## ##       ##        ##  ##   ###  ##     ##     ##  ##     ## ##   ### ##    ## 
-########  ######## ##       #### ##    ## ####    ##    ####  #######  ##    ##  ######  
+########  ######## ######## #### ##    ## #### ######## ####  #######  ##    ##  ######
+##     ## ##       ##        ##  ###   ##  ##     ##     ##  ##     ## ###   ## ##    ##
+##     ## ##       ##        ##  ####  ##  ##     ##     ##  ##     ## ####  ## ##
+##     ## ######   ######    ##  ## ## ##  ##     ##     ##  ##     ## ## ## ##  ######
+##     ## ##       ##        ##  ##  ####  ##     ##     ##  ##     ## ##  ####       ##
+##     ## ##       ##        ##  ##   ###  ##     ##     ##  ##     ## ##   ### ##    ##
+########  ######## ##       #### ##    ## ####    ##    ####  #######  ##    ##  ######
 
 ############################################################################################
 
@@ -168,7 +168,7 @@ INPUT_KEYS_BG = pygame.image.load("backgrounds/squared_paper_wun.png")
 #
 def update_settings_menu_texts():
 	#default fullscreens for settings menu
-	if settings.get_fullscreen(): 
+	if settings.get_fullscreen():
 		settings_menu.options[1] = "Fullscreen: ON"
 	else:
 		settings_menu.options[1] = "Fullscreen: OFF"
@@ -181,13 +181,13 @@ update_settings_menu_texts()
 
 #####################################################################
 
-########  ######   ######  ########  ######## ######## ##    ## 
-##       ##    ## ##    ## ##     ## ##       ##       ###   ## 
-##       ##       ##       ##     ## ##       ##       ####  ## 
-######    ######  ##       ########  ######   ######   ## ## ## 
-##             ## ##       ##   ##   ##       ##       ##  #### 
-##       ##    ## ##    ## ##    ##  ##       ##       ##   ### 
-##        ######   ######  ##     ## ######## ######## ##    ## 
+########  ######   ######  ########  ######## ######## ##    ##
+##       ##    ## ##    ## ##     ## ##       ##       ###   ##
+##       ##       ##       ##     ## ##       ##       ####  ##
+######    ######  ##       ########  ######   ######   ## ## ##
+##             ## ##       ##   ##   ##       ##       ##  ####
+##       ##    ## ##    ## ##    ##  ##       ##       ##   ###
+##        ######   ######  ##     ## ######## ######## ##    ##
 
 ######################################################################
 
@@ -195,7 +195,7 @@ def set_fullscreen():
 	"""
 		Set a fullscreen
 	"""
-	pygame.display.set_mode((width,height),pygame.FULLSCREEN) 
+	pygame.display.set_mode((width,height),pygame.FULLSCREEN)
 
 def toggle_fullscreen():
 	"""
@@ -209,7 +209,7 @@ def toggle_fullscreen():
 	else:
 		pygame.display.set_mode(size)
 		fullscreen = False
-	
+
 	settings.set_fullscreen(fullscreen)
 	fullscreen = settings.get_fullscreen()
 
@@ -224,13 +224,13 @@ if settings.get_fullscreen(): set_fullscreen()
 
 ##########################################################
 
-######## ##     ## ######## ##    ## ########  ######  
-##       ##     ## ##       ###   ##    ##    ##    ## 
-##       ##     ## ##       ####  ##    ##    ##       
-######   ##     ## ######   ## ## ##    ##     ######  
-##        ##   ##  ##       ##  ####    ##          ## 
-##         ## ##   ##       ##   ###    ##    ##    ## 
-########    ###    ######## ##    ##    ##     ######  
+######## ##     ## ######## ##    ## ########  ######
+##       ##     ## ##       ###   ##    ##    ##    ##
+##       ##     ## ##       ####  ##    ##    ##
+######   ##     ## ######   ## ## ##    ##     ######
+##        ##   ##  ##       ##  ####    ##          ##
+##         ## ##   ##       ##   ###    ##    ##    ##
+########    ###    ######## ##    ##    ##     ######
 
 ###########################################################
 
@@ -251,7 +251,7 @@ def key_debug_actions(event):
 
 #Main Key Handler For the GAMING STATUS
 def key_handler(event):
-        
+
 	if event.type == pygame.KEYDOWN:
 		if event.key == pygame.K_DOWN: stick.move_down();
 		elif event.key == pygame.K_UP: stick.move_up();
@@ -261,10 +261,10 @@ def key_handler(event):
 
 		#Pause Button
 		elif event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.pause_game()
-                
+
 		#Debug Handlers
 		key_debug_actions(event)
-        
+
 	elif event.type == pygame.KEYUP:
 		if event.key == pygame.K_DOWN: stick.move_up();
 		elif event.key == pygame.K_UP: stick.move_down();
@@ -286,10 +286,10 @@ def input_name_keyhandler(event):
 	"""
 		Input handler when reading a username
 	"""
-	if event.key == pygame.K_ESCAPE: 
+	if event.key == pygame.K_ESCAPE:
 		TRANSITION.setActive()
 		status.set_game_status(cStatus._STAT_SETTINGS)
-	
+
 	if INPUT_KEYS.process_keystroke(event): #process the keystrokes, and if keystroke is ENTER finish
 		if INPUT_KEYS.sanitize_input():
 			TRANSITION.setActive()
@@ -306,33 +306,33 @@ def pause_menu_events(event):
 
 #Also used by settings menu
 def level_menu_events(event):
-	if event.key == pygame.K_ESCAPE: 
+	if event.key == pygame.K_ESCAPE:
 		status.set_game_status(cStatus._STAT_PACKSEL)
 		TRANSITION.setActive()
 
 #Also used by settings menu
 def pack_menu_events(event):
-	if event.key == pygame.K_ESCAPE: 
+	if event.key == pygame.K_ESCAPE:
 		status.set_game_status(cStatus._STAT_MAINMENU)
 		TRANSITION.setActive()
 
 #
-# MAIN ENTRANCE FOR EVENT HANDLING 
+# MAIN ENTRANCE FOR EVENT HANDLING
 #
 def event_handler(event):
-	""" 
+	"""
 		Different handlers for different events in different status
 		Check cStatus class for status definitions
 	"""
 	if event.type == pygame.QUIT: pygame.quit();sys.exit()
 
 	#if transition ongoing do not listen the events
-	if TRANSITION.isActive(): return 
-        
+	if TRANSITION.isActive(): return
+
 	#Gaming
 	if status.GAME_STAT == cStatus._STAT_GAMING:
 		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_handler(event)
-        
+
 	#Game Over Screen
 	elif status.GAME_STAT == cStatus._STAT_GAMEOVER:
 		if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: key_menu_handler(event,gover_menu)
@@ -369,13 +369,13 @@ def event_handler(event):
 
 ####################################################
 
-##     ## ######## ##    ## ##     ##  ######  
-###   ### ##       ###   ## ##     ## ##    ## 
-#### #### ##       ####  ## ##     ## ##       
-## ### ## ######   ## ## ## ##     ##  ######  
-##     ## ##       ##  #### ##     ##       ## 
-##     ## ##       ##   ### ##     ## ##    ## 
-##     ## ######## ##    ##  #######   ######  
+##     ## ######## ##    ## ##     ##  ######
+###   ### ##       ###   ## ##     ## ##    ##
+#### #### ##       ####  ## ##     ## ##
+## ### ## ######   ## ## ## ##     ##  ######
+##     ## ##       ##  #### ##     ##       ##
+##     ## ##       ##   ### ##     ## ##    ##
+##     ## ######## ##    ##  #######   ######
 
 ######################################################
 
@@ -385,7 +385,7 @@ def load_level(level_num):
 	status.level = cLevel(level_list.levelfiles[level_num])
 	stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
 	#stick.load_stick_image(status.level.stick)
-        
+
 	status.reset_lives()
 	status.set_game_status(cStatus._STAT_GAMING)
 	status.SUBSTAT = 0
@@ -393,7 +393,20 @@ def load_level(level_num):
 	status.reset_timer()
 	status.clear_penalty_seconds()
 
-def load_levellist_with_pack(pack_num):	
+def load_level_filename(level_fname):
+	"""Load level from a filename. For debug purposes"""
+	status.level = cLevel(level_fname)
+	stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
+	#stick.load_stick_image(status.level.stick)
+
+	status.reset_lives()
+	status.set_game_status(cStatus._STAT_GAMING)
+	status.SUBSTAT = 0
+	status.current_level = -1
+	status.reset_timer()
+	status.clear_penalty_seconds()
+
+def load_levellist_with_pack(pack_num):
 	"""
 		Fills the level menu with the levels of a packlist
 	"""
@@ -403,7 +416,7 @@ def load_levellist_with_pack(pack_num):
 	#and set level_menu current to 0
 	level_list.load_leveldir(basedir)
 	levels_menu.set_current(0)
-	
+
 #Records menu selection function
 def records_menu_selection():
 	if records_menu.current == 0:
@@ -411,16 +424,16 @@ def records_menu_selection():
 		if level_list.level_exists(status.current_level):
 			load_level(status.current_level)
 		else:
-			status.set_game_status(cStatus._STAT_PACKSEL)			
-			
+			status.set_game_status(cStatus._STAT_PACKSEL)
+
 
 	elif records_menu.current == 1:
 		load_level(status.current_level)
-	
+
 	elif records_menu.current == 2:
 		levels_menu.set_current(status.current_level)
 		status.set_game_status(cStatus._STAT_LEVELSEL)
-	
+
 	TRANSITION.setActive()
 
 def settings_menu_selection():
@@ -434,7 +447,7 @@ def settings_menu_selection():
 	elif settings_menu.current == 2:
 		status.set_game_status(cStatus._STAT_MAINMENU)
 
-	TRANSITION.setActive()		
+	TRANSITION.setActive()
 
 #Game over menu selection function
 def game_over_menu_selection():
@@ -446,11 +459,11 @@ def game_over_menu_selection():
 	elif gover_menu.current == 1:
 		levels_menu.set_current(status.current_level)
 		status.set_game_status(cStatus._STAT_LEVELSEL)
-        
+
         #Return to Main Menu
 	elif gover_menu.current == 2:
 		status.set_game_status(cStatus._STAT_MAINMENU)
-        
+
 	TRANSITION.setActive()
 
 #Level Menu Selection Function
@@ -483,7 +496,7 @@ def pause_menu_selection():
 		levels_menu.set_current(status.current_level)
 		status.set_game_status(cStatus._STAT_LEVELSEL)
 		TRANSITION.setActive()
-        
+
 	#Return to Main Menu
 	elif pause_menu.current == 3:
 		status.set_game_status(cStatus._STAT_MAINMENU)
@@ -503,7 +516,7 @@ def main_menu_selection():
 	elif main_menu.current == 2:
 		pygame.quit()
 		sys.exit()
-	
+
 	TRANSITION.setActive()
 
 #MENU BINDINGS
@@ -523,13 +536,13 @@ pause_menu.event_function = pause_menu_events
 
 ###################################################
 
-##        #######   ######   ####  ######  
-##       ##     ## ##    ##   ##  ##    ## 
-##       ##     ## ##         ##  ##       
-##       ##     ## ##   ####  ##  ##       
-##       ##     ## ##    ##   ##  ##       
-##       ##     ## ##    ##   ##  ##    ## 
-########  #######   ######   ####  ######  
+##        #######   ######   ####  ######
+##       ##     ## ##    ##   ##  ##    ##
+##       ##     ## ##         ##  ##
+##       ##     ## ##   ####  ##  ##
+##       ##     ## ##    ##   ##  ##
+##       ##     ## ##    ##   ##  ##    ##
+########  #######   ######   ####  ######
 
 ###################################################
 
@@ -540,11 +553,11 @@ def colision_handler(cx,cy):
                  - add a collision sprite to print
                  - Change stick rotation direction for a time
                  - Make the stick jump back
-        """   
-        
+        """
+
 	#Create a 'collision' animated sprite
 	tsprite = SPRITE_FAC.get_sprite_by_id(cx,cy,SPRITE_FAC.EXPLOSION)
-	ANIM_SPRITES.append(tsprite)        
+	ANIM_SPRITES.append(tsprite)
 
 
 	#Move the Stick back from the collision place
@@ -572,7 +585,7 @@ def handle_item_monster_colision(item,cx,cy,sprite_id=0):
 		- If applicable, generates a text sprite (Boing, Crash etc)
 		- If applicable deletes the item (one colision items)
 	"""
-	if item.isMonster(): 
+	if item.isMonster():
 		stick.flip_rotation_tmp()
 		stick.jump_back(cx,cy,1.5)
 
@@ -581,7 +594,7 @@ def handle_item_monster_colision(item,cx,cy,sprite_id=0):
 	status.set_invincible()
 	tsprite = SPRITE_FAC.get_sprite_by_id(cx,cy,sprite_id)
 	ANIM_SPRITES.append(tsprite)
-	
+
 def item_colisions():
 	for m in status.level.items:
 		colision,xc,yc = stick.collides(m)
@@ -603,13 +616,13 @@ def monster_logic():
 
 ###################################################################
 
-########  ########     ###    ##      ## #### ##    ##  ######   
-##     ## ##     ##   ## ##   ##  ##  ##  ##  ###   ## ##    ##  
-##     ## ##     ##  ##   ##  ##  ##  ##  ##  ####  ## ##        
-##     ## ########  ##     ## ##  ##  ##  ##  ## ## ## ##   #### 
-##     ## ##   ##   ######### ##  ##  ##  ##  ##  #### ##    ##  
-##     ## ##    ##  ##     ## ##  ##  ##  ##  ##   ### ##    ##  
-########  ##     ## ##     ##  ###  ###  #### ##    ##  ######   
+########  ########     ###    ##      ## #### ##    ##  ######
+##     ## ##     ##   ## ##   ##  ##  ##  ##  ###   ## ##    ##
+##     ## ##     ##  ##   ##  ##  ##  ##  ##  ####  ## ##
+##     ## ########  ##     ## ##  ##  ##  ##  ## ## ## ##   ####
+##     ## ##   ##   ######### ##  ##  ##  ##  ##  #### ##    ##
+##     ## ##    ##  ##     ## ##  ##  ##  ##  ##   ### ##    ##
+########  ##     ## ##     ##  ###  ###  #### ##    ##  ######
 
 ###################################################################
 
@@ -630,7 +643,7 @@ def debug_onscreen(colides):
         fps             = myfont.render("FPS:"+str(clock.get_fps()),1,red)
         elapsed_time    = myfont.render("TIME:"+timestr,1,red)
         levels_cleared  = myfont.render("LEVELS:"+str(settings.total_levels_cleared()),1,red)
-        
+
         # put the label objects on the screen
         window.blit(title, (0, 0))
         window.blit(stickpos, (0, 20))
@@ -654,7 +667,7 @@ def draw_transition():
 	if TRANSITION.isActive():
 		if TRANSITION.isDrawBG():
 			window.blit(TRANSITION.getBG(),TRANSITION.getBG().get_rect())
-		
+
 		if TRANSITION.getType() == TRANSITION.SQUARES:
 			for r in TRANSITION.getRects():
 				pygame.draw.rect(window,black,r)
@@ -676,15 +689,15 @@ def update_scene_records():
 
 	# pick a font you have and set its size
         myfont = pygame.font.SysFont("Arial", 25)
-	
+
 	for i,r in enumerate(records):
 		player = r[1]
 		time = r[0]
-		
+
 		seconds         = int(time)
         	millis          = str(seconds - time).partition(".")[2]
         	timestr         = str(seconds)+":"+millis[0:3]
-        	
+
 		if player_index == i:
 			timefont	= FONT.render(timestr, 1, black,yellow)
 			namefont	= FONT.render(player, 1, black,yellow)
@@ -693,7 +706,7 @@ def update_scene_records():
 			namefont	= FONT.render(player, 1, black)
 
 
-        	
+
 		window.blit(namefont, (150, 50*(i+3)))
 		window.blit(timefont, (50, 50*(i+3)))
 
@@ -722,29 +735,29 @@ def update_scene():
 
         window.blit(status.level.goal_sprite.image,status.level.goal_sprite.rect.move(dx,dy))
         status.level.goal_sprite.update(pygame.time.get_ticks())
-        
-			
+
+
 	#Items InGame
 	for i,m in enumerate(status.level.items):
-                if m.col_anim.draw == False: 
+                if m.col_anim.draw == False:
 			window.blit(m.anim.image,m.rect.move(dx,dy))
 			m.draw_update()
 		else:
 			window.blit(m.col_anim.image,m.rect.move(dx,dy))
 			if m.draw_update() and m.delete_on_colision:
 				status.level.items.remove(m)
-     
+
      	#Monsters
 	for i,m in enumerate(status.level.monsters):
-                if m.col_anim.draw == False: 
+                if m.col_anim.draw == False:
 			window.blit(m.anim.image,m.rect.move(dx,dy))
 			m.draw_update()
 		else:
 			window.blit(m.col_anim.image,m.rect.move(dx,dy))
 			if m.draw_update() and m.delete_on_colision:
 				status.level.monsters.remove(m)
-		
-        
+
+
 	for i,s in enumerate(ANIM_SPRITES):
                 if s.draw:
                         window.blit(s.image,s.rect.move(dx,dy))
@@ -753,7 +766,7 @@ def update_scene():
 			ANIM_SPRITES.pop(i) #If draw is false, delete the reference
 
 	window.blit(stick.image,stick.rect.move(dx,dy))
-        
+
 
 def update_gui_timer_CF():
 	"""
@@ -763,15 +776,15 @@ def update_gui_timer_CF():
 	#TIMING
 	seconds         = int(status.get_elapsed_time())
 	millis          = str(seconds - status.get_elapsed_time()).partition(".")[2]
-	
-	if seconds > 999: 
+
+	if seconds > 999:
 		seconds = "999"
 		millis = "00"
 
 	seconds_images = number_gen.parse_number(int(seconds))
 	millis_images = number_gen.parse_number(int(millis[0:2]))
 
-	nw = seconds_images[0].get_rect().width	
+	nw = seconds_images[0].get_rect().width
 
 	#Bg Zeros (avoid a flickr)
 	zero = number_gen.parse_number(0)[0]
@@ -782,10 +795,10 @@ def update_gui_timer_CF():
 		zero = number_gen.parse_number(0)[0]
 		seconds_images.insert(0,zero)
 
-	
+
 	ddimg = number_gen.get_doubledots()
 	window.blit(pygame.transform.rotate(ddimg,-10),ddimg.get_rect().move(len(seconds_images)*nw,height-ddimg.get_rect().height - 15))
-	
+
 	for i,s in enumerate(seconds_images):
 		window.blit(pygame.transform.rotate(s,-10),s.get_rect().move(i*nw,height-s.get_rect().height - 15))
 
@@ -796,7 +809,7 @@ def update_gui_timer_TTF():
 	"""
 		updates the timer using a TTF font
 		@TODO::Check another font than the dafault font for menus,
-		this font here, generates bouncing numbers not good 
+		this font here, generates bouncing numbers not good
 		for my eye
 	"""
 	window.blit(bg_timer_image,bg_timer_image.get_rect().move(0,400))
@@ -804,9 +817,9 @@ def update_gui_timer_TTF():
 	ypad = 55
 	xpad = 26
 
-	if time > 999: 
+	if time > 999:
 		time = "A Lot!"
-		t=0	
+		t=0
 	else:
 		#traling zeros space
 		if time < 10:t = 2
@@ -842,13 +855,13 @@ def fancy_stick_death_animation():
 
 ##################################################################
 
- ######   ######  ########  ######## ######## ##    ##  ######  
-##    ## ##    ## ##     ## ##       ##       ###   ## ##    ## 
-##       ##       ##     ## ##       ##       ####  ## ##       
- ######  ##       ########  ######   ######   ## ## ##  ######  
-      ## ##       ##   ##   ##       ##       ##  ####       ## 
-##    ## ##    ## ##    ##  ##       ##       ##   ### ##    ## 
- ######   ######  ##     ## ######## ######## ##    ##  ######  
+ ######   ######  ########  ######## ######## ##    ##  ######
+##    ## ##    ## ##     ## ##       ##       ###   ## ##    ##
+##       ##       ##     ## ##       ##       ####  ## ##
+ ######  ##       ########  ######   ######   ## ## ##  ######
+      ## ##       ##   ##   ##       ##       ##  ####       ##
+##    ## ##    ## ##    ##  ##       ##       ##   ### ##    ##
+ ######   ######  ##     ## ######## ######## ##    ##  ######
 
 ##################################################################
 
@@ -873,16 +886,16 @@ def menu_screen(menu,rotate=True,x=200,y=200):
 	"""
 	update_gui()
 	if rotate: stick.rotate(1)
-	draw_menu(menu,x,y)	
+	draw_menu(menu,x,y)
 
 #
 # What to draw on screen for a newname
 #
 def newname_screen():
 	window.fill(white)
-	
+
 	window.blit(INPUT_KEYS_BG,INPUT_KEYS_BG.get_rect())
-	
+
 	namefont    = FONT.render(INPUT_KEYS.text, 1, black)
 	window.blit(namefont, (100, 200))
 
@@ -939,11 +952,11 @@ def records_screen():
 	"""
 		Show the records
 	"""
-	
+
 	#Some Entering animation would be nice
         #if status.SUBSTAT == 0:
 	status.SUBSTAT = 1 #Skip the first stat (saved for further animation)
-	
+
 	if status.SUBSTAT == 1:
 		draw_menu(records_menu,width-200,height-210)
 		update_scene_records()
@@ -977,7 +990,7 @@ def level_select_menu():
 			if settings.isLevelCompleted(level_list.level_uuid(index)):
 				window.blit(tick_sprite,tick_sprite.get_rect().move(x-20,y))
 
-			render_font = FONT.render(me, 1, color) 
+			render_font = FONT.render(me, 1, color)
 			window.blit(render_font, (x, y))
 			y += increment_px_y
 
@@ -1005,7 +1018,7 @@ def pack_select_menu():
 
 		for index,me in enumerate(packs_menu.options):
 			draw_lock = True
-			if packs_menu.current == index: 
+			if packs_menu.current == index:
 					if packlist.isPackOpen(packs_menu.current,settings.total_levels_cleared()):
 						color = packs_menu.select_color
 						draw_lock = False
@@ -1022,24 +1035,24 @@ def pack_select_menu():
 				window.blit(locked_sprite,lock_rect.move(x-lock_rect_w,y))
 			else:
 				window.blit(openlock_sprite,lock_rect.move(x-lock_rect_w,y))
-				
 
-					
 
-			render_font = FONT.render(me, 1, color) 
+
+
+			render_font = FONT.render(me, 1, color)
 			window.blit(render_font, (x, y))
 			y += increment_px_y
 
 
 #
-# Draws a menu on screen 
+# Draws a menu on screen
 # - menu (the menu to draw)
 #
 def draw_menu(menu,sx=200,sy=160):
-        
+
 	if menu.background != None:
 		window.blit(menu.background,menu.background.get_rect())
-        
+
         x = sx
         y = sy
 
@@ -1047,7 +1060,7 @@ def draw_menu(menu,sx=200,sy=160):
                 if menu.current == index: color = menu.select_color
                 else: color = menu.color
 
-                render_font = FONT.render(me, 1, color) 
+                render_font = FONT.render(me, 1, color)
                 window.blit(render_font, (x, y))
                 y += 39
 
@@ -1071,16 +1084,46 @@ def finish_level():
 
 ###############################################
 
-##     ##    ###    #### ##    ## 
-###   ###   ## ##    ##  ###   ## 
-#### ####  ##   ##   ##  ####  ## 
-## ### ## ##     ##  ##  ## ## ## 
-##     ## #########  ##  ##  #### 
-##     ## ##     ##  ##  ##   ### 
+##     ##    ###    #### ##    ##
+###   ###   ## ##    ##  ###   ##
+#### ####  ##   ##   ##  ####  ##
+## ### ## ##     ##  ##  ## ## ##
+##     ## #########  ##  ##  ####
+##     ## ##     ##  ##  ##   ###
 ##     ## ##     ## #### ##    ##
 
 ###############################################
-def main():
+def gaming_status(debug=False):
+	#Debug Purposes
+	if not status._DEBUG_COLLISION:
+
+		#Level Colision
+		colision,cx,cy = status.level.stick_collides(stick);
+		if colision: colision_handler(cx,cy)
+
+		#Item colision
+		item_colisions()
+
+		#Monster Colisions
+		monster_colisions()
+
+	monster_logic()
+	playing_screen()
+	#debug_onscreen(colision)
+	#Unset invincibility when needed
+	status.unset_invincible_by_time()
+
+	#check if goal
+	if status.level.stick_in_goal(stick):
+		return True
+
+	#check if dead
+	if status.lives <= 0:
+		return True
+
+	#Game Over
+
+def main_game():
         #Main Game Function
 	while 1:
 		for event in pygame.event.get(): event_handler(event)
@@ -1088,73 +1131,62 @@ def main():
 
 		#Playing Level
 		if status.GAME_STAT == cStatus._STAT_GAMING:
+			gaming_status()
 
-			#Debug Purposes
-			if not status._DEBUG_COLLISION:
-				
-				#Level Colision
-				colision,cx,cy = status.level.stick_collides(stick);
-				if colision: colision_handler(cx,cy)
-				
-				#Item colision
-				item_colisions()
-                        	
-				#Monster Colisions
-				monster_colisions()
-
-			monster_logic()
-			playing_screen()                        
-			#debug_onscreen(colision)
-			#Unset invincibility when needed
-			status.unset_invincible_by_time()
-
-			#check if goal
-			if status.level.stick_in_goal(stick): 
-				finish_level()
-                	
-			#check if dead
-			if status.lives <= 0: fancy_stick_death_animation()
-
-			#Game Over
-		
-		elif status.GAME_STAT == cStatus._STAT_GAMEOVER: 
+		elif status.GAME_STAT == cStatus._STAT_GAMEOVER:
 			stick.fancy_rotation_death(0,10)
 			ingame_menu_screen(gover_menu,y=175)
-                
+
 			#Level Selection
 		elif status.GAME_STAT == cStatus._STAT_LEVELSEL:
 			level_selection_screen()
 
 		elif status.GAME_STAT == cStatus._STAT_PACKSEL:
-			pack_selection_screen()			
+			pack_selection_screen()
 
 		#Goal
 		elif status.GAME_STAT == cStatus._STAT_GOAL:
 			goal_screen()
-                
+
 		#After Goal, Level Records Screen
 		elif status.GAME_STAT == cStatus._STAT_LEVELRECORD:
 			records_screen()
 
 		#Pause Menu
-		elif status.GAME_STAT == cStatus._STAT_PAUSE: 
+		elif status.GAME_STAT == cStatus._STAT_PAUSE:
 			ingame_menu_screen(pause_menu,rotate=False,x=200,y=160)
-                
+
 		#Main Menu
-		elif status.GAME_STAT == cStatus._STAT_MAINMENU: 
+		elif status.GAME_STAT == cStatus._STAT_MAINMENU:
 			menu_screen(main_menu,rotate=False)
-                
+
 		#settings Menu
-		elif status.GAME_STAT == cStatus._STAT_SETTINGS: 
+		elif status.GAME_STAT == cStatus._STAT_SETTINGS:
 			menu_screen(settings_menu,rotate=False)
-                
-		elif status.GAME_STAT == cStatus._STAT_NEWNAME: 
+
+		elif status.GAME_STAT == cStatus._STAT_NEWNAME:
 			newname_screen()
-		
+
 		draw_transition() #transition always on top
 
 		pygame.display.update()
-		clock.tick(FPS) 
+		clock.tick(FPS)
 
+def main_debug(filename):
+	load_level_filename(filename)
+	status.set_game_status(cStatus._STAT_GAMING)
+	finish = False
+	while not finish:
+		for event in pygame.event.get(): event_handler(event)
+		finish = gaming_status(debug=True)
 
-if __name__ == '__main__': main()  
+		pygame.display.update()
+		clock.tick(FPS)
+
+def main():
+	if len(sys.argv) > 1:
+		main_debug(sys.argv[1])
+	else:
+		main_game()
+
+if __name__ == '__main__': main()
