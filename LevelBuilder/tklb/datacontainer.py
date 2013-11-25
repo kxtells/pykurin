@@ -85,7 +85,7 @@ class datacontainer:
     def set_base_dir(self,path):
         self.base_pykurin_directory = path
 
-    def get_base_dir(self,path):
+    def get_base_dir(self):
         return self.base_pykurin_directory
 
     def set_image(self,imagepath):

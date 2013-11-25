@@ -74,9 +74,7 @@ class PykurinLevelEditorUI(Frame):
 
         menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Level", menu=menu)
-        menu.add_command(label="Cut")
-        menu.add_command(label="Copy")
-        menu.add_command(label="Paste")
+        menu.add_command(label="Edit")
 
         menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Objects", menu=menu)
@@ -85,6 +83,12 @@ class PykurinLevelEditorUI(Frame):
         menu.add_command(label="Bouncer")
         menu.add_command(label="Lifeup")
         menu.add_command(label="Basher")
+
+        menu = Menu(self.menubar, tearoff=0)
+        self.menubar.add_cascade(label="Test", menu=menu)
+        menu.add_command(label="Run Level", command=self.run_level)
+
+
 
         # Status bar with the x y information
         self.statusbar = StatusBar(self.master)
@@ -139,6 +143,18 @@ class PykurinLevelEditorUI(Frame):
 
     def isBasherEnd(self, itemid):
         return self.get_item_type(itemid) == self.DC.BASHER_END
+
+
+    #
+    # Running a level
+    #
+    def run_level(self):
+        """Run the current level by the specified pykurin base dir"""
+        bdir = self.DC.get_base_dir()
+        pykurinexe = os.path.join(bdir,"pykurin.py")
+        fname = self.DC.get_current_level_filename()
+
+        os.system("/usr/bin/python %s %s" % (pykurinexe, fname))
 
     #
     # Panning
