@@ -1,3 +1,4 @@
+#!/usr/bin/python
 #######################
 # Main pykurin entrance
 # @author: Jordi Castells Sala
@@ -19,7 +20,9 @@ from cLevelList import cLevelList
 from cSettings import cSettings
 from cTransition import cTransition
 from colors import *
+import os
 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 pygame.init()
 
 size = width, height = 640, 480
