@@ -5,6 +5,12 @@ from tksimplestatusbar import StatusBar
 
 import os
 
+#
+#
+# Generic Dialog functions
+#
+#
+
 def open_file_chooser(naming, ftype="*", basepath = None):
     if not basepath:
         basepath = '.'
@@ -39,7 +45,12 @@ def show_disclaimer():
 It is just a helper utility, don't expect to be beautiful or bug free in Exotic cases")
 
 
-class AppUI(Frame):
+#
+#
+# MAIN LEVEL EDITOR SCREEN
+#
+#
+class PykurinLevelEditorUI(Frame):
 
     def __init__(self, master=None):
 
@@ -120,6 +131,15 @@ class AppUI(Frame):
         #ID dictionary between GUI and datacontainer
         self.dataids = {}
 
+    def get_item_type(self, itemid):
+        return self.dataids[itemid][0]
+
+    def isBasher(self, itemid):
+        return self.get_item_type(itemid) == self.DC.BASHER
+
+    def isBasherEnd(self, itemid):
+        return self.get_item_type(itemid) == self.DC.BASHER_END
+
     #
     # Panning
     #
@@ -183,15 +203,68 @@ class AppUI(Frame):
             c.create_rectangle(c.bbox(self.sitem), tags=("pan","selection"),
                                                    outline="red", width=2)
 
-
     #
     # Item moving
     #
     def canvas_left_click_motion(self, event):
-        print "lc motion"
+        """This motion is responsible mainly for the movement of the items"""
+        if not self.sitem:
+            return
+
+        #If item selected Move that item
+        self.canvas.coords(self.sitem, (event.x, event.y))
+
+        #Move the selection
+        for item in self.canvas.find_withtag("selection"):
+            self.canvas.coords(item, self.canvas.bbox(self.sitem))
+
+        #Basher needs a little bit more of work
+        if self.isBasher(self.sitem) :
+            self.update_basher_arrow(self.sitem)
+        if self.isBasherEnd(self.sitem):
+            basher_id = self.dataids[self.sitem][2]
+            self.update_basher_arrow(basher_id)
 
     def canvas_left_click_release(self, event):
         print "lc release"
+
+    def update_basher_arrow(self, basherid):
+        basher_line   = self.dataids[basherid][3]
+        basher_end    = self.dataids[basherid][2]
+        basher_coords = self.canvas.bbox(basherid)
+        end_coords    = self.canvas.bbox(basher_end)
+
+        bwidth        = abs(basher_coords[0] - basher_coords[2])
+        bheight       = abs(basher_coords[1] - basher_coords[3])
+
+        ewidth        = abs(end_coords[0] - end_coords[2])
+        eheight       = abs(end_coords[1] - end_coords[3])
+
+        lbbox         = ( basher_coords[0] + bwidth  / 2,
+                          basher_coords[1] + bheight / 2,
+                          end_coords[0]    + ewidth  / 2,
+                          end_coords[1]    + eheight / 2
+                        )
+
+        print lbbox
+        self.canvas.coords(basher_line, lbbox)
+
+
+
+#        arrow_startx = r1.x + r1.w/2
+#        arrow_starty = r1.y + r1.h/2
+#        arrow_endx   = r2.x + 5
+#        arrow_endy   = r2.y + 5
+#
+#        idl = canvas.create_line(arrow_startx,
+#                           arrow_starty,
+#                           arrow_endx,
+#                           arrow_endy,
+#                           tags = ("pan")
+#                           )
+#
+#
+#        self.canvas.coords(basher_line, bcoords)
 
     #
     # Remove items
@@ -277,7 +350,6 @@ class AppUI(Frame):
         else:
 	        tkMessageBox.showerror("Invalid Filename %s" % fname)
 
-
     def f_save_level(self):
         fname = self.DC.get_current_level_filename()
         if not fname:
@@ -287,7 +359,7 @@ class AppUI(Frame):
 
     def f_save_level_as(self):
         fname = save_file_chooser("Save As")
-        self.__f_save()
+        self.__f_save(fname)
 
     def f_exit(self):
         self.master.destroy()
@@ -352,16 +424,16 @@ class AppUI(Frame):
                                tags = ("pan")
                                )
 
-            ids = canvas.create_rectangle(arrow_endx-5, arrow_endy-5,
-                                    arrow_endx+5, arrow_endy+5,
-                                    tags=("select", "move", "delete", "basher",
-                                          "pan"), fill="black")
+            ids = canvas.create_image((arrow_endx-5, arrow_endy-5),
+                                image=dc.get_basher_goto_image(), anchor=NW,
+                                tags=("select", "move", "pan", "basher"))
+
             idb = canvas.create_image((r1.x, r1.y),
                                 image=dc.get_basher_image(), anchor=NW,
                                 tags=("select", "move", "pan"))
 
             self.dataids[idb] = (dc.BASHER, idx, ids, idl)
-            self.dataids[ids] = (dc.BASHER_END, idx)
+            self.dataids[ids] = (dc.BASHER_END, idx, idb, idl)
             self.dataids[idl] = (-1, idx)
 
         # Draw the 0,0 cross
@@ -370,7 +442,7 @@ class AppUI(Frame):
 
 root = Tk()
 
-app = AppUI(root)
+app = PykurinLevelEditorUI(root)
 app.pack()
 
 #show_disclaimer()
