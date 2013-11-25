@@ -1118,11 +1118,13 @@ def gaming_status(debug=False):
 
 	#check if goal
 	if status.level.stick_in_goal(stick):
-		return True
+		if debug: return True
+		finish_level()
 
 	#check if dead
 	if status.lives <= 0:
-		return True
+		if debug: return True
+		fancy_stick_death_animation()
 
 	#Game Over
 
