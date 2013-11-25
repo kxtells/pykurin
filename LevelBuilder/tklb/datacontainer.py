@@ -65,6 +65,9 @@ class datacontainer:
         timage = Image.open("icons/basher.png")
         images["basher"] = ImageTk.PhotoImage(timage)
 
+        timage = Image.open("icons/basher_goto_icon.png")
+        images["basher_goto"] = ImageTk.PhotoImage(timage)
+
         timage = Image.open("icons/bouncer.png")
         images["bouncer"] = ImageTk.PhotoImage(timage)
 
@@ -139,6 +142,9 @@ class datacontainer:
     #
     def get_basher_image(self):
         return self.images["basher"]
+
+    def get_basher_goto_image(self):
+        return self.images["basher_goto"]
 
     def get_bouncer_image(self):
         return self.images["bouncer"]
