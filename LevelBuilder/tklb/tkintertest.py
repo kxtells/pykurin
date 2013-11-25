@@ -266,19 +266,28 @@ class AppUI(Frame):
 
         self._create_canvas_with_DC()
 
-    def f_save_level(self):
-        pass
-
-    def f_save_level_as(self):
-        fname = save_file_chooser("Save As")
+    def __f_save(self, fname):
+        """Try to save the level to the specified filename"""
         if fname:
             ret, msg = self.DC.save_to_file(fname)
             if ret:
                 popup_message("SUCCESS","%s saved" % fname)
             else:
-                popup_message("ERROR","File %s NOT saved\n %s" % (fname, msg))
+	            tkMessageBox.showerror("ERROR","File %s NOT saved\n %s" % (fname, msg))
         else:
-            popup_message("ERROR","Invalid Filename %s" % None)
+	        tkMessageBox.showerror("Invalid Filename %s" % fname)
+
+
+    def f_save_level(self):
+        fname = self.DC.get_current_level_filename()
+        if not fname:
+            self.f_save_level_as()
+        else:
+            self.__f_save(fname)
+
+    def f_save_level_as(self):
+        fname = save_file_chooser("Save As")
+        self.__f_save()
 
     def f_exit(self):
         self.master.destroy()

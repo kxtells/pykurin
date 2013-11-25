@@ -25,8 +25,6 @@ class datacontainer:
 
     selecteditem = None
 
-    #
-    file_prop_path = None
 
     #File Metadata
     colimg_filename = None
@@ -43,6 +41,7 @@ class datacontainer:
         self.__load_images()
 
         self.base_pykurin_directory = None
+        self.current_level_filename = None
         self.image = None
         self.bgimage = None
         self.bashers = []
@@ -83,6 +82,9 @@ class datacontainer:
     def set_base_dir(self,path):
         self.base_pykurin_directory = path
 
+    def get_base_dir(self,path):
+        return self.base_pykurin_directory
+
     def set_image(self,imagepath):
         image = Image.open(imagepath)
         self.image = ImageTk.PhotoImage(image)
@@ -93,8 +95,11 @@ class datacontainer:
         self.bgimage= ImageTk.PhotoImage(image)
         self.background_filename = imagepath
 
-    def set_file_prop_path(self,text):
-        self.file_prop_path = text
+    def set_current_level_filename(self,text):
+        self.current_level_filename = text
+
+    def get_current_level_filename(self):
+        return self.current_level_filename
 
     def set_last_error(self,text):
         self.last_error = text
@@ -302,7 +307,6 @@ class datacontainer:
     #
     def load_from_file(self,full_path,xpadding=0,ypadding=0):
         #clear_everything()
-        print "LOAd"
         parser = SafeConfigParser()
         parser.read(full_path)
 
@@ -335,7 +339,7 @@ class datacontainer:
         self.retrieve_bashers_list(parser,xpadding,ypadding)
 
         #everything went as expected, save current editing filename
-        self.file_prop_path = full_path
+        self.current_level_filename = full_path
 
     def retrieve_bashers_list(self,parser,xp,yp):
 
@@ -402,7 +406,8 @@ class datacontainer:
     #
     def save_to_file(self,filepath,xpadding=0,ypadding=0):
         if len(self.sticks)!=1: return False, "Need a start Stick Position"
-        if len(self.goals)!=1: return False, "Need a GOAL Position"
+        if len(self.goals)!=1:  return False, "Need a GOAL Position"
+        if not self.base_pykurin_directory: return False, "There is no base pykurin directory set"
 
         f = open(filepath, 'w')
         f.write("[options]\n");
