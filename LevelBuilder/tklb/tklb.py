@@ -5,6 +5,7 @@ from tksimplestatusbar import StatusBar
 
 from lbdialogs import tkLevelDialog
 from common_dialogs import *
+import tempfile
 
 import os
 
@@ -152,9 +153,18 @@ class PykurinLevelEditorUI(Frame):
         """Run the current level by the specified pykurin base dir"""
         bdir = self.DC.get_base_dir()
         pykurinexe = os.path.join(bdir,"pykurin.py")
-        fname = self.DC.get_current_level_filename()
+        #fname = self.DC.get_current_level_filename()
 
-        os.system("/usr/bin/python %s %s" % (pykurinexe, fname))
+        #Create a temporary file, save the level, run and delete
+        tmpfile = tempfile.NamedTemporaryFile()
+        if self._save_level_errcheck():
+            return
+
+        self.__f_save(tmpfile.name)
+
+        os.system("/usr/bin/python %s %s" % (pykurinexe, tmpfile.name))
+
+        os.unlink(tmpfile.name)
 
     #
     # Panning
@@ -361,7 +371,9 @@ class PykurinLevelEditorUI(Frame):
         print "NEW LEVEL"
 
         # Force a new datacontainer
+        basep   = self.DC.get_basepath()
         self.DC = datacontainer.datacontainer()
+        self.DC.set_base_dir(basep) #Keep the pykurin directory
 
         #Start and end are created automatically
         self.DC.add_item(self.DC.STICKS, 0, 0)
@@ -382,8 +394,17 @@ class PykurinLevelEditorUI(Frame):
 
         self._create_canvas_with_DC()
 
+    def _save_level_errcheck(self):
+        """Checks for errors, Returns true if an error is found"""
+        save , why = self.DC.isSaveable()
+        if not save:
+            error_message("Can't Save", why)
+            return True
+        return False
+
     def __f_save(self, fname):
         """Try to save the level to the specified filename"""
+
         if fname:
             ret, msg = self.DC.save_to_file(fname)
             if ret:
@@ -394,6 +415,9 @@ class PykurinLevelEditorUI(Frame):
 	        error_message("Invalid Filename %s" % fname)
 
     def f_save_level(self):
+        if self._save_level_errcheck():
+            return
+
         fname = self.DC.get_current_level_filename()
         if not fname:
             self.f_save_level_as()
@@ -401,6 +425,9 @@ class PykurinLevelEditorUI(Frame):
             self.__f_save(fname)
 
     def f_save_level_as(self):
+        if self._save_level_errcheck():
+            return
+
         fname = save_file_chooser("Save As")
         self.__f_save(fname)
 

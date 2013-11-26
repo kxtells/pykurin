@@ -287,25 +287,21 @@ class datacontainer:
         parser = SafeConfigParser()
         parser.read(full_path)
 
-        #print full_path
         imagefile = parser.get('options','background')
-        self.img_filename = imagefile
         colfilename = parser.get('options','collision')
-        self.collision_filename = colfilename
         bgfilename = parser.get('options','background2')
-        self.background_filename = bgfilename
         title = parser.get('options','name')
-        self.title = title
         uuid = parser.get('options','uuid')
+
+        self.title = title
         self.uuid = uuid
 
         part = full_path.rpartition('/')
         part2 = imagefile.rpartition('/')
 
-        imagepath =  part[0]+"/"+part2[2]
         colfilename = self.base_pykurin_directory+"/"+colfilename
-        self.set_image(imagepath)
-        self.set_bg_image(os.path.join(self.base_pykurin_directory, self.background_filename))
+        self.set_image(os.path.join(self.base_pykurin_directory, imagefile))
+        self.set_bg_image(os.path.join(self.base_pykurin_directory, bgfilename))
         self.set_col_image(os.path.join(self.base_pykurin_directory, colfilename))
 
 
