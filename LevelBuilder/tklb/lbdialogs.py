@@ -9,6 +9,8 @@ from Tkinter import *
 from common_dialogs import *
 
 import os
+import difflib
+import tempfile
 
 class tkLevelDialog(Toplevel):
     def __init__(self, parent, title = None, modal=True, datacontainer=None):
@@ -53,10 +55,13 @@ class tkLevelDialog(Toplevel):
         self.bviewfile = Button(self, text="View File", width=6,
                               command=lambda: self.view_file())
 
+        self.bdifffile = Button(self, text="Diff File", width=6,
+                              command=lambda: self.diff_file())
+
 
         self.bframe  = Frame(self)
         self.bok     = Button(self.bframe, text="OK", width=6, command=lambda: self.finish())
-        self.bapply  = Button(self.bframe, text="Apply", width=6, command=lambda: self.apply())
+        #self.bapply  = Button(self.bframe, text="Apply", width=6, command=lambda: self.apply())
         self.bcancel = Button(self.bframe, text="Cancel", width=6, command=lambda: self.cancel())
 
         self.fchooser1 = Button(self, text="F", width=1,
@@ -75,10 +80,11 @@ class tkLevelDialog(Toplevel):
         self.e3.grid(row=3, column=1)
         #self.e4.grid(row=4, column=1)
         self.bviewfile.grid(row=5, column=0)
+        self.bdifffile.grid(row=6, column=0)
 
-        self.bframe.grid(row=6, column=0, columnspan=3)
+        self.bframe.grid(row=7, column=0, columnspan=3)
         self.bok.grid(row=0, column=0)
-        self.bapply.grid(row=0, column=1)
+        #self.bapply.grid(row=0, column=1)
         self.bcancel.grid(row=0, column=2)
         self.fchooser1.grid(row=1, column=2)
         self.fchooser2.grid(row=2, column=2)
@@ -124,6 +130,25 @@ class tkLevelDialog(Toplevel):
         fname = self.DC.get_current_level_filename()
         tkTextViewer(self.parent, title="FILE %s"%os.path.basename(fname),
                 filename=fname)
+
+    def diff_file(self):
+        fname  = self.DC.get_current_level_filename()
+        tfil   = tempfile.NamedTemporaryFile()
+        tfname = tfil.name
+
+        with open (fname, "r") as datafile:
+            lines1=datafile.readlines()
+
+        self.DC.save_to_file(tfname)
+        with open (tfname, "r") as datafile:
+            lines2=datafile.readlines()
+
+
+        difflines=difflib.unified_diff(lines1, lines2)
+        tkTextViewer(self.parent, title="FILE %s"%os.path.basename(fname),
+                textdata="".join(difflines))
+
+
 
 """
     Basic class to present big amount of text together.
