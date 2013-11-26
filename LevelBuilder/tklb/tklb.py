@@ -16,6 +16,13 @@ import os, sys
 #
 class PykurinLevelEditorUI(Frame):
 
+    #Button identifiers
+    BASHER_BUTTON  = 0
+    BOUNCER_BUTTON = 1
+    LIVES_BUTTON   = 2
+    PAN_BUTTON     = 3
+    SELECT_BUTTON  = 4
+
     def __init__(self, master=None):
         Frame.__init__(self, master, relief=SUNKEN, bd=2)
 
@@ -119,15 +126,29 @@ class PykurinLevelEditorUI(Frame):
 
         self.buttons = []
 
-        b = Button(toolbar, text="Bouncer", width=6, command=lambda: self.button(self.DC.BOUNCER,0))
+        b = Button(toolbar, text="Select", width=6,
+                   command=lambda: self.button(self.SELECT_BUTTON, 0))
+        b.pack(side=LEFT, padx=2, pady=2)
+        b.config(relief=SUNKEN)
+        self.buttons.append(b)
+
+        b = Button(toolbar, text="Pan", width=6,
+                   command=lambda: self.button(self.PAN_BUTTON, 1))
         b.pack(side=LEFT, padx=2, pady=2)
         self.buttons.append(b)
 
-        b = Button(toolbar, text="lifeup", width=6, command=lambda: self.button(self.DC.LIVES,1))
+        b = Button(toolbar, text="Bouncer", width=6,
+                   command=lambda: self.button(self.BOUNCER_BUTTON, 2))
         b.pack(side=LEFT, padx=2, pady=2)
         self.buttons.append(b)
 
-        b = Button(toolbar, text="basher", width=6, command=lambda: self.button(self.DC.BASHER,2))
+        b = Button(toolbar, text="lifeup", width=6,
+                   command=lambda: self.button(self.LIVES_BUTTON, 3))
+        b.pack(side=LEFT, padx=2, pady=2)
+        self.buttons.append(b)
+
+        b = Button(toolbar, text="basher", width=6,
+                   command=lambda: self.button(self.BASHER_BUTTON, 4))
         b.pack(side=LEFT, padx=2, pady=2)
         self.buttons.append(b)
 
@@ -208,6 +229,10 @@ class PykurinLevelEditorUI(Frame):
             self.buttons[buttonid].config(relief=SUNKEN)
             self.buttonpressed = code
 
+        #Let the select button always be pressed
+        if not self.isButtonPressed():
+            self.buttons[0].config(relief=SUNKEN)
+
     #
     # Running a level
     #
@@ -266,10 +291,11 @@ class PykurinLevelEditorUI(Frame):
             If any creation tool is active may create one of the selected items
 
         """
-        if self.isButtonPressed():
-            self.adding_item_to_canvas(event)
-        else:
+        if (self.buttonpressed == self.SELECT_BUTTON
+            or not self.isButtonPressed()):
             self.selecting_items(event)
+        else:
+            self.adding_item_to_canvas(event)
 
     def selecting_items(self, event):
         #Once clicked, give keyboard focus to canvas (in case it wasn't set)
@@ -285,14 +311,15 @@ class PykurinLevelEditorUI(Frame):
         #Create a new selection
         self.select_item(x,y)
 
-
     def adding_item_to_canvas(self, event):
-        if self.buttonpressed == self.DC.BASHER:
+        if self.buttonpressed == self.BASHER_BUTTON:
             self._create_basher(event.x, event.y, new=True)
-        elif self.buttonpressed == self.DC.BOUNCER:
+        elif self.buttonpressed == self.BOUNCER_BUTTON:
             self._create_bouncer(event.x, event.y, new=True)
-        elif self.buttonpressed == self.DC.LIVES:
+        elif self.buttonpressed == self.LIVES_BUTTON:
             self._create_lives(event.x, event.y, new=True)
+        elif self.buttonpressed == self.PAN_BUTTON:
+            self.pan_start(event)
 
     def select_item(self, x, y):
         """Selects an item, setting the sitem attribute"""
@@ -319,6 +346,13 @@ class PykurinLevelEditorUI(Frame):
     #
     def canvas_left_click_motion(self, event):
         """This motion is responsible mainly for the movement of the items"""
+
+        #If the pan button is pressed, PAN as it would be done with middle
+        #button
+        if self.buttonpressed == self.PAN_BUTTON:
+            self.pan_motion(event)
+            return
+
         if not self.sitem:
             return
 
