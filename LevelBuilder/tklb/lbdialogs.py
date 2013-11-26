@@ -58,6 +58,11 @@ class tkLevelDialog(Toplevel):
         self.bdifffile = Button(self, text="Diff File", width=6,
                               command=lambda: self.diff_file())
 
+        #If theres no original file, theres no diff or view
+        if not self.DC.get_current_level_filename():
+            self.bviewfile.config(state=DISABLED)
+            self.bdifffile.config(state=DISABLED)
+
 
         self.bframe  = Frame(self)
         self.bok     = Button(self.bframe, text="OK", width=6, command=lambda: self.finish())
@@ -144,7 +149,8 @@ class tkLevelDialog(Toplevel):
             lines2=datafile.readlines()
 
 
-        difflines=difflib.unified_diff(lines1, lines2)
+        difflines=difflib.unified_diff(lines1, lines2,
+                                      fromfile=fname, tofile=tfname)
         tkTextViewer(self.parent, title="FILE %s"%os.path.basename(fname),
                 textdata="".join(difflines))
 

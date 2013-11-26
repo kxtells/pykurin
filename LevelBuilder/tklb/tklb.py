@@ -216,6 +216,9 @@ class PykurinLevelEditorUI(Frame):
         bdir = self.DC.get_base_dir()
         pykurinexe = os.path.join(bdir,"pykurin.py")
 
+        #Check for errors on save Before trying Anything
+        if self._save_level_errcheck(): return
+
         #Check if all data is in pykurin directory, if not copy, if not end
         if not self.manage_data_dialogs():
             return
@@ -224,8 +227,6 @@ class PykurinLevelEditorUI(Frame):
         #Create a temporary file, save the level, run and delete
         tmpfile = tempfile.NamedTemporaryFile()
 
-        #Check for errors on save Before trying to launch
-        if self._save_level_errcheck(): return
 
         self.__f_save(tmpfile.name)
 
