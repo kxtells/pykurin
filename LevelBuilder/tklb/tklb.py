@@ -4,48 +4,9 @@ import tkFileDialog, tkSimpleDialog, tkMessageBox
 from tksimplestatusbar import StatusBar
 
 from lbdialogs import tkLevelDialog
+from common_dialogs import *
 
 import os
-
-#
-#
-# Generic Dialog functions
-#
-#
-
-def open_file_chooser(naming, ftype="*", basepath = None):
-    if not basepath:
-        basepath = '.'
-
-    somefile = tkFileDialog.askopenfilename(filetypes=[(naming, ftype)],
-            initialdir=basepath,
-            multiple=False)
-    return somefile or u''
-
-def open_dir_chooser(naming,ftype="*"):
-	try:
-		somedir = tkFileDialog.askdirectory(title=naming,mustexist=True)
-		return somedir
-	except:
-		return None
-
-def save_file_chooser(naming, ftype=".prop"):
-	try:
-		somefile = tkFileDialog.asksaveasfilename(filetypes=[(naming, ftype)])
-		return somefile
-	except:
-		return None
-
-def popup_message(title,text):
-    return tkMessageBox.showinfo(title,text)
-
-def show_disclaimer():
-    """
-        Show a disclaimer saying that this software is shit
-    """
-    popup_message("BorinotGames Note","This program is provided AS IS :-P\n\
-It is just a helper utility, don't expect to be beautiful or bug free in Exotic cases")
-
 
 #
 #
@@ -420,9 +381,9 @@ class PykurinLevelEditorUI(Frame):
             if ret:
                 popup_message("SUCCESS","%s saved" % fname)
             else:
-	            tkMessageBox.showerror("ERROR","File %s NOT saved\n %s" % (fname, msg))
+                error_message("ERROR","File %s NOT saved\n %s" % (fname, msg))
         else:
-	        tkMessageBox.showerror("Invalid Filename %s" % fname)
+	        error_message("Invalid Filename %s" % fname)
 
     def f_save_level(self):
         fname = self.DC.get_current_level_filename()
@@ -441,6 +402,8 @@ class PykurinLevelEditorUI(Frame):
 
     def e_edit_level_attributes(self):
         d = tkLevelDialog(self.master, datacontainer=self.DC)
+        self._create_backgrounds()
+
     #
     # Item Creation
     #
@@ -508,6 +471,26 @@ class PykurinLevelEditorUI(Frame):
 
         self.update_basher_arrow(idb)
 
+    def _create_backgrounds(self):
+        canvas = self.canvas
+        dc     = self.DC
+
+        canvas.delete("backgrounds")
+
+        canvas.create_image((0 + self.panx,0 + self.pany),
+                                image=dc.get_colimage(), anchor=NW,
+                                tags = ("pan", "backgrounds", "collision")
+                                )
+        canvas.create_image((0,0),
+                                image=dc.get_bgimage(), anchor=NW,
+                                tags = ("backgrounds")
+                                )
+        canvas.create_image((0 + self.panx ,0 + self.pany),
+                            image=dc.get_image(), anchor=NW,
+                            tags = ("pan", "backgrounds", "playing"))
+
+        canvas.tag_lower("backgrounds")
+
 
     def _create_canvas_with_DC(self):
         """
@@ -518,11 +501,8 @@ class PykurinLevelEditorUI(Frame):
         canvas.delete(ALL)
         self.panx = self.pany = 0
 
-        canvas.create_image((0,0),
-                                image=dc.get_bgimage(), anchor=NW)
-        canvas.create_image((0,0),
-                            image=dc.get_image(), anchor=NW,
-                            tags = ("pan"))
+        self._create_backgrounds()
+
 
         #Filled with pygame RECTS
         for idx,r in enumerate(dc.bouncers):
