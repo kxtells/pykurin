@@ -7,7 +7,7 @@ from lbdialogs import tkLevelDialog
 from common_dialogs import *
 import tempfile
 
-import os
+import os, sys
 
 #
 #
@@ -17,63 +17,24 @@ import os
 class PykurinLevelEditorUI(Frame):
 
     def __init__(self, master=None):
-
-        self.DC = datacontainer.datacontainer()
         Frame.__init__(self, master, relief=SUNKEN, bd=2)
 
-        #The Menu bar
-        self.menubar = Menu(self)
-        menu = Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label="File", menu=menu)
-        menu.add_command(label="New Level",     command=self.f_new_level)
-        menu.add_command(label="Open Level",    command=self.f_open_level)
-        menu.add_command(label="Save Level",    command=self.f_save_level)
-        menu.add_command(label="Save Level As", command=self.f_save_level_as)
-        menu.add_command(label="Exit",          command=self.f_exit)
-
-        menu = Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label="View", menu=menu)
-        menu.add_command(label="As Game")
-        menu.add_command(label="Collisions")
-
-        menu = Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label="Level", menu=menu)
-        menu.add_command(label="Edit", command=self.e_edit_level_attributes)
-
-        menu = Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label="Test", menu=menu)
-        menu.add_command(label="Run Level", command=self.run_level)
-
-        # The toolbar to create things
-        toolbar = Frame(self.master)
-
-        self.buttons = []
-
-        b = Button(toolbar, text="Bouncer", width=6, command=lambda: self.button(self.DC.BOUNCER,0))
-        b.pack(side=LEFT, padx=2, pady=2)
-        self.buttons.append(b)
-
-        b = Button(toolbar, text="lifeup", width=6, command=lambda: self.button(self.DC.LIVES,1))
-        b.pack(side=LEFT, padx=2, pady=2)
-        self.buttons.append(b)
-
-        b = Button(toolbar, text="basher", width=6, command=lambda: self.button(self.DC.BASHER,2))
-        b.pack(side=LEFT, padx=2, pady=2)
-        self.buttons.append(b)
-
-        #Contains the currently pressed button. Not the index but the type of the item to create
-        #DC.BASHER (for example)
-        self.buttonpressed = None
-        toolbar.pack(side=TOP, fill=X)
+        self.DC             = datacontainer.datacontainer()
 
 
-        # Status bar with the x y information
-        self.statusbar = StatusBar(self.master)
-        self.statusbar.pack(side=BOTTOM, fill=X)
+        self.__guibuild_menubar()
+        self.__guibuild_toolbar()
+        self.__guibuild_statusbar()
 
-        while self.DC.base_pykurin_directory == None:
-            bdir = open_dir_chooser("Choose Pykurin Base Directory")
-            self.DC.set_base_dir(bdir)
+        #Force the search of a pykurin directory
+        bdir = open_dir_chooser("Choose Pykurin Base Directory")
+        if not bdir:
+            sys.exit()
+        if not self.DC.isPykurinDirectory(bdir):
+            error_message("ERROR", "%s is not a Pykurin game directory" % bdir)
+            sys.exit()
+
+        self.DC.set_base_dir(bdir)
 
         try:
             self.master.config(menu=self.menubar)
@@ -115,6 +76,82 @@ class PykurinLevelEditorUI(Frame):
 		#Window title
         self.changeWindowTitle("TK pykurin Level builder")
 
+    #
+    # GUI BUILD FUNCTIONS
+    #
+    def __guibuild_menubar(self):
+        #The Menu bar
+        self.menubar = Menu(self)
+        menu = Menu(self.menubar, tearoff=0)
+        self.menubar.add_cascade(label="File", menu=menu)
+        menu.add_command(label="New Level",     command=self.f_new_level)
+        menu.add_command(label="Open Level",    command=self.f_open_level)
+        menu.add_command(label="Save Level",    command=self.f_save_level)
+        menu.add_command(label="Save Level As", command=self.f_save_level_as)
+        menu.add_command(label="Exit",          command=self.f_exit)
+
+        menu = Menu(self.menubar, tearoff=0)
+        self.showImage      = BooleanVar()
+        self.showBackground = BooleanVar()
+        self.showCollisions = BooleanVar()
+        self.showItems      = BooleanVar()
+        self.showMonsters   = BooleanVar()
+
+        self.menubar.add_cascade(label="View", menu=menu)
+        menu.add_checkbutton(label="Game Image", variable=self.showImage, onvalue=True, offvalue=False)
+        menu.add_checkbutton(label="Background", variable=self.showBackground, onvalue=True, offvalue=False)
+        menu.add_checkbutton(label="Collisions", variable=self.showCollisions, onvalue=True, offvalue=False)
+        menu.add_checkbutton(label="Monsters",   variable=self.showMonsters, onvalue=True, offvalue=False)
+        menu.add_checkbutton(label="Items",      variable=self.showItems, onvalue=True, offvalue=False)
+
+        self.showImage.set(True)
+        self.showBackground.set(True)
+        self.showCollisions.set(True)
+        self.showItems.set(True)
+        self.showMonsters.set(True)
+
+        menu = Menu(self.menubar, tearoff=0)
+        self.menubar.add_cascade(label="Level", menu=menu)
+        menu.add_command(label="Edit", command=self.e_edit_level_attributes)
+
+        menu = Menu(self.menubar, tearoff=0)
+        self.menubar.add_cascade(label="Test", menu=menu)
+        menu.add_command(label="Run Level", command=self.run_level)
+
+
+    def __guibuild_toolbar(self):
+        # The toolbar to create things
+        toolbar = Frame(self.master)
+
+        self.buttons = []
+
+        b = Button(toolbar, text="Bouncer", width=6, command=lambda: self.button(self.DC.BOUNCER,0))
+        b.pack(side=LEFT, padx=2, pady=2)
+        self.buttons.append(b)
+
+        b = Button(toolbar, text="lifeup", width=6, command=lambda: self.button(self.DC.LIVES,1))
+        b.pack(side=LEFT, padx=2, pady=2)
+        self.buttons.append(b)
+
+        b = Button(toolbar, text="basher", width=6, command=lambda: self.button(self.DC.BASHER,2))
+        b.pack(side=LEFT, padx=2, pady=2)
+        self.buttons.append(b)
+
+        #Contains the currently pressed button. Not the index but the type of the item to create
+        #DC.BASHER (for example)
+        self.buttonpressed = None
+        toolbar.pack(side=TOP, fill=X)
+
+
+    def __guibuild_statusbar(self):
+        # Status bar with the x y information
+        self.statusbar = StatusBar(self.master)
+        self.statusbar.pack(side=BOTTOM, fill=X)
+
+
+    #
+    # Some getters
+    #
     def get_item_type(self, itemid):
         return self.dataids[itemid][0]
 

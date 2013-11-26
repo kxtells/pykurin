@@ -276,6 +276,24 @@ class datacontainer:
 
         return ret,text
 
+    def isPykurinDirectory(self, dirpath):
+        """Returns True if dirpath is a pykurin directory. (contains
+        all what is expected from it). If not, returns False and a list
+        of what failed
+        """
+
+        if not dirpath: return
+
+        dirlist = os.listdir(dirpath)
+        expected = ["pykurin.py", "levels", "backgrounds", "sticks", "sprites",
+                "levelpacks"]
+
+        for exp in expected:
+            if exp not in dirlist:
+                return False
+
+        return True
+
     #
     #
     # Load Parser from file
@@ -299,10 +317,10 @@ class datacontainer:
         part = full_path.rpartition('/')
         part2 = imagefile.rpartition('/')
 
-        colfilename = self.base_pykurin_directory+"/"+colfilename
-        self.set_image(os.path.join(self.base_pykurin_directory, imagefile))
-        self.set_bg_image(os.path.join(self.base_pykurin_directory, bgfilename))
-        self.set_col_image(os.path.join(self.base_pykurin_directory, colfilename))
+        colfilename = self.get_base_dir()+"/"+colfilename
+        self.set_image(os.path.join(self.get_base_dir(), imagefile))
+        self.set_bg_image(os.path.join(self.get_base_dir(), bgfilename))
+        self.set_col_image(os.path.join(self.get_base_dir(), colfilename))
 
 
         #Fill the things
@@ -381,7 +399,7 @@ class datacontainer:
     def save_to_file(self,filepath,xpadding=0,ypadding=0):
         if len(self.sticks)!=1: return False, "Need a start Stick Position"
         if len(self.goals)!=1:  return False, "Need a GOAL Position"
-        if not self.base_pykurin_directory: return False, "There is no base pykurin directory set"
+        if not self.get_base_dir(): return False, "There is no base pykurin directory set"
 
         f = open(filepath, 'w')
         f.write("[options]\n");
