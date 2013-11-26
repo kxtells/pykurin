@@ -359,7 +359,15 @@ class PykurinLevelEditorUI(Frame):
     def f_new_level(self):
         """ Creates a new level with no file associated to it """
         print "NEW LEVEL"
-        pass
+
+        # Force a new datacontainer
+        self.DC = datacontainer.datacontainer()
+
+        #Start and end are created automatically
+        self.DC.add_item(self.DC.STICKS, 0, 0)
+        self.DC.add_item(self.DC.GOALS,  100, 100)
+
+        self._create_canvas_with_DC()
 
     def f_open_level(self):
         """

@@ -83,10 +83,14 @@ class tkLevelDialog(Toplevel):
             self.wait_window(self)
 
     def apply(self):
-        self.DC.set_image(self.e1.get())
-        self.DC.set_bg_image(self.e2.get())
-        self.DC.set_col_image(self.e3.get())
-        self.DC.set_title(self.e0.get())
+        if self.e1.get() != "None":
+            self.DC.set_image(self.e1.get())
+        if self.e2.get() != "None":
+            self.DC.set_bg_image(self.e2.get())
+        if self.e3.get() != "None":
+            self.DC.set_col_image(self.e3.get())
+        if self.e0.get() != "None":
+            self.DC.set_title(self.e0.get())
 
     def finish(self):
         self.apply()

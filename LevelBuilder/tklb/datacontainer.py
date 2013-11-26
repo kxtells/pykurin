@@ -32,7 +32,6 @@ class datacontainer:
 
 
     #File Metadata
-    colimg_filename = None
     background_filename = None
     uuid = None
 
@@ -50,7 +49,7 @@ class datacontainer:
         self.bgimage = None
         self.background_filename = None
         self.colimage = None
-        self.colimg_filename= None
+        self.collision_filename= None
         self.bashers = []
         self.bouncers = []
         self.lives = []
@@ -228,7 +227,7 @@ class datacontainer:
         return self.background_filename != None
 
     def isColisionDefined(self):
-        return self.colimg_filename != None
+        return self.collision_filename != None
 
     def isGoalDefined(self):
         return len(self.goals) > 0
@@ -292,7 +291,7 @@ class datacontainer:
         imagefile = parser.get('options','background')
         self.img_filename = imagefile
         colfilename = parser.get('options','collision')
-        self.colimg_filename = colfilename
+        self.collision_filename = colfilename
         bgfilename = parser.get('options','background2')
         self.background_filename = bgfilename
         title = parser.get('options','name')
@@ -392,7 +391,7 @@ class datacontainer:
         f.write("[options]\n");
         f.write("name:"+self.title+"\n")
 
-        colimgtuple = self.colimg_filename.rpartition('levels')
+        colimgtuple = self.collision_filename.rpartition('levels')
         imgtuple = self.img_filename.rpartition('levels')
         colimg = colimgtuple[1]+colimgtuple[2]
         img = imgtuple[1]+imgtuple[2]
