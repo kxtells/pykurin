@@ -3,6 +3,7 @@ from pygame import image
 from ConfigParser import SafeConfigParser
 import uuid
 import os
+import shutil
 
 from PIL import Image, ImageTk
 
@@ -293,6 +294,76 @@ class datacontainer:
                 return False
 
         return True
+
+    def isAllDataInPykurinDirectory(self):
+        """Checks if all the data is relative to the set pykurin directory.
+            All the levels must store their data in that directory, if not,
+            pykurin won't run correctly.
+        """
+        pdir = self.get_base_dir()
+        isall = True
+        data  = []
+
+        if pdir not in self.get_image_fname():
+            isall = False
+            data.append(self.get_image_fname())
+        if pdir not in self.get_background_fname():
+            isall = False
+            data.append(self.get_background_fname())
+        if pdir not in self.get_colision_fname():
+            isall = False
+            data.append(self.get_background_fname())
+
+        return isall, data
+
+    def get_last_autogenfile(self, directory):
+        """When creating new files, follow the convention:
+            backgrounds/bgX.ext (X increases over time)
+            levels/levelname.ext
+            levels/levelnamecol.ext
+        """
+        pass
+
+    def copyOutsidersToPykurinDirectory(self):
+        """
+            Check all the files defined that are outise the pykurin directory
+            and creates a copy inside the directory (if it is possible)
+            This will modify the datacontainer to point to the new files
+            inside the pykurin directory.
+
+            Will raise the Exceptions up, to be catched and presented.
+        """
+        pdir  = self.get_base_dir()
+        #Create a filename without special characters from the title
+        filen = ''.join(e for e in self.get_title() if e.isalnum())
+        operations = []
+
+
+        if pdir not in self.get_image_fname():
+            origin  = self.get_image_fname()
+            fn, ext = os.path.splitext(origin)
+            dest    = os.path.join(pdir,"levels","base","%s.%s"%(filen,ext))
+            shutil.copyfile(origin, dest)
+            self.set_image(dest)
+            operations.append("CP %s -> %s" %(origin, dest))
+        if pdir not in self.get_background_fname():
+            origin  = self.get_background_fname()
+            fname   = os.path.basename(origin)
+            dest    = os.path.join(pdir,"backgrounds", fname)
+            shutil.copyfile(origin, dest)
+            self.set_bg_image(dest)
+            operations.append("CP %s -> %s" %(origin, dest))
+        if pdir not in self.get_colision_fname():
+            origin  = self.get_colision_fname()
+            fn, ext = os.path.splitext(origin)
+            dest    = os.path.join(pdir,"levels","base","%sCOL.%s"%(filen,ext))
+            shutil.copyfile(origin, dest)
+            self.set_col_image(dest)
+            operations.append("CP %s -> %s" %(origin, fname))
+
+        return operations
+
+
 
     #
     #
