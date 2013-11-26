@@ -24,13 +24,16 @@ class datacontainer:
     STICKS      = 4
     BASHER_END  = 5
 
+    IMAGE       = 0
+    COLIMAGE    = 1
+    BGIMAGE     = 2
+
     selecteditem = None
 
 
     #File Metadata
     colimg_filename = None
     background_filename = None
-    title = None
     uuid = None
 
     #working data
@@ -54,6 +57,7 @@ class datacontainer:
         self.goals = []
         self.sticks = []
         self.bashers_end = []
+        self.title = None
 
         #References to everything
         self.items = [self.bashers, self.bouncers, self.lives, self.goals, self.sticks, self.bashers_end]
@@ -137,6 +141,9 @@ class datacontainer:
 
     def get_bgimage(self):
         return self.bgimage
+
+    def get_colimage(self):
+        return self.colimage
 
     def get_title(self):
         return self.title
