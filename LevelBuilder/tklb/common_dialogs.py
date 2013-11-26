@@ -55,4 +55,6 @@ def show_disclaimer():
     popup_message("BorinotGames Note","This program is provided AS IS :-P\n\
 It is just a helper utility, don't expect to be beautiful or bug free in Exotic cases")
 
-
+def ask_dialog(title, question):
+    """A simple ask dialog will return True or False"""
+    return tkMessageBox.askyesno(title, question)
