@@ -3,7 +3,7 @@ import datacontainer
 import tkFileDialog, tkSimpleDialog, tkMessageBox
 from tksimplestatusbar import StatusBar
 
-from lbdialogs import tkLevelDialog
+from lbdialogs import tkLevelDialog, tkTextViewer
 from common_dialogs import *
 import tempfile
 
@@ -454,7 +454,8 @@ class PykurinLevelEditorUI(Frame):
                     error_message("ERROR",e)
                     return False
 
-                popup_message("COPIED","\n".join(cplist))
+                tkTextViewer(self.master, title="COPY LOG",
+                        textdata="COPIED\n%s"%"\n".join(cplist))
                 return True
             else:
                 return False
@@ -542,9 +543,9 @@ Do you want to copy the files to the game tree?
     def f_exit(self):
         self.master.destroy()
 
-
     def f_deploy_to_pykurin(self):
         popup_message("Not implemented","This will save the level to the pykurin directory")
+
 
     def e_edit_level_attributes(self):
         d = tkLevelDialog(self.master, datacontainer=self.DC)
