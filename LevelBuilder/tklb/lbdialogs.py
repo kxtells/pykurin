@@ -8,6 +8,8 @@ from Tkinter import *
 
 from common_dialogs import *
 
+import os
+
 class tkLevelDialog(Toplevel):
     def __init__(self, parent, title = None, modal=True, datacontainer=None):
         Toplevel.__init__(self, parent)
@@ -15,7 +17,6 @@ class tkLevelDialog(Toplevel):
         if title:
             self.title(title)
         self.parent = parent
-        self.result = None
         self.DC = datacontainer
 
 
@@ -49,6 +50,9 @@ class tkLevelDialog(Toplevel):
         self.e3 = Entry(self, textvariable = self.collision, width=50,
                        state=DISABLED, relief=RIDGE)
 
+        self.bviewfile = Button(self, text="View File", width=6,
+                              command=lambda: self.view_file())
+
 
         self.bframe  = Frame(self)
         self.bok     = Button(self.bframe, text="OK", width=6, command=lambda: self.finish())
@@ -70,8 +74,9 @@ class tkLevelDialog(Toplevel):
         self.e2.grid(row=2, column=1)
         self.e3.grid(row=3, column=1)
         #self.e4.grid(row=4, column=1)
+        self.bviewfile.grid(row=5, column=0)
 
-        self.bframe.grid(row=5, column=0, columnspan=3)
+        self.bframe.grid(row=6, column=0, columnspan=3)
         self.bok.grid(row=0, column=0)
         self.bapply.grid(row=0, column=1)
         self.bcancel.grid(row=0, column=2)
@@ -114,3 +119,55 @@ class tkLevelDialog(Toplevel):
             self.background2.set(filename)
         elif which == self.DC.COLIMAGE:
             self.collision.set(filename)
+
+    def view_file(self):
+        fname = self.DC.get_current_level_filename()
+        tkTextViewer(self.parent, title="FILE %s"%os.path.basename(fname),
+                filename=fname)
+
+"""
+    Basic class to present big amount of text together.
+    Useful for presenting logs or small files
+
+    tkTextViewer(master, textdata="lala")
+"""
+class tkTextViewer(Toplevel):
+    def __init__(self, parent, title = None, modal=True, textdata="", filename=None):
+        Toplevel.__init__(self, parent)
+        self.transient(parent)
+
+        if title:
+            self.title(title)
+
+        self.parent = parent
+        self.text   = textdata
+        if filename:
+            try:
+                with open (filename, "r") as datafile:
+                    data=datafile.readlines()
+                    self.text = "".join(data)
+            except:
+                self.text = "ERROR READING FILE: %s" % filename
+
+
+        self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
+                                  parent.winfo_rooty()+50))
+
+
+        self.TW = Text(self)
+        self.TW.insert(INSERT, self.text)
+
+        self.bok = Button(self, text="OK", width=6, command=lambda: self.finish())
+
+        #self.TW.grid(row=0, column=0)
+        #self.bok.grid(row=1, column=0)
+        self.TW.pack()
+        self.bok.pack()
+
+
+
+        if modal:
+            self.wait_window(self)
+
+    def finish(self):
+        self.destroy()
