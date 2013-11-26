@@ -25,6 +25,7 @@ class PykurinLevelEditorUI(Frame):
         self.__guibuild_menubar()
         self.__guibuild_toolbar()
         self.__guibuild_statusbar()
+        self.__guibuild_canvas()
 
         #Force the search of a pykurin directory
         bdir = open_dir_chooser("Choose Pykurin Base Directory")
@@ -42,24 +43,6 @@ class PykurinLevelEditorUI(Frame):
             # master is a toplevel window (Python 1.4/Tkinter 1.63)
             self.master.tk.call(master, "config", "-menu", self.menubar)
 
-        self.canvas = Canvas(self, bg="gray", width=800, height=600,
-                     bd=0, highlightthickness=0)
-        self.canvas.pack()
-
-        #Bind Mouseover on Canvas
-        self.canvas.bind("<Motion>", self.mouse_motion)
-
-        #Bind Center click to pan
-        self.canvas.bind("<B2-Motion>", self.pan_motion)
-        self.canvas.bind("<Button-2>", self.pan_start)
-
-        #Bind clicking to select
-        self.canvas.bind("<Button-1>", self.canvas_left_click)
-        self.canvas.bind("<B1-Motion>", self.canvas_left_click_motion)
-        self.canvas.bind("<ButtonRelease-1>", self.canvas_left_click_release)
-
-        #Bind clicking to select
-        self.canvas.bind("<Delete>", self.delete_item)
 
         #PAN
         self.panx  = 0
@@ -91,24 +74,34 @@ class PykurinLevelEditorUI(Frame):
         menu.add_command(label="Exit",          command=self.f_exit)
 
         menu = Menu(self.menubar, tearoff=0)
-        self.showImage      = BooleanVar()
-        self.showBackground = BooleanVar()
-        self.showCollisions = BooleanVar()
-        self.showItems      = BooleanVar()
-        self.showMonsters   = BooleanVar()
+        showImage      = BooleanVar()
+        showBackground = BooleanVar()
+        showCollisions = BooleanVar()
+        showItems      = BooleanVar()
+        showMonsters   = BooleanVar()
+
+        self.view_menu_items = [showImage, showBackground, showCollisions,
+                showMonsters, showItems]
 
         self.menubar.add_cascade(label="View", menu=menu)
-        menu.add_checkbutton(label="Game Image", variable=self.showImage, onvalue=True, offvalue=False)
-        menu.add_checkbutton(label="Background", variable=self.showBackground, onvalue=True, offvalue=False)
-        menu.add_checkbutton(label="Collisions", variable=self.showCollisions, onvalue=True, offvalue=False)
-        menu.add_checkbutton(label="Monsters",   variable=self.showMonsters, onvalue=True, offvalue=False)
-        menu.add_checkbutton(label="Items",      variable=self.showItems, onvalue=True, offvalue=False)
+        menu.add_checkbutton(label="Game Image", variable=showImage,
+                            onvalue=True, offvalue=False,
+                            command=lambda: self.v_toggle(0, ["playBG"]))
+        menu.add_checkbutton(label="Background", variable=showBackground,
+                            onvalue=True, offvalue=False,
+                            command=lambda: self.v_toggle(1, ["bgBG"]))
+        menu.add_checkbutton(label="Collisions", variable=showCollisions,
+                            onvalue=True, offvalue=False,
+                            command=lambda: self.v_toggle(2, ["colBG"]))
+        menu.add_checkbutton(label="Monsters",   variable=showMonsters,
+                            onvalue=True, offvalue=False,
+                            command=lambda: self.v_toggle(3, ["basher", "basher_end"]))
+        menu.add_checkbutton(label="Items",      variable=showItems,
+                            onvalue=True, offvalue=False,
+                            command=lambda: self.v_toggle(4, ["bouncer", "lives"]))
 
-        self.showImage.set(True)
-        self.showBackground.set(True)
-        self.showCollisions.set(True)
-        self.showItems.set(True)
-        self.showMonsters.set(True)
+        for var in self.view_menu_items:
+            var.set(True)
 
         menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Level", menu=menu)
@@ -148,6 +141,37 @@ class PykurinLevelEditorUI(Frame):
         self.statusbar = StatusBar(self.master)
         self.statusbar.pack(side=BOTTOM, fill=X)
 
+    def __guibuild_canvas(self):
+        self.canvas = Canvas(self, bg="gray", width=800, height=600,
+                     bd=0, highlightthickness=0)
+        self.canvas.pack()
+
+        #Bind Mouseover on Canvas
+        self.canvas.bind("<Motion>", self.mouse_motion)
+
+        #Bind Center click to pan
+        self.canvas.bind("<B2-Motion>", self.pan_motion)
+        self.canvas.bind("<Button-2>", self.pan_start)
+
+        #Bind clicking to select
+        self.canvas.bind("<Button-1>", self.canvas_left_click)
+        self.canvas.bind("<B1-Motion>", self.canvas_left_click_motion)
+        self.canvas.bind("<ButtonRelease-1>", self.canvas_left_click_release)
+
+        #Bind clicking to select
+        self.canvas.bind("<Delete>", self.delete_item)
+
+
+    #
+    # Canvas draw toggle
+    #
+    def v_toggle(self, buttonid, taglist):
+        for tag in taglist:
+            for item in self.canvas.find_withtag(tag):
+                if self.view_menu_items[buttonid].get():
+                    self.canvas.itemconfig(item, state=NORMAL)
+                else:
+                    self.canvas.itemconfig(item, state=HIDDEN)
 
     #
     # Some getters
@@ -401,7 +425,7 @@ class PykurinLevelEditorUI(Frame):
                         self.dataids[tkid] = (itype, dcdata[1] - 1)
 
     #
-    # LEVEL LOADING AND SAVING
+    # MENU HANDLING. SAVE; LOAD; NEW; EXIT
     #
     def f_new_level(self):
         """ Creates a new level with no file associated to it """
@@ -526,7 +550,7 @@ class PykurinLevelEditorUI(Frame):
             dc.add_item(self.DC.BASHER_END, rx, ry)
 
 
-        idl = canvas.create_line(0,0,0,0,tags = ("pan"))
+        idl = canvas.create_line(0,0,0,0,tags = ("pan", "basher"))
 
         ids = canvas.create_image((rx, ry),
                             image=dc.get_basher_goto_image(), anchor=NW,
@@ -534,7 +558,7 @@ class PykurinLevelEditorUI(Frame):
 
         idb = canvas.create_image((x, y),
                             image=dc.get_basher_image(), anchor=NW,
-                            tags=("select", "move", "pan"))
+                            tags=("select", "move", "pan", "basher"))
 
 
         self.dataids[idb] = (dc.BASHER, dcid, ids, idl)
@@ -551,15 +575,15 @@ class PykurinLevelEditorUI(Frame):
 
         canvas.create_image((0 + self.panx,0 + self.pany),
                                 image=dc.get_colimage(), anchor=NW,
-                                tags = ("pan", "backgrounds", "collision")
+                                tags = ("pan", "backgrounds", "colBG")
                                 )
         canvas.create_image((0,0),
                                 image=dc.get_bgimage(), anchor=NW,
-                                tags = ("backgrounds")
+                                tags = ("backgrounds", "bgBG")
                                 )
         canvas.create_image((0 + self.panx ,0 + self.pany),
                             image=dc.get_image(), anchor=NW,
-                            tags = ("pan", "backgrounds", "playing"))
+                            tags = ("pan", "backgrounds", "playBG"))
 
         canvas.tag_lower("backgrounds")
 
