@@ -71,6 +71,7 @@ class PykurinLevelEditorUI(Frame):
         menu.add_command(label="Open Level",    command=self.f_open_level)
         menu.add_command(label="Save Level",    command=self.f_save_level)
         menu.add_command(label="Save Level As", command=self.f_save_level_as)
+        menu.add_command(label="Deploy",        command=self.f_deploy_to_pykurin)
         menu.add_command(label="Exit",          command=self.f_exit)
 
         menu = Menu(self.menubar, tearoff=0)
@@ -214,16 +215,11 @@ class PykurinLevelEditorUI(Frame):
         """Run the current level by the specified pykurin base dir"""
         bdir = self.DC.get_base_dir()
         pykurinexe = os.path.join(bdir,"pykurin.py")
-        #fname = self.DC.get_current_level_filename()
 
-        isalldata, outsidedata = self.DC.isAllDataInPykurinDirectory()
-        if not isalldata:
-            if self.copy_data_dialog(outsidedata):
-                #Get ready to copy files
-                cplist = self.DC.copyOutsidersToPykurinDirectory()
-                popup_message("COPIED","\n".join(cplist))
-            else:
-                return
+        #Check if all data is in pykurin directory, if not copy, if not end
+        if not self.manage_data_dialogs():
+            return
+
 
         #Create a temporary file, save the level, run and delete
         tmpfile = tempfile.NamedTemporaryFile()
@@ -437,6 +433,35 @@ class PykurinLevelEditorUI(Frame):
     #
     # MENU HANDLING. SAVE; LOAD; NEW; EXIT
     #
+    def manage_data_dialogs(self):
+        """ This flow of dialogs does the following:
+         - Checks if datacontainer has all the files pointed to the pykurin directory
+         - If not, asks for a possible copy of data (if the user wants it)
+         - Tries to copy all the data and presents the user with the copy
+            information
+
+            Success returns True (the level is on a pykurin directory)
+            False -> The level can't be run, as it is not a pykurin directory
+
+        """
+        isalldata, outsidedata = self.DC.isAllDataInPykurinDirectory()
+        if not isalldata:
+            if self.copy_data_dialog(outsidedata):
+                #Get ready to copy files
+                try:
+                    cplist = self.DC.copyOutsidersToPykurinDirectory()
+                except Exception as e:
+                    error_message("ERROR",e)
+                    return False
+
+                popup_message("COPIED","\n".join(cplist))
+                return True
+            else:
+                return False
+        else:
+            return True
+
+
     def copy_data_dialog(self, files):
         files_str = "\n".join(files)
         return ask_dialog("COPY NEEDED",
@@ -517,6 +542,9 @@ Do you want to copy the files to the game tree?
     def f_exit(self):
         self.master.destroy()
 
+
+    def f_deploy_to_pykurin(self):
+        popup_message("Not implemented","This will save the level to the pykurin directory")
 
     def e_edit_level_attributes(self):
         d = tkLevelDialog(self.master, datacontainer=self.DC)
