@@ -216,16 +216,26 @@ class PykurinLevelEditorUI(Frame):
         pykurinexe = os.path.join(bdir,"pykurin.py")
         #fname = self.DC.get_current_level_filename()
 
+        isalldata, outsidedata = self.DC.isAllDataInPykurinDirectory()
+        if not isalldata:
+            if self.copy_data_dialog(outsidedata):
+                #Get ready to copy files
+                cplist = self.DC.copyOutsidersToPykurinDirectory()
+                popup_message("COPIED","\n".join(cplist))
+            else:
+                return
+
         #Create a temporary file, save the level, run and delete
         tmpfile = tempfile.NamedTemporaryFile()
-        if self._save_level_errcheck():
-            return
+
+        #Check for errors on save Before trying to launch
+        if self._save_level_errcheck(): return
 
         self.__f_save(tmpfile.name)
 
         os.system("/usr/bin/python %s %s" % (pykurinexe, tmpfile.name))
 
-        os.unlink(tmpfile.name)
+        #os.unlink(tmpfile.name)
 
     #
     # Panning
@@ -427,6 +437,18 @@ class PykurinLevelEditorUI(Frame):
     #
     # MENU HANDLING. SAVE; LOAD; NEW; EXIT
     #
+    def copy_data_dialog(self, files):
+        files_str = "\n".join(files)
+        return ask_dialog("COPY NEEDED",
+        """The following files are not on the pykurin
+base directory tree %s:
+
+%s.
+
+Do you want to copy the files to the game tree?
+        """% (self.DC.get_base_dir(), files_str)
+        )
+
     def f_new_level(self):
         """ Creates a new level with no file associated to it """
         print "NEW LEVEL"
@@ -573,14 +595,16 @@ class PykurinLevelEditorUI(Frame):
 
         canvas.delete("backgrounds")
 
-        canvas.create_image((0 + self.panx,0 + self.pany),
-                                image=dc.get_colimage(), anchor=NW,
-                                tags = ("pan", "backgrounds", "colBG")
-                                )
         canvas.create_image((0,0),
                                 image=dc.get_bgimage(), anchor=NW,
                                 tags = ("backgrounds", "bgBG")
                                 )
+
+        canvas.create_image((0 + self.panx,0 + self.pany),
+                                image=dc.get_colimage(), anchor=NW,
+                                tags = ("pan", "backgrounds", "colBG")
+                                )
+
         canvas.create_image((0 + self.panx ,0 + self.pany),
                             image=dc.get_image(), anchor=NW,
                             tags = ("pan", "backgrounds", "playBG"))
