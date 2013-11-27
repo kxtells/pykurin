@@ -31,8 +31,6 @@ class datacontainer:
 
     def __init__(self):
         """Loads all the needed common images"""
-        self.__load_images()
-
         self.base_pykurin_directory = None
         self.current_level_filename = None
         self.image = None

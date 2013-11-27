@@ -7,6 +7,8 @@ from lbdialogs import tkLevelDialog, tkTextViewer
 from common_dialogs import *
 import tempfile
 
+import icons
+
 import os, sys
 
 
@@ -31,8 +33,7 @@ class PykurinLevelEditorUI(Frame):
 
         #Import the icons. (needs tk running, that is why it is done inside
         #the function and not on the top of the module
-        from icons import ICONS
-        self.ICONS = ICONS
+        self.ICONS = icons.icons_from_dir()
 
 
         self.__guibuild_menubar()

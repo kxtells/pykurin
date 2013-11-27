@@ -8,6 +8,8 @@ from Tkinter import *
 
 from common_dialogs import *
 
+import icons
+
 import os
 import difflib
 import tempfile
@@ -65,8 +67,8 @@ class tkLevelDialog(Toplevel):
 
 
 
-        from icons import ICONS
 
+        ICONS = icons.icons_from_dir()
         self.bframe  = Frame(self)
         self.bok     = Button(self.bframe, text="OK", width=6, command=lambda: self.finish())
         #self.bapply  = Button(self.bframe, text="Apply", width=6, command=lambda: self.apply())
