@@ -338,7 +338,10 @@ class tkLevelPacksList(Toplevel):
         self.destroy()
 
 """
-    Level Pack editor
+    Level Pack editor.
+    Edit a specific LevelPack, changing the name and various attributes.
+
+    Presents a list of which levels are assigned to this levelpack.
 """
 class tkLevelPackEdit(Toplevel):
     def __init__(self, parent, modal=True, levelpack=None):
@@ -366,7 +369,7 @@ class tkLevelPackEdit(Toplevel):
         Label(self, text="Directory Name:").grid(row=1)
         Label(self, text="Icon:").grid(row=2)
         Label(self, text="Levels to open:").grid(row=3)
-        Label(self, text="Levels Assigned:").grid(row=4)
+        Label(self, text="Levels Assigned:").grid(row=5)
 
         self.packtitle = StringVar()
         self.packtitle.set(self.LP.get_name())

@@ -4,6 +4,7 @@ from ConfigParser import SafeConfigParser
 import uuid
 import os
 import shutil
+import time
 
 def isPykurinDirectory(dirpath):
     """Returns True if dirpath is a pykurin directory. (contains
@@ -545,8 +546,11 @@ class LevelPackContainer:
 
         if file:
             self.load(file)
+            fname = os.path.basename(file)
+            self.filename = fname
             return
 
+        self.filename    = None
         self.name        = name
 
         #Contains
@@ -555,6 +559,12 @@ class LevelPackContainer:
         self.levels2open = levels2open
 
     #Getters
+    def set_filename(self, fname):
+        self.filename = fname
+
+    def get_filename(self):
+        return self.filename
+
     def get_name(self):
         return self.name
 
@@ -591,11 +601,20 @@ class LevelPackContainer:
     def directoryExists(self):
         return os.path.isdir(os.path.join(self.get_pykurindir(), "levels", self.dirname))
 
+    def gen_filepath(self):
+        return os.path.join(self.get_pykurindir(), "levels", self.dirname, self.filename)
+
     #SAVE
-    def save(self, filepath):
+    def save(self, filepath=None):
         """ Save the file directly, not checking where is it being saved,
             or if it makes sense in the pykurin executable
         """
+
+        if not filepath and not self.filename:
+            return False, ["No filename or path defined"]
+
+        if not filepath:
+            filepath = self.gen_filepath()
 
         f = open(filepath, 'w')
         f.write("[options]\n");
@@ -604,6 +623,8 @@ class LevelPackContainer:
         f.write("basedir:"+"levels"+"/"+str(self.dirname)+"\n")
         f.write("icon:"+str(self.icon)+"\n")
         f.write("levels2open:"+str(self.levels2open)+"\n")
+
+        return True
 
     def load(self, filepath):
 
@@ -622,13 +643,17 @@ class LevelPackContainer:
         return os.path.join(self.get_pykurindir(), "levels", self.dirname)
 
     def get_list_of_levels(self):
-        dirpath = self.get_directory_fullpath()
-
         levelfiles = []
-        for lpfile in os.listdir(dirpath):
-            name, ext = os.path.splitext(lpfile)
-            if ext != ".prop":continue
-            levelfiles.append(lpfile)
+
+        try:
+            dirpath = self.get_directory_fullpath()
+
+            for lpfile in os.listdir(dirpath):
+                name, ext = os.path.splitext(lpfile)
+                if ext != ".prop":continue
+                levelfiles.append(lpfile)
+        except:
+            pass
 
         return levelfiles
 
@@ -704,15 +729,17 @@ class LevelPackList:
             Creates a new LevelPack, and returns a pointer to that new
             instance
         """
+        # Create a current date identifier, to avoid problems
+        cdate = int(time.time())
 
         if not filename:
-            filename = "%s-levelpack.lvlpack"%(len(self.lpackfiles)+1)
+            filename = "%slpack.lvlpack"%(cdate)
 
         if not name:
-            name    = "levelpack-%s"%(len(self.lpackfiles)+1)
+            name    = "levelpack-%s"%(cdate)
 
         if not dirname:
-            dirname = "levelpack-%s"%(len(self.lpackfiles)+1)
+            dirname = "levelpack-%s"%(cdate)
 
         ncont = LevelPackContainer(name = name, dirname=dirname, icon=icon,
                                   levels2open=levels2open,
