@@ -3,33 +3,42 @@ import glob
 from ConfigParser import SafeConfigParser
 
 class cLevelList:
-	levelfiles = []
-	levelnames = []
-	levelsuuid = []
+	def __init__(self):
+		self.levelfiles = []
+		self.levelnames = []
+		self.levelsuuid = []
 
-	packfiles = []
-	packnames = []
-	packdirs = []
-	packscoretoopen = []
-
+		self.packfiles = []
+		self.packnames = []
+		self.packdirs = []
+		self.packscoretoopen = []
 
 	def load_leveldir(self,path):
 		"""
 			Loads the .prop files in the proper path
-		"""	
+		"""
 		del self.levelfiles[:]
 		del self.levelnames[:]
-		del self.levelsuuid[:]		
+		del self.levelsuuid[:]
 
-		for infile in glob.glob( os.path.join(path, '*.prop') ):
-			self.levelfiles.append(infile)
-		
-		self.levelfiles.sort()
-		
-		for infile in self.levelfiles:
-			self.levelnames.append(self.get_level_name_from_file(infile))
-			self.levelsuuid.append(self.get_specific_option(infile,'uuid'))
-	
+		levelfiles = []
+		levelnames = []
+		levelsuuid = []
+		for infile in glob.glob(os.path.join(path, '*.prop') ):
+			levelfiles.append(infile)
+
+		levelfiles.sort()
+
+		for infile in levelfiles:
+			levelnames.append(self.get_level_name_from_file(infile))
+			levelsuuid.append(self.get_specific_option(infile,'uuid'))
+
+		tmp = zip(levelnames, levelfiles, levelsuuid)
+		tmp.sort()
+		self.levelfiles = [lf for ln,lf,lu in tmp]
+		self.levelnames = [ln for ln,lf,lu in tmp]
+		self.levelsuuid = [lu for ln,lf,lu in tmp]
+
 	def load_packdir(self,path):
 		"""
 			Loads the .prop files in the proper path
@@ -39,14 +48,14 @@ class cLevelList:
 
 		for infile in glob.glob( os.path.join(path, '*.lvlpack') ):
 			self.packfiles.append(infile)
-		
+
 		self.packfiles.sort()
-		
+
 		for infile in self.packfiles:
 			self.packnames.append(self.get_specific_option(infile,'name'))
 			self.packdirs.append(self.get_specific_option(infile,'basedir'))
 			self.packscoretoopen.append(int(self.get_specific_option(infile,'levels2open')))
-				
+
 	def get_level_name_from_file(self,path):
 		parser = SafeConfigParser()
 		parser.read(path)
@@ -56,7 +65,7 @@ class cLevelList:
 		parser = SafeConfigParser()
 		parser.read(path)
 		return parser.get('options',option)
-	
+
 
 	def get_levelnames(self):
 		return self.levelnames

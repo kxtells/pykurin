@@ -418,6 +418,7 @@ def load_levellist_with_pack(pack_num):
 	#levels_menu references to level list so just modify level list
 	#and set level_menu current to 0
 	level_list.load_leveldir(basedir)
+	levels_menu.reload_options(level_list.get_levelnames())
 	levels_menu.set_current(0)
 
 #Records menu selection function

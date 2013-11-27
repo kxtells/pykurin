@@ -14,10 +14,11 @@ class cMenu:
 		self.action_function = None
 		self.event_function = None
 
+
 	def menu_up(self):
 		self.current -= 1
 		if self.current < 0: self.current = len(self.options)-1
-	
+
 	def menu_down(self):
 		self.current += 1
 		if self.current > len(self.options)-1: self.current = 0
@@ -35,3 +36,6 @@ class cMenu:
 		if num > len(self.options): return False
 		else: self.current = num
 		return True
+
+	def reload_options(self, text_options):
+		self.options = text_options
