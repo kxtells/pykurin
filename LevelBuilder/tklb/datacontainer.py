@@ -502,7 +502,7 @@ class LevelPackContainer:
         return self.base_pykurin_directory
 
     def directoryExists(self):
-        os.path.isdir(os.path.join(self.get_base_dir(), "levels", self.dirname)
+        os.path.isdir(os.path.join(self.get_base_dir(), "levels", self.dirname))
 
     #SAVE
     def save(self, filepath):
@@ -530,3 +530,7 @@ class LevelPackContainer:
         #Get just the basedirname, not the partial path (levels)
         bdir = str(parser.get('options','basedir'))
         self.basedir = bdir.rpartition("/")[-1]
+
+class LevelPackList:
+    pass
+
