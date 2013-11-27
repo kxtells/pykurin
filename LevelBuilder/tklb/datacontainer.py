@@ -8,16 +8,6 @@ import shutil
 from PIL import Image, ImageTk
 
 class datacontainer:
-    #
-    # basher = 0
-    # bouncer = 1
-    # lives = 2
-    # goals = 3
-    # sticks = 4
-    #
-    #
-    #
-
     BASHER      = 0
     BOUNCER     = 1
     LIVES       = 2
@@ -244,6 +234,11 @@ class datacontainer:
 
     def isSaveable(self):
         """
+            Checks if the current datacontainer can be saved, that means, that
+            all the needed parameters are defined.
+            Note that isSaveable=True does not mean that the level will run
+            correctly with pykurin. For that, you also need to check if the
+            data is in the pykurin directory. isAllDataInPykurinDirectory
             Returns True or False + an explanation of what is missing
         """
         ret = True
@@ -364,14 +359,10 @@ class datacontainer:
         return operations
 
 
-
-    #
-    #
-    # Load Parser from file
-    # Multiple functions to do so
-    #
-    #
     def load_from_file(self,full_path,xpadding=0,ypadding=0):
+        """
+            Load the datacontainer from a file.
+        """
         #clear_everything()
         parser = SafeConfigParser()
         parser.read(full_path)
@@ -462,12 +453,14 @@ class datacontainer:
 
         selecteditem = None
 
-    #
-    #
-    # Save to file
-    #
-    #
     def save_to_file(self,filepath,xpadding=0,ypadding=0):
+        """
+            Save the current datacontainer to a specified file in the expected
+            format.
+
+            The format is simply a .text configuration file with various
+            sections
+        """
         if len(self.sticks)!=1: return False, "Need a start Stick Position"
         if len(self.goals)!=1:  return False, "Need a GOAL Position"
         if not self.get_base_dir(): return False, "There is no base pykurin directory set"
