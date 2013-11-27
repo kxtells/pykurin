@@ -55,29 +55,6 @@ class datacontainer:
         #LEGACY
         self.items_pack = [self.bashers,self.bouncers,self.lives,self.goals,self.sticks,self.bashers_end]
 
-    def __load_images(self):
-        """Loads the basic set of icons"""
-        images = {}
-        timage = Image.open("icons/basher.png")
-        images["basher"] = ImageTk.PhotoImage(timage)
-
-        timage = Image.open("icons/basher_goto_icon.png")
-        images["basher_goto"] = ImageTk.PhotoImage(timage)
-
-        timage = Image.open("icons/bouncer.png")
-        images["bouncer"] = ImageTk.PhotoImage(timage)
-
-        timage = Image.open("icons/goalimage.png")
-        images["goal"] = ImageTk.PhotoImage(timage)
-
-        timage = Image.open("icons/lives.png")
-        images["live"] = ImageTk.PhotoImage(timage)
-
-        timage = Image.open("icons/stick.png")
-        images["stick"] = ImageTk.PhotoImage(timage)
-
-        self.images = images
-
     def set_base_dir(self,path):
         self.base_pykurin_directory = path
 
@@ -150,27 +127,6 @@ class datacontainer:
 
     def generate_uuid(self):
         self.uuid = uuid.uuid4()
-
-    #
-    # Image Getters
-    #
-    def get_basher_image(self):
-        return self.images["basher"]
-
-    def get_basher_goto_image(self):
-        return self.images["basher_goto"]
-
-    def get_bouncer_image(self):
-        return self.images["bouncer"]
-
-    def get_live_image(self):
-        return self.images["live"]
-
-    def get_stick_image(self):
-        return self.images["stick"]
-
-    def get_goal_image(self):
-        return self.images["goal"]
 
     #
     # Object Handling

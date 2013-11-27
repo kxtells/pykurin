@@ -607,7 +607,7 @@ Do you want to copy the files to the game tree?
             dcid = dc.add_item(self.DC.BOUNCER, x, y)
 
         id = canvas.create_image((x, y),
-                            image=dc.get_bouncer_image(), anchor=NW,
+                            image=self.ICONS["bouncer"], anchor=NW,
                             tags=("select", "move", "bouncer", "delete", "pan"))
 
         self.dataids[id] = (dc.BOUNCER, dcid)
@@ -621,7 +621,7 @@ Do you want to copy the files to the game tree?
 
 
         id = canvas.create_image((x, y),
-                            image=dc.get_live_image(), anchor=NW,
+                            image=self.ICONS["live"], anchor=NW,
                             tags=("select", "move", "delete", "lives", "pan"))
 
         self.dataids[id] = (dc.LIVES, dcid)
@@ -650,11 +650,11 @@ Do you want to copy the files to the game tree?
         idl = canvas.create_line(0,0,0,0,tags = ("pan", "basher"))
 
         ids = canvas.create_image((rx, ry),
-                            image=dc.get_basher_goto_image(), anchor=NW,
+                            image=self.ICONS["basher_goto"], anchor=NW,
                             tags=("select", "move", "pan", "basher"))
 
         idb = canvas.create_image((x, y),
-                            image=dc.get_basher_image(), anchor=NW,
+                            image=self.ICONS["basher"], anchor=NW,
                             tags=("select", "move", "pan", "basher"))
 
 
@@ -708,14 +708,14 @@ Do you want to copy the files to the game tree?
 
         for idx,r in enumerate(dc.goals):
             id = canvas.create_image((r.x, r.y),
-                                image=dc.get_goal_image(), anchor=NW,
+                                image=self.ICONS["goal"], anchor=NW,
                                 tags=("select", "move", "goal", "pan"))
 
             self.dataids[id] = (dc.GOALS, idx)
 
         for idx,r in enumerate(dc.sticks):
             id = canvas.create_image((r.x, r.y),
-                                image=dc.get_stick_image(), anchor=NW,
+                                image=self.ICONS["stick"], anchor=NW,
                                 tags=("select", "move", "stick", "pan")
                                 )
 
