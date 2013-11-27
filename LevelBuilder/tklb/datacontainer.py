@@ -5,6 +5,23 @@ import uuid
 import os
 import shutil
 
+def isPykurinDirectory(dirpath):
+    """Returns True if dirpath is a pykurin directory. (contains
+    all what is expected from it). If not, returns False
+    """
+
+    if not dirpath: return
+
+    dirlist = os.listdir(dirpath)
+    expected = ["pykurin.py", "levels", "backgrounds", "sticks", "sprites",
+            "levelpacks"]
+
+    for exp in expected:
+        if exp not in dirlist:
+            return False
+
+    return True
+
 class LevelContainer:
     BASHER      = 0
     BOUNCER     = 1
@@ -27,9 +44,9 @@ class LevelContainer:
     #working data
     last_error = None
 
-    def __init__(self):
+    def __init__(self, pykurindir=None):
         """Loads all the needed common images"""
-        self.base_pykurin_directory = None
+        self.base_pykurin_directory = pykurindir
         self.current_level_filename = None
         self.img_filename = None
         self.background_filename = None
@@ -42,8 +59,6 @@ class LevelContainer:
         self.bashers_end = []
         self.title = None
 
-        #By default it is not assigned to a LevelPack. But on save it should, or
-        #there is no place to be saved!
         self.lvlpack = None
 
         #References to everything
@@ -51,6 +66,36 @@ class LevelContainer:
 
         #LEGACY
         self.items_pack = [self.bashers,self.bouncers,self.lives,self.goals,self.sticks,self.bashers_end]
+
+    def _find_levelpack(self):
+        """
+            Find the levelpack corresponding to the file. If no LevelPack exists
+            let it be none
+        """
+        if not self.current_level_filename:
+            return None
+
+        lpl      = LevelPackList(self.get_pykurindir())
+        dirnames = [lp.get_dirname() for fn,lp in lpl.get_packs()]
+        lpacks   = [lp               for fn,lp in lpl.get_packs()]
+
+        if "levels" not in self.current_level_filename:
+            #Level file is not in the pykurin tree
+            return None
+
+        pathend = self.current_level_filename.split("/")[-3:]
+
+        #The path should be something like
+        #pykurinbasepath/LEVELS/LVLPACKDIR/FILE
+
+        if pathend[0] != "levels":
+            return None
+
+        if pathend[1] in dirnames:
+            idx = dirnames.index(pathend[1])
+            return lpacks[idx]
+
+        return None
 
     def set_pykurindir(self,path):
         self.base_pykurin_directory = path
@@ -89,6 +134,10 @@ class LevelContainer:
         self.last_error = text
 
     def get_levelpack(self):
+        """ If not set try to find if the file fits somewhere"""
+        if not self.lvlpack:
+            pack         = self._find_levelpack()
+            self.lvlpack = pack
         return self.lvlpack
 
     def set_levelpack(self, levelpack):
@@ -226,23 +275,6 @@ class LevelContainer:
 
         return ret,text
 
-    def isPykurinDirectory(self, dirpath):
-        """Returns True if dirpath is a pykurin directory. (contains
-        all what is expected from it). If not, returns False and a list
-        of what failed
-        """
-
-        if not dirpath: return
-
-        dirlist = os.listdir(dirpath)
-        expected = ["pykurin.py", "levels", "backgrounds", "sticks", "sprites",
-                "levelpacks"]
-
-        for exp in expected:
-            if exp not in dirlist:
-                return False
-
-        return True
 
     def isAllDataInPykurinDirectory(self):
         """Checks if all the data is relative to the set pykurin directory.
@@ -338,7 +370,7 @@ class LevelContainer:
         """
             Load the datacontainer from a file.
         """
-        #clear_everything()
+        self.__init__(pykurindir = self.get_pykurindir())
         parser = SafeConfigParser()
         parser.read(full_path)
 
@@ -359,16 +391,19 @@ class LevelContainer:
         self.set_bg_image(os.path.join(self.get_pykurindir(), bgfilename))
         self.set_col_image(os.path.join(self.get_pykurindir(), colfilename))
 
-
         #Fill the things
         self.retrieve_bouncer_list(parser,xpadding,ypadding)
         self.retrieve_lives_list(parser,xpadding,ypadding)
         self.retrieve_end(parser,xpadding,ypadding)
         self.retrieve_start(parser,xpadding,ypadding)
         self.retrieve_bashers_list(parser,xpadding,ypadding)
+        #try to guess which LevelPack this level belongs to. If not, it will
+        #Be set to none
+        self.lvlpack =  self._find_levelpack()
 
         #everything went as expected, save current editing filename
         self.current_level_filename = full_path
+
 
     def retrieve_bashers_list(self,parser,xp,yp):
 
@@ -418,15 +453,6 @@ class LevelContainer:
         gy = int(parser.get('options','endy'))
         self.goals.append(Rect(int(gx)+xp,int(gy)+yp,100,100))
 
-
-    def clear_everything(self):
-        image = None
-        bashers =[]
-        bouncers = []
-        lives = []
-        goals = []
-
-        selecteditem = None
 
     def save_to_file(self,filepath,xpadding=0,ypadding=0):
         """

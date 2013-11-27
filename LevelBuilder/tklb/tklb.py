@@ -31,7 +31,6 @@ class PykurinLevelEditorUI(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master, relief=SUNKEN, bd=2)
 
-        self.DC             = datacontainer.LevelContainer()
 
         #Import the icons. (needs tk running, that is why it is done inside
         #the function and not on the top of the module
@@ -46,11 +45,11 @@ class PykurinLevelEditorUI(Frame):
         bdir = open_dir_chooser("Choose Pykurin Base Directory")
         if not bdir:
             sys.exit()
-        if not self.DC.isPykurinDirectory(bdir):
+        if not datacontainer.isPykurinDirectory(bdir):
             error_message("ERROR", "%s is not a Pykurin game directory" % bdir)
             sys.exit()
 
-        self.DC.set_pykurindir(bdir)
+        self.DC = datacontainer.LevelContainer(pykurindir=bdir)
 
         try:
             self.master.config(menu=self.menubar)
