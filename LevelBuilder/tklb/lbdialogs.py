@@ -157,7 +157,8 @@ class tkLevelDialog(Toplevel):
         difflines=difflib.unified_diff(lines1, lines2,
                                       fromfile=fname, tofile=tfname)
         tkTextViewer(self.parent, title="FILE %s"%os.path.basename(fname),
-                textdata="".join(difflines))
+                textdata="".join(difflines),
+                isdiff=True)
 
 
 
@@ -168,7 +169,8 @@ class tkLevelDialog(Toplevel):
     tkTextViewer(master, textdata="lala")
 """
 class tkTextViewer(Toplevel):
-    def __init__(self, parent, title = None, modal=True, textdata="", filename=None):
+    def __init__(self, parent, title = None, modal=True, textdata="",
+                filename=None, isdiff=False):
         Toplevel.__init__(self, parent)
         self.transient(parent)
 
@@ -193,6 +195,9 @@ class tkTextViewer(Toplevel):
         self.TW = Text(self)
         self.TW.insert(INSERT, self.text)
 
+        if isdiff:
+            self._colorize_diff()
+
         self.bok = Button(self, text="OK", width=6, command=lambda: self.finish())
 
         #self.TW.grid(row=0, column=0)
@@ -207,3 +212,24 @@ class tkTextViewer(Toplevel):
 
     def finish(self):
         self.destroy()
+
+    def _colorize_diff(self):
+        """
+            Colorizes a UNIFIED DIFF.
+        """
+        for linenum, line in enumerate(self.text.split("\n")):
+            cline = linenum+1
+
+            if len(line) == 0 :
+                continue
+
+            if line.startswith("-"):
+                self.TW.tag_add("rem","%s.0" % cline, "%s.%s" %(cline, len(line)))
+            elif line.startswith("+"):
+                self.TW.tag_add("add","%s.0" % cline, "%s.%s" %(cline, len(line)))
+            elif line.startswith("@@"):
+                self.TW.tag_add("info","%s.0" % cline, "%s.%s" %(cline, len(line)))
+
+        self.TW.tag_config("rem",   background="#fdf6e3", foreground="#d33682")
+        self.TW.tag_config("add",   background="#fdf6e3", foreground="#859900")
+        self.TW.tag_config("info",  background="#fdf6e3", foreground="#b58900")
