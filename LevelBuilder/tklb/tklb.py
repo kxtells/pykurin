@@ -324,8 +324,7 @@ class PykurinLevelEditorUI(Frame):
         y = event.y
 
         #Delete all selections
-        for item in self.canvas.find_withtag("selection"):
-            self.canvas.delete(item)
+        self.canvas.delete("selection")
 
         #Create a new selection
         self.select_item(x,y)
@@ -462,6 +461,7 @@ class PykurinLevelEditorUI(Frame):
             self.canvas.delete(self.sitem)
 
         self.__update_dataids_after_remove(itype, dcid)
+        self.canvas.delete("selection")
 
 
     #
