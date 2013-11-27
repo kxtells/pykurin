@@ -522,13 +522,12 @@ class PykurinLevelEditorUI(Frame):
     def copy_data_dialog(self, files):
         files_str = "\n".join(files)
         return ask_dialog("COPY NEEDED",
-        """The following files are not on the pykurin
-base directory tree %s:
+        """The following files are not in the correct path:
 
 %s.
 
-Do you want to copy the files to the game tree?
-        """% (self.DC.get_pykurindir(), files_str)
+Do you want to copy the files to the game levelpack tree?
+        """% (files_str)
         )
 
     def f_new_level(self):

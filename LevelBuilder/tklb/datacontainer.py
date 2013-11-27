@@ -248,20 +248,32 @@ class LevelContainer:
         """Checks if all the data is relative to the set pykurin directory.
             All the levels must store their data in that directory, if not,
             pykurin won't run correctly.
+            If the level has also a levelpack assigned it will check if all
+            the data is in the levelpack directory.
         """
         pdir = self.get_pykurindir()
+
+        if self.get_levelpack():
+            lpdir = self.get_levelpack().get_dirname()
+        else:
+            lpdir = ""
+
+        tdir  = os.path.join(pdir,"levels",lpdir)
         isall = True
         data  = []
 
-        if pdir not in self.get_image_fname():
-            isall = False
-            data.append(self.get_image_fname())
+        #Background always on the same place
         if pdir not in self.get_background_fname():
             isall = False
             data.append(self.get_background_fname())
-        if pdir not in self.get_colision_fname():
+
+        #Levels and colisions go to their own levelpackdir
+        if tdir not in self.get_colision_fname():
             isall = False
-            data.append(self.get_background_fname())
+            data.append(self.get_colision_fname())
+        if tdir not in self.get_image_fname():
+            isall = False
+            data.append(self.get_image_fname())
 
         return isall, data
 
@@ -287,14 +299,14 @@ class LevelContainer:
         filen = ''.join(e for e in self.get_title() if e.isalnum())
         operations = []
 
+        if self.get_levelpack():
+            lpdir = self.get_levelpack().get_dirname()
+        else:
+            lpdir = ""
 
-        if pdir not in self.get_image_fname():
-            origin  = self.get_image_fname()
-            fn, ext = os.path.splitext(origin)
-            dest    = os.path.join(pdir,"levels","base","%s.%s"%(filen,ext))
-            shutil.copyfile(origin, dest)
-            self.set_image(dest)
-            operations.append("CP %s -> %s" %(origin, dest))
+        tdir  = os.path.join(pdir,"levels",lpdir)
+
+
         if pdir not in self.get_background_fname():
             origin  = self.get_background_fname()
             fname   = os.path.basename(origin)
@@ -302,13 +314,22 @@ class LevelContainer:
             shutil.copyfile(origin, dest)
             self.set_bg_image(dest)
             operations.append("CP %s -> %s" %(origin, dest))
-        if pdir not in self.get_colision_fname():
+
+        #Levels and colisions go th the levelpack dir
+        if tdir not in self.get_image_fname():
+            origin  = self.get_image_fname()
+            fn, ext = os.path.splitext(origin)
+            dest    = os.path.join(pdir,"levels",lpdir,"%s%s"%(filen,ext))
+            shutil.copyfile(origin, dest)
+            self.set_image(dest)
+            operations.append("CP %s -> %s" %(origin, dest))
+        if tdir not in self.get_colision_fname():
             origin  = self.get_colision_fname()
             fn, ext = os.path.splitext(origin)
-            dest    = os.path.join(pdir,"levels","base","%sCOL.%s"%(filen,ext))
+            dest    = os.path.join(pdir,"levels",lpdir,"%sCOL%s"%(filen,ext))
             shutil.copyfile(origin, dest)
             self.set_col_image(dest)
-            operations.append("CP %s -> %s" %(origin, fname))
+            operations.append("CP %s -> %s" %(origin, dest))
 
         return operations
 
