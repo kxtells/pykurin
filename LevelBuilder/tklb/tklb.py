@@ -3,7 +3,7 @@ import datacontainer
 import tkFileDialog, tkSimpleDialog, tkMessageBox
 from tksimplestatusbar import StatusBar
 
-from lbdialogs import tkLevelDialog, tkTextViewer
+from lbdialogs import tkLevelDialog, tkTextViewer, tkLevelPacksList
 from common_dialogs import *
 import tempfile
 
@@ -56,7 +56,6 @@ class PykurinLevelEditorUI(Frame):
         except AttributeError:
             # master is a toplevel window (Python 1.4/Tkinter 1.63)
             self.master.tk.call(master, "config", "-menu", self.menubar)
-
 
         #PAN
         self.panx  = 0
@@ -123,6 +122,7 @@ class PykurinLevelEditorUI(Frame):
         menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Level", menu=menu)
         menu.add_command(label="Edit", command=self.e_edit_level_attributes)
+        menu.add_command(label="LevelPacks", command=self.e_edit_level_packs)
 
         menu = Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Test", menu=menu)
@@ -640,8 +640,12 @@ Do you want to copy the files to the game levelpack tree?
 
 
     def e_edit_level_attributes(self):
-        d = tkLevelDialog(self.master, levelcontainer=self.DC)
+        tkLevelDialog(self.master, levelcontainer=self.DC)
         self._create_backgrounds()
+
+    def e_edit_level_packs(self):
+        tkLevelPacksList(self.master, pykurindir=self.DC.get_pykurindir())
+
 
     #
     # Item Creation

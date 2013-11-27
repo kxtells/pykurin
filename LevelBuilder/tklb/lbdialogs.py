@@ -94,8 +94,8 @@ class tkLevelDialog(Toplevel):
                                 command=lambda: self.fchooser(self.C_BACKGROUND))
         self.fchooser3 = Button(self, image=ICONS["edit16"],
                                 command=lambda: self.fchooser(self.C_COLLISION))
-        self.fchooser4 = Button(self, image=ICONS["edit16"],
-                                command=lambda: self.levelpacksDialog())
+        #self.fchooser4 = Button(self, image=ICONS["edit16"],
+        #                        command=lambda: self.levelpacksDialog())
         #bcancel= Button(toolbar, text="Cancel", width=6, command=self.cancel())
         #bapply.pack(side=LEFT, padx=2, pady=2)
         #self.buttons.append(b)
@@ -109,7 +109,7 @@ class tkLevelDialog(Toplevel):
         self.fchooser1.grid(row=1, column=2)
         self.fchooser2.grid(row=2, column=2)
         self.fchooser3.grid(row=3, column=2)
-        self.fchooser4.grid(row=4, column=2)
+        #self.fchooser4.grid(row=4, column=2)
 
         self.bviewfile.grid(row=5, column=0)
         self.bdifffile.grid(row=6, column=0)
@@ -267,26 +267,56 @@ class tkTextViewer(Toplevel):
     Frame to present the LevelPacks List And edit if necessary.
 """
 class tkLevelPacksList(Toplevel):
-    def __init__(self, parent, title = None, modal=True, pykurindir=None):
+    def __init__(self, parent, modal=True, pykurindir=None):
         Toplevel.__init__(self, parent)
         self.transient(parent)
         self.LPL = datacontainer.LevelPackList(pykurindir)
 
-        if title:
-            self.title(title)
+        self.title("Level Pack Manager")
 
         self.parent = parent
         self.LB = Listbox(self, width=50)
 
-        self.bok = Button(self, text="OK", width=6, command=lambda: self.finish())
+        self.bok  = Button(self, text="OK",     width=6, command=lambda: self.finish())
+        self.bdel = Button(self, text="DELETE", width=6, command=lambda: self.deletepack())
+        self.bnew = Button(self, text="NEW",    width=6, command=lambda: self.addpack())
+        self.bmod = Button(self, text="MODIFY", width=6, command=lambda: self.finish())
 
+        self.LB.grid(row=0, column=0, rowspan=5)
+        self.bok.grid(row=6, column=0)
+        self.bnew.grid(row=1, column=1)
+        self.bmod.grid(row=2, column=1)
+        self.bdel.grid(row=3, column=1)
 
-        self.LB.pack()
-        self.bok.pack()
+        self.__load_listbox()
 
-        for fname,lpc in self.LPL.get_packs():
-            self.LB.insert(END,"%s\t%s"%(fname,lpc.get_name()))
 
     def finish(self):
+        stat,errlog = self.LPL.sync()
+
+        tkTextViewer(self.parent, title="LevelPack Changes",
+                textdata="\n".join(errlog))
+
         self.destroy()
-        return 20
+        return
+
+    def __load_listbox(self):
+        self.LB.delete(0, END)
+
+        self.levelpacks = []
+        for fname,lpc in self.LPL.get_packs():
+            self.LB.insert(END,"%s\t%s"%(fname,lpc.get_name()))
+            self.levelpacks.append(lpc)
+
+    def deletepack(self):
+        items = map(int, self.LB.curselection())
+
+        for idx in items:
+            ret = self.LPL.removePack(self.levelpacks[idx])
+            print ret
+
+        self.__load_listbox()
+
+    def addpack(self):
+        self.LPL.addPack()
+        self.__load_listbox()
