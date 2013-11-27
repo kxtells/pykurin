@@ -119,7 +119,6 @@ class tkLevelDialog(Toplevel):
         #self.bapply.grid(row=0, column=1)
         self.bcancel.grid(row=0, column=2)
 
-
         if modal:
             self.wait_window(self)
 
@@ -277,13 +276,19 @@ class tkLevelPacksList(Toplevel):
         self.parent = parent
         self.LB = Listbox(self, width=50)
 
-        self.bok  = Button(self, text="OK",     width=6, command=lambda: self.finish())
+        self.bframe  = Frame(self)
+        self.bok  = Button(self.bframe, text="OK",     width=6, command=lambda: self.finish())
+        self.bcancel  = Button(self.bframe, text="CANCEL",     width=6, command=lambda: self.cancel())
         self.bdel = Button(self, text="DELETE", width=6, command=lambda: self.deletepack())
         self.bnew = Button(self, text="NEW",    width=6, command=lambda: self.addpack())
-        self.bmod = Button(self, text="MODIFY", width=6, command=lambda: self.finish())
+        self.bmod = Button(self, text="MODIFY", width=6, command=lambda: self.modify())
 
         self.LB.grid(row=0, column=0, rowspan=5)
-        self.bok.grid(row=6, column=0)
+
+        self.bframe.grid(row=6, columnspan=2)
+        self.bok.grid(row=0, column=0)
+        self.bcancel.grid(row=0, column=1)
+
         self.bnew.grid(row=1, column=1)
         self.bmod.grid(row=2, column=1)
         self.bdel.grid(row=3, column=1)
@@ -320,3 +325,114 @@ class tkLevelPacksList(Toplevel):
     def addpack(self):
         self.LPL.addPack()
         self.__load_listbox()
+
+    def modify(self):
+        items     = map(int, self.LB.curselection())
+        sel_lpack = self.levelpacks[items[-1]]
+
+        tkLevelPackEdit(self.parent, levelpack=sel_lpack)
+
+        self.__load_listbox()
+
+    def cancel(self):
+        self.destroy()
+
+"""
+    Level Pack editor
+"""
+class tkLevelPackEdit(Toplevel):
+    def __init__(self, parent, modal=True, levelpack=None):
+        Toplevel.__init__(self, parent)
+        self.transient(parent)
+
+
+        self.parent = parent
+        self.LP = levelpack
+
+
+        self.listframe  = Frame(self)
+        self.lb = Listbox(self.listframe, width=49)
+        scrollbar = Scrollbar(self.listframe)
+        self.lb.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.lb.yview)
+
+
+        self.title("MODIFY: %s"%self.LP.get_name())
+        self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
+                                  parent.winfo_rooty()+50))
+
+
+        Label(self, text="Name:").grid(row=0)
+        Label(self, text="Directory Name:").grid(row=1)
+        Label(self, text="Icon:").grid(row=2)
+        Label(self, text="Levels to open:").grid(row=3)
+        Label(self, text="Levels Assigned:").grid(row=4)
+
+        self.packtitle = StringVar()
+        self.packtitle.set(self.LP.get_name())
+        self.e0 = Entry(self, textvariable = self.packtitle, width=50)
+
+        self.dname = StringVar()
+        self.dname.set(self.LP.get_dirname())
+        self.e1 = Entry(self, textvariable = self.dname, width=50)
+
+        self.icon = StringVar()
+        self.icon.set(self.LP.get_icon())
+        self.e2 = Entry(self, textvariable = self.icon, width=50)
+
+        self.levels2open = StringVar()
+        self.levels2open.set(self.LP.get_levels2open())
+        self.e3 = Entry(self, textvariable = self.levels2open, width=50)
+
+        self.e0.grid(row=0, column=1)
+        self.e1.grid(row=1, column=1)
+        self.e2.grid(row=2, column=1)
+        self.e3.grid(row=3, column=1)
+
+
+        self.bframe  = Frame(self)
+        self.bok     = Button(self.bframe, text="OK", width=6, command=lambda: self.ok())
+        self.bcancel = Button(self.bframe, text="Cancel", width=6, command=lambda: self.cancel())
+
+        #self.lb.grid(row=4, column=1)
+        self.listframe.grid(row=4, column=1)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        self.lb.pack()
+
+        self.bframe.grid(row=5, column=0, columnspan=2)
+        self.bok.grid(row=0, column=0)
+        self.bcancel.grid(row=0, column=1)
+
+        self._fill_listbox()
+
+        if modal:
+            self.wait_window(self)
+
+    def _fill_listbox(self):
+        #FILL THE LISTBOX
+        for file in self.LP.get_list_of_levels():
+            fpath = os.path.join(self.LP.get_directory_fullpath(), file)
+            lc = datacontainer.LevelContainer(pykurindir=self.LP.get_pykurindir())
+            lc.load_from_file(fpath)
+            self.lb.insert(END,"%s\t%s"%(file,lc.get_title()))
+
+
+    def apply(self):
+        if self.e0.get() != "None":
+            self.LP.set_name(self.e0.get())
+        if self.e1.get() != "None":
+            self.LP.set_dirname(self.e1.get())
+        if self.e2.get() != "None":
+            self.LP.set_icon(self.e2.get())
+        if self.e3.get() != "None":
+            self.LP.set_levels2open(self.e3.get())
+
+
+    def ok(self):
+        #apply changes, sync and leave
+        self.apply()
+        self.destroy()
+        pass
+
+    def cancel(self):
+        self.destroy()

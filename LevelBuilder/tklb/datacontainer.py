@@ -48,9 +48,10 @@ class LevelContainer:
     #working data
     last_error = None
 
-    def __init__(self, pykurindir=None):
+    def __init__(self, pykurindir=None, filename=None):
         """Loads all the needed common images"""
         self.base_pykurin_directory = pykurindir
+
         self.current_level_filename = None
         self.img_filename = None
         self.background_filename = None
@@ -616,6 +617,20 @@ class LevelPackContainer:
         #Get just the basedirname, not the partial path (levels)
         bdir = str(parser.get('options','basedir'))
         self.dirname = bdir.rstrip("/").rpartition("/")[-1]
+
+    def get_directory_fullpath(self):
+        return os.path.join(self.get_pykurindir(), "levels", self.dirname)
+
+    def get_list_of_levels(self):
+        dirpath = self.get_directory_fullpath()
+
+        levelfiles = []
+        for lpfile in os.listdir(dirpath):
+            name, ext = os.path.splitext(lpfile)
+            if ext != ".prop":continue
+            levelfiles.append(lpfile)
+
+        return levelfiles
 
 class LevelPackList:
     """ A LevelPackList of the Levels currently defined in the pykurin directory.
