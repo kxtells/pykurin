@@ -488,6 +488,22 @@ class PykurinLevelEditorUI(Frame):
     #
     # MENU HANDLING. SAVE; LOAD; NEW; EXIT
     #
+
+    def manage_level_data(self):
+        log = []
+        isalldata, outsidedata = self.DC.isAllDataInPykurinDirectory()
+
+        if isalldata:
+            log.append("All data is in pykurin environment")
+            return log
+
+        cplist = self.DC.copyOutsidersToPykurinDirectory()
+        log.append("Copying data to deploy")
+        for c in cplist:
+            log.append(c)
+
+        return log
+
     def manage_data_dialogs(self):
         """ This flow of dialogs does the following:
          - Checks if LevelContainer has all the files pointed to the pykurin directory
@@ -604,13 +620,23 @@ Do you want to copy the files to the game levelpack tree?
         if not ask_dialog("DEPLOY", "Save the level an all its files to pykurin directory"):
             return
 
-        if not self.manage_data_dialogs():
-            return
+        #if not self.manage_data_dialogs():
+        #    return
 
-        fname = self.DC.get_deploy_filename()
+        fname    = self.DC.get_deploy_filename()
+        log      = self.manage_level_data()
+        ret, msg = self.DC.save_to_file(fname)
 
+        data     =   log
 
-        self.__f_save(fname)
+        if ret:
+            data += ["DEPLOYED TO %s"%fname]
+        else:
+            data += ["ERROR SAVING %s: %s"%(fname, msg)]
+
+        tkTextViewer(self.master, title="DEPLOY LOG",
+                textdata="\n".join(data))
+
 
 
     def e_edit_level_attributes(self):
