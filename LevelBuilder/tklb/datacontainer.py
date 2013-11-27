@@ -465,3 +465,68 @@ class LevelContainer:
         f.close()
 
         return True,""
+
+class LevelPackContainer:
+    def __init__(self):
+        self.name        = None
+
+        #Contains
+        self.dirname     = None
+        self.icon        = None
+        self.levels2open = None
+        self.base_pykurin_directory = None
+
+    #Getters
+    def get_name(self):
+        return self.name
+
+    def get_basedir(self):
+        return self.dirname
+
+    def get_icon(self):
+        return self.icon
+
+    def get_levels2open(self):
+        return self.levels2open
+
+    def set_base_dir(self, directory):
+        self.base_pykurin_directory = directory
+
+    def set_dirname(self, dname):
+        if not dname.isalnum():
+            return False, "Directory should be only letters and numbers"
+        self.dirname = dname
+        return True
+
+    def get_base_dir(self):
+        return self.base_pykurin_directory
+
+    def directoryExists(self):
+        os.path.isdir(os.path.join(self.get_base_dir(), "levels", self.dirname)
+
+    #SAVE
+    def save(self, filepath):
+        """ Save the file directly, not checking where is it being saved,
+            or if it makes sense in the pykurin executable
+        """
+
+        f = open(filepath, 'w')
+        f.write("[options]\n");
+
+        f.write("name:"+self.name+"\n")
+        f.write("basedir:"+"levels"+"/"+self.dirname+"\n")
+        f.write("icon:"+self.icon+"\n")
+        f.write("levels2open:"+self.levels2open+"\n")
+
+    def load(self, filepath):
+
+        parser = SafeConfigParser()
+        parser.read(filepath)
+
+        self.name        = str(parser.get('options','name'))
+        self.icon        = str(parser.get('options','icon'))
+        self.levels2open = int(parser.get('options','levels2open'))
+
+        #Get just the basedirname, not the partial path (levels)
+        bdir = str(parser.get('options','basedir'))
+        self.basedir = bdir.rpartition("/")[-1]
