@@ -467,14 +467,20 @@ class LevelContainer:
         return True,""
 
 class LevelPackContainer:
-    def __init__(self):
-        self.name        = None
+    def __init__(self, name=None, dirname=None, icon=None, levels2open=None, pykurindir=None,
+                 file=None):
+        self.base_pykurin_directory = pykurindir
+
+        if file:
+            self.load(file)
+            return
+
+        self.name        = name
 
         #Contains
-        self.dirname     = None
-        self.icon        = None
-        self.levels2open = None
-        self.base_pykurin_directory = None
+        self.dirname     = dirname
+        self.icon        = icon
+        self.levels2open = levels2open
 
     #Getters
     def get_name(self):
@@ -513,10 +519,10 @@ class LevelPackContainer:
         f = open(filepath, 'w')
         f.write("[options]\n");
 
-        f.write("name:"+self.name+"\n")
-        f.write("basedir:"+"levels"+"/"+self.dirname+"\n")
-        f.write("icon:"+self.icon+"\n")
-        f.write("levels2open:"+self.levels2open+"\n")
+        f.write("name:"+str(self.name)+"\n")
+        f.write("basedir:"+"levels"+"/"+str(self.dirname)+"\n")
+        f.write("icon:"+str(self.icon)+"\n")
+        f.write("levels2open:"+str(self.levels2open)+"\n")
 
     def load(self, filepath):
 
@@ -529,8 +535,88 @@ class LevelPackContainer:
 
         #Get just the basedirname, not the partial path (levels)
         bdir = str(parser.get('options','basedir'))
-        self.basedir = bdir.rpartition("/")[-1]
+        self.dirname = bdir.rstrip("/").rpartition("/")[-1]
 
 class LevelPackList:
-    pass
+    """ A LevelPackList of the Levels currently defined in the pykurin directory.
+        Used to maintain the packs and all under them.
+    """
+    def __init__(self, pykurinpath = None):
+        self.lpackfiles  = []
+        self.lpacks      = []
+        self.pykurinpath = pykurinpath
 
+        self.lpackdelete = []
+
+        if not pykurinpath:
+            return None
+
+        lpacksdir = os.path.abspath(os.path.join(pykurinpath,"levelpacks"))
+        for lpfile in os.listdir(lpacksdir):
+            self.lpackfiles.append(lpfile)
+
+        self.lpackfiles.sort()
+        for lpfile in self.lpackfiles:
+            fpath = os.path.join(lpacksdir, lpfile)
+            self.lpacks.append(LevelPackContainer(file=fpath,
+                                                  pykurindir=self.pykurinpath))
+
+    def sync(self):
+        """ Sync the packs to the levelpacks directory. Delete the packs marked
+            for delete
+        """
+
+        lpacksdir = os.path.abspath(os.path.join(self.pykurinpath,"levelpacks"))
+
+        for idx,lp in enumerate(self.lpacks):
+            fname = os.path.abspath(os.path.join(lpacksdir, self.lpackfiles[idx]))
+            lp.save(fname)
+
+        for fname in self.lpackdelete:
+            fname = os.path.abspath(os.path.join(lpacksdir, fname))
+            os.unlink(fname)
+
+        return True
+
+    def addPack(self, filename=None, name=None, dirname=None,
+                      icon=None, levels2open=0):
+
+        if not filename:
+            filename = "%s-levelpack.prop"%(len(self.lpackfiles)+1)
+
+        if not name:
+            name    = "levelpack-%s"%(len(self.lpackfiles)+1)
+
+        if not dirname:
+            dirname = "levelpack-%s"%(len(self.lpackfiles)+1)
+
+        ncont = LevelPackContainer(name = name, dirname=dirname, icon=icon,
+                                  levels2open=levels2open)
+
+        self.lpackfiles.append(filename)
+        self.lpacks.append(ncont)
+        pack = zip(self.lpackfiles, self.lpacks)
+        pack.sort()
+        self.lpackfiles = [f for f,p in pack]
+        self.lpacks     = [p for f,p in pack]
+
+    def removePackIdx(self, index):
+        """ Remove pack from list. Marked for removal on sync"""
+        self.lpackdelete.append(self.lpackfiles[index])
+        del self.lpackfiles[index]
+        del self.lpacks[index]
+
+        return True
+
+    def removePack(self, pack):
+        """ Remove pack from list. Marked for removal on sync"""
+        try:
+            index = self.lpacks.index(pack)
+        except:
+            return False
+
+        self.lpackdelete.append(self.lpackfiles[index])
+        del self.lpackfiles[index]
+        del self.lpacks[index]
+
+        return True
