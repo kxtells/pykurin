@@ -64,16 +64,19 @@ class tkLevelDialog(Toplevel):
             self.bdifffile.config(state=DISABLED)
 
 
+
+        from icons import ICONS
+
         self.bframe  = Frame(self)
         self.bok     = Button(self.bframe, text="OK", width=6, command=lambda: self.finish())
         #self.bapply  = Button(self.bframe, text="Apply", width=6, command=lambda: self.apply())
         self.bcancel = Button(self.bframe, text="Cancel", width=6, command=lambda: self.cancel())
 
-        self.fchooser1 = Button(self, text="F", width=1,
+        self.fchooser1 = Button(self, image=ICONS["edit16"],
                                 command=lambda: self.fchooser(self.DC.IMAGE))
-        self.fchooser2 = Button(self, text="F", width=1,
+        self.fchooser2 = Button(self, image=ICONS["edit16"],
                                 command=lambda: self.fchooser(self.DC.BGIMAGE))
-        self.fchooser3 = Button(self, text="F", width=1,
+        self.fchooser3 = Button(self, image=ICONS["edit16"],
                                 command=lambda: self.fchooser(self.DC.COLIMAGE))
         #bcancel= Button(toolbar, text="Cancel", width=6, command=self.cancel())
         #bapply.pack(side=LEFT, padx=2, pady=2)

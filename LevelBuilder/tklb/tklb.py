@@ -9,6 +9,7 @@ import tempfile
 
 import os, sys
 
+
 #
 #
 # MAIN LEVEL EDITOR SCREEN
@@ -27,6 +28,11 @@ class PykurinLevelEditorUI(Frame):
         Frame.__init__(self, master, relief=SUNKEN, bd=2)
 
         self.DC             = datacontainer.datacontainer()
+
+        #Import the icons. (needs tk running, that is why it is done inside
+        #the function and not on the top of the module
+        from icons import ICONS
+        self.ICONS = ICONS
 
 
         self.__guibuild_menubar()
@@ -66,10 +72,12 @@ class PykurinLevelEditorUI(Frame):
 		#Window title
         self.changeWindowTitle("TK pykurin Level builder")
 
+
     #
     # GUI BUILD FUNCTIONS
     #
     def __guibuild_menubar(self):
+
         #The Menu bar
         self.menubar = Menu(self)
         menu = Menu(self.menubar, tearoff=0)
@@ -121,18 +129,21 @@ class PykurinLevelEditorUI(Frame):
 
 
     def __guibuild_toolbar(self):
+
         # The toolbar to create things
         toolbar = Frame(self.master)
 
         self.buttons = []
 
-        b = Button(toolbar, text="Select", width=6,
+        b = Button(toolbar, image=self.ICONS["select24"], text="Select",
+                   #compound=LEFT, #COmbine text and icon
                    command=lambda: self.button(self.SELECT_BUTTON, 0))
         b.pack(side=LEFT, padx=2, pady=2)
         b.config(relief=SUNKEN)
         self.buttons.append(b)
 
-        b = Button(toolbar, text="Pan", width=6,
+        b = Button(toolbar, image=self.ICONS["move24"], text="Pan",
+                   #compound=LEFT, #COmbine text and icon
                    command=lambda: self.button(self.PAN_BUTTON, 1))
         b.pack(side=LEFT, padx=2, pady=2)
         self.buttons.append(b)
