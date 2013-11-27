@@ -9,19 +9,26 @@ from Tkinter import *
 from common_dialogs import *
 
 import icons
+import datacontainer
 
 import os
 import difflib
 import tempfile
 
 class tkLevelDialog(Toplevel):
-    def __init__(self, parent, title = None, modal=True, datacontainer=None):
+    C_IMAGE         = 0
+    C_BACKGROUND    = 1
+    C_COLLISION     = 2
+    C_LEVELPACK     = 3
+
+    def __init__(self, parent, title = None, modal=True, levelcontainer=None):
         Toplevel.__init__(self, parent)
         self.transient(parent)
         if title:
             self.title(title)
         self.parent = parent
-        self.DC = datacontainer
+        self.DC = levelcontainer
+        self.LPL = datacontainer.LevelPackList(self.DC.get_pykurindir())
 
 
         self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
@@ -32,12 +39,12 @@ class tkLevelDialog(Toplevel):
         Label(self, text="Level Image:").grid(row=1)
         Label(self, text="Static Background:").grid(row=2)
         Label(self, text="Collisions Image:").grid(row=3)
-        Label(self, text="Stick:").grid(row=4)
+        Label(self, text="Level Pack:").grid(row=4)
+        Label(self, text="Stick:").grid(row=5)
 
         self.leveltitle = StringVar()
         self.leveltitle.set(self.DC.get_title())
         self.e0 = Entry(self, textvariable = self.leveltitle, width=50)
-
 
         self.image = StringVar()
         self.image.set(self.DC.get_image_fname())
@@ -54,6 +61,15 @@ class tkLevelDialog(Toplevel):
         self.e3 = Entry(self, textvariable = self.collision, width=50,
                        state=DISABLED, relief=RIDGE)
 
+        self.lpack = StringVar()
+        if self.DC.get_levelpack():
+            self.lpack.set(self.DC.get_levelpack().get_name())
+        else:
+            self.lpack.set("No level Pack")
+
+        lnames = [lp.get_name() for lfn,lp in self.LPL.get_packs()]
+        self.e4 = OptionMenu(self, self.lpack, *lnames)
+
         self.bviewfile = Button(self, text="View File", width=6,
                               command=lambda: self.view_file())
 
@@ -66,8 +82,6 @@ class tkLevelDialog(Toplevel):
             self.bdifffile.config(state=DISABLED)
 
 
-
-
         ICONS = icons.icons_from_dir()
         self.bframe  = Frame(self)
         self.bok     = Button(self.bframe, text="OK", width=6, command=lambda: self.finish())
@@ -75,11 +89,13 @@ class tkLevelDialog(Toplevel):
         self.bcancel = Button(self.bframe, text="Cancel", width=6, command=lambda: self.cancel())
 
         self.fchooser1 = Button(self, image=ICONS["edit16"],
-                                command=lambda: self.fchooser(self.DC.IMAGE))
+                                command=lambda: self.fchooser(self.C_IMAGE))
         self.fchooser2 = Button(self, image=ICONS["edit16"],
-                                command=lambda: self.fchooser(self.DC.BGIMAGE))
+                                command=lambda: self.fchooser(self.C_BACKGROUND))
         self.fchooser3 = Button(self, image=ICONS["edit16"],
-                                command=lambda: self.fchooser(self.DC.COLIMAGE))
+                                command=lambda: self.fchooser(self.C_COLLISION))
+        self.fchooser4 = Button(self, image=ICONS["edit16"],
+                                command=lambda: self.levelpacksDialog())
         #bcancel= Button(toolbar, text="Cancel", width=6, command=self.cancel())
         #bapply.pack(side=LEFT, padx=2, pady=2)
         #self.buttons.append(b)
@@ -88,7 +104,13 @@ class tkLevelDialog(Toplevel):
         self.e1.grid(row=1, column=1)
         self.e2.grid(row=2, column=1)
         self.e3.grid(row=3, column=1)
-        #self.e4.grid(row=4, column=1)
+        self.e4.grid(row=4, column=1)
+
+        self.fchooser1.grid(row=1, column=2)
+        self.fchooser2.grid(row=2, column=2)
+        self.fchooser3.grid(row=3, column=2)
+        self.fchooser4.grid(row=4, column=2)
+
         self.bviewfile.grid(row=5, column=0)
         self.bdifffile.grid(row=6, column=0)
 
@@ -96,9 +118,7 @@ class tkLevelDialog(Toplevel):
         self.bok.grid(row=0, column=0)
         #self.bapply.grid(row=0, column=1)
         self.bcancel.grid(row=0, column=2)
-        self.fchooser1.grid(row=1, column=2)
-        self.fchooser2.grid(row=2, column=2)
-        self.fchooser3.grid(row=3, column=2)
+
 
         if modal:
             self.wait_window(self)
@@ -112,6 +132,10 @@ class tkLevelDialog(Toplevel):
             self.DC.set_col_image(self.e3.get())
         if self.e0.get() != "None":
             self.DC.set_title(self.e0.get())
+        lvlpackname = self.lpack.get()
+        lvlpack     = self.LPL.getPackByName(lvlpackname)
+        if lvlpack:
+            self.DC.set_levelpack(lvlpack)
 
     def finish(self):
         self.apply()
@@ -119,6 +143,10 @@ class tkLevelDialog(Toplevel):
 
     def cancel(self):
         self.destroy()
+
+    def levelpacksDialog(self):
+        tkLevelPacksList(self.parent, title="Level Packs Selector",
+                        pykurindir=self.DC.get_pykurindir())
 
     def fchooser(self, which):
         """
@@ -129,11 +157,11 @@ class tkLevelDialog(Toplevel):
         if not filename:
             return
 
-        if which == self.DC.IMAGE:
+        if which == self.C_IMAGE:
             self.image.set(filename)
-        elif which == self.DC.BGIMAGE:
+        elif which == self.C_BACKGROUND:
             self.background2.set(filename)
-        elif which == self.DC.COLIMAGE:
+        elif which == self.C_COLLISION:
             self.collision.set(filename)
 
     def view_file(self):
@@ -233,3 +261,32 @@ class tkTextViewer(Toplevel):
         self.TW.tag_config("rem",   background="#fdf6e3", foreground="#d33682")
         self.TW.tag_config("add",   background="#fdf6e3", foreground="#859900")
         self.TW.tag_config("info",  background="#fdf6e3", foreground="#b58900")
+
+
+"""
+    Frame to present the LevelPacks List And edit if necessary.
+"""
+class tkLevelPacksList(Toplevel):
+    def __init__(self, parent, title = None, modal=True, pykurindir=None):
+        Toplevel.__init__(self, parent)
+        self.transient(parent)
+        self.LPL = datacontainer.LevelPackList(pykurindir)
+
+        if title:
+            self.title(title)
+
+        self.parent = parent
+        self.LB = Listbox(self, width=50)
+
+        self.bok = Button(self, text="OK", width=6, command=lambda: self.finish())
+
+
+        self.LB.pack()
+        self.bok.pack()
+
+        for fname,lpc in self.LPL.get_packs():
+            self.LB.insert(END,"%s\t%s"%(fname,lpc.get_name()))
+
+    def finish(self):
+        self.destroy()
+        return 20

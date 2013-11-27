@@ -42,6 +42,10 @@ class LevelContainer:
         self.bashers_end = []
         self.title = None
 
+        #By default it is not assigned to a LevelPack. But on save it should, or
+        #there is no place to be saved!
+        self.lvlpack = None
+
         #References to everything
         self.items = [self.bashers, self.bouncers, self.lives, self.goals, self.sticks, self.bashers_end]
 
@@ -83,6 +87,13 @@ class LevelContainer:
 
     def set_last_error(self,text):
         self.last_error = text
+
+    def get_levelpack(self):
+        return self.lvlpack
+
+    def set_levelpack(self, levelpack):
+        assert isinstance(levelpack, LevelPackContainer)
+        self.lvlpack = levelpack
 
     def get_last_error(self):
         if last_error==None:
@@ -661,6 +672,16 @@ class LevelPackList:
         del self.lpacks[index]
 
         return True
+
+    def getPackByName(self, name):
+        pack = None
+
+        names = [l.get_name() for l in self.lpacks]
+        try:
+            nameindex = names.index(name)
+            return self.lpacks[nameindex]
+        except ValueError as ve:
+            return None
 
     def get_packs(self):
         """ Return a list with filename,LevelPackContainer"""

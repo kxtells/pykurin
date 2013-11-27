@@ -604,7 +604,7 @@ Do you want to copy the files to the game tree?
 
 
     def e_edit_level_attributes(self):
-        d = tkLevelDialog(self.master, datacontainer=self.DC)
+        d = tkLevelDialog(self.master, levelcontainer=self.DC)
         self._create_backgrounds()
 
     #
