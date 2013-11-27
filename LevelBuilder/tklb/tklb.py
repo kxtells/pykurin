@@ -598,7 +598,19 @@ Do you want to copy the files to the game levelpack tree?
         self.master.destroy()
 
     def f_deploy_to_pykurin(self):
-        popup_message("Not implemented","This will save the level to the pykurin directory")
+        #Check for errors before attempting a save
+        if self._save_level_errcheck(): return
+
+        if not ask_dialog("DEPLOY", "Save the level an all its files to pykurin directory"):
+            return
+
+        if not self.manage_data_dialogs():
+            return
+
+        fname = self.DC.get_deploy_filename()
+
+
+        self.__f_save(fname)
 
 
     def e_edit_level_attributes(self):

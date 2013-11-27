@@ -22,6 +22,10 @@ def isPykurinDirectory(dirpath):
 
     return True
 
+def safe_filename(filename):
+    """Return a filesystem safe filename"""
+    return ''.join(e for e in filename if e.isalnum())
+
 class LevelContainer:
     BASHER      = 0
     BOUNCER     = 1
@@ -129,6 +133,16 @@ class LevelContainer:
 
     def get_current_level_filename(self):
         return self.current_level_filename
+
+    def get_deploy_filename(self):
+        lvlpack = self.get_levelpack()
+        if not lvlpack:
+            return False, "No Levelpack defined"
+
+        return os.path.join(self.get_pykurindir(), "levels",
+                lvlpack.get_dirname(),
+                "%s.%s" % (safe_filename(self.get_title()),"prop")
+                        )
 
     def set_last_error(self,text):
         self.last_error = text
@@ -327,8 +341,7 @@ class LevelContainer:
             Will raise the Exceptions up, to be catched and presented.
         """
         pdir  = self.get_pykurindir()
-        #Create a filename without special characters from the title
-        filen = ''.join(e for e in self.get_title() if e.isalnum())
+        filen = safe_filename(self.get_title())
         operations = []
 
         if self.get_levelpack():
