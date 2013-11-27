@@ -35,7 +35,6 @@ class PykurinLevelEditorUI(Frame):
         #the function and not on the top of the module
         self.ICONS = icons.icons_from_dir()
 
-
         self.__guibuild_menubar()
         self.__guibuild_toolbar()
         self.__guibuild_statusbar()
@@ -671,18 +670,23 @@ Do you want to copy the files to the game tree?
 
         canvas.delete("backgrounds")
 
+        self.bgimage  = icons.load_tkimage(dc.get_background_fname())
+        self.colimg   = icons.load_tkimage(dc.get_colision_fname())
+        self.frontimg = icons.load_tkimage(dc.get_image_fname())
+
+
         canvas.create_image((0,0),
-                                image=dc.get_bgimage(), anchor=NW,
+                                image=self.bgimage, anchor=NW,
                                 tags = ("backgrounds", "bgBG")
                                 )
 
         canvas.create_image((0 + self.panx,0 + self.pany),
-                                image=dc.get_colimage(), anchor=NW,
+                                image=self.colimg, anchor=NW,
                                 tags = ("pan", "backgrounds", "colBG")
                                 )
 
         canvas.create_image((0 + self.panx ,0 + self.pany),
-                            image=dc.get_image(), anchor=NW,
+                            image=self.frontimg, anchor=NW,
                             tags = ("pan", "backgrounds", "playBG"))
 
         canvas.tag_lower("backgrounds")

@@ -5,8 +5,6 @@ import uuid
 import os
 import shutil
 
-from PIL import Image, ImageTk
-
 class datacontainer:
     BASHER      = 0
     BOUNCER     = 1
@@ -33,11 +31,8 @@ class datacontainer:
         """Loads all the needed common images"""
         self.base_pykurin_directory = None
         self.current_level_filename = None
-        self.image = None
         self.img_filename = None
-        self.bgimage = None
         self.background_filename = None
-        self.colimage = None
         self.collision_filename= None
         self.bashers = []
         self.bouncers = []
@@ -60,8 +55,6 @@ class datacontainer:
         return self.base_pykurin_directory
 
     def set_image(self,imagepath):
-        image = Image.open(imagepath)
-        self.image = ImageTk.PhotoImage(image)
         self.img_filename = imagepath
 
     def get_image_fname(self):
@@ -77,13 +70,9 @@ class datacontainer:
         return self.background_filename
 
     def set_bg_image(self, imagepath):
-        image = Image.open(imagepath)
-        self.bgimage= ImageTk.PhotoImage(image)
         self.background_filename = imagepath
 
     def set_col_image(self,imagepath):
-        image = Image.open(imagepath)
-        self.colimage= ImageTk.PhotoImage(image)
         self.collision_filename  = imagepath
 
     def set_current_level_filename(self,text):
@@ -181,7 +170,7 @@ class datacontainer:
         return len(self.sticks) > 0
 
     def isImageDefined(self):
-        return self.image !=None
+        return self.img_filename !=None
 
     def isTitleDefined(self):
         return self.title !=None
