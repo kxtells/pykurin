@@ -5,7 +5,7 @@ import uuid
 import os
 import shutil
 
-class datacontainer:
+class LevelContainer:
     BASHER      = 0
     BOUNCER     = 1
     LIVES       = 2

@@ -12,6 +12,8 @@ import icons
 import os, sys
 
 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 #
 #
 # MAIN LEVEL EDITOR SCREEN
@@ -29,7 +31,7 @@ class PykurinLevelEditorUI(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master, relief=SUNKEN, bd=2)
 
-        self.DC             = datacontainer.datacontainer()
+        self.DC             = datacontainer.LevelContainer()
 
         #Import the icons. (needs tk running, that is why it is done inside
         #the function and not on the top of the module
@@ -66,7 +68,7 @@ class PykurinLevelEditorUI(Frame):
         #Selected item
         self.sitem = None
 
-        #ID dictionary between GUI and datacontainer
+        #ID dictionary between GUI and LevelContainer
         self.dataids = {}
 
 		#Window title
@@ -470,7 +472,7 @@ class PykurinLevelEditorUI(Frame):
     def __update_dataids_after_remove(self, itype, dcid):
         """Update all the indexes after the removal of one
         of the objects.
-            This is kind of ugly because the ids of datacontainer
+            This is kind of ugly because the ids of LevelContainer
             are just the indexes. So removing one object from there
             implies invalidating most of the indexes here.
         """
@@ -489,7 +491,7 @@ class PykurinLevelEditorUI(Frame):
     #
     def manage_data_dialogs(self):
         """ This flow of dialogs does the following:
-         - Checks if datacontainer has all the files pointed to the pykurin directory
+         - Checks if LevelContainer has all the files pointed to the pykurin directory
          - If not, asks for a possible copy of data (if the user wants it)
          - Tries to copy all the data and presents the user with the copy
             information
@@ -533,9 +535,9 @@ Do you want to copy the files to the game tree?
         """ Creates a new level with no file associated to it """
         print "NEW LEVEL"
 
-        # Force a new datacontainer
+        # Force a new LevelContainer
         basep   = self.DC.get_basepath()
-        self.DC = datacontainer.datacontainer()
+        self.DC = datacontainer.LevelContainer()
         self.DC.set_base_dir(basep) #Keep the pykurin directory
 
         #Start and end are created automatically
@@ -637,9 +639,9 @@ Do you want to copy the files to the game tree?
 
     def _create_basher(self, x, y, rx=None, ry=None, dcid=None, new=False):
         """
-            Create a basher to add to the canvas and Datacontainer.
+            Create a basher to add to the canvas and LevelContainer.
             By default the basher is only created in the canvas, to be
-            saved in the datacontainer the new flag has to be set to true
+            saved in the LevelContainer the new flag has to be set to true
         """
         canvas = self.canvas
         dc     = self.DC
