@@ -137,6 +137,7 @@ class PykurinLevelEditorUI(Frame):
 
         b = Button(toolbar, image=self.ICONS["select24"], text="Select",
                    #compound=LEFT, #COmbine text and icon
+                   padx=8, pady=8,
                    command=lambda: self.button(self.SELECT_BUTTON, 0))
         b.pack(side=LEFT, padx=2, pady=2)
         b.config(relief=SUNKEN)
@@ -144,24 +145,28 @@ class PykurinLevelEditorUI(Frame):
 
         b = Button(toolbar, image=self.ICONS["move24"], text="Pan",
                    #compound=LEFT, #COmbine text and icon
+                   padx=8, pady=8,
                    command=lambda: self.button(self.PAN_BUTTON, 1))
         b.pack(side=LEFT, padx=2, pady=2)
         self.buttons.append(b)
 
         b = Button(toolbar, text="Bouncer", image=self.ICONS["bouncer_icon_24"],
                    #compound=LEFT, #COmbine text and icon
+                   padx=8, pady=8,
                    command=lambda: self.button(self.BOUNCER_BUTTON, 2))
         b.pack(side=LEFT, padx=2, pady=2)
         self.buttons.append(b)
 
         b = Button(toolbar, text="lifeup", image=self.ICONS["live_icon_24"],
                    #compound=LEFT, #COmbine text and icon
+                   padx=8, pady=8,
                    command=lambda: self.button(self.LIVES_BUTTON, 3))
         b.pack(side=LEFT, padx=2, pady=2)
         self.buttons.append(b)
 
         b = Button(toolbar, image=self.ICONS["basher_icon_24"], text="basher",
                    #compound=LEFT, #COmbine text and icon
+                   padx=8, pady=8,
                    command=lambda: self.button(self.BASHER_BUTTON, 4))
         b.pack(side=LEFT, padx=2, pady=2)
         self.buttons.append(b)
