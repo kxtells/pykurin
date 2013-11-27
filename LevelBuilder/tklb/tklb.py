@@ -50,7 +50,7 @@ class PykurinLevelEditorUI(Frame):
             error_message("ERROR", "%s is not a Pykurin game directory" % bdir)
             sys.exit()
 
-        self.DC.set_base_dir(bdir)
+        self.DC.set_pykurindir(bdir)
 
         try:
             self.master.config(menu=self.menubar)
@@ -259,7 +259,7 @@ class PykurinLevelEditorUI(Frame):
     #
     def run_level(self):
         """Run the current level by the specified pykurin base dir"""
-        bdir = self.DC.get_base_dir()
+        bdir = self.DC.get_pykurindir()
         pykurinexe = os.path.join(bdir,"pykurin.py")
 
         #Check for errors on save Before trying Anything
@@ -528,7 +528,7 @@ base directory tree %s:
 %s.
 
 Do you want to copy the files to the game tree?
-        """% (self.DC.get_base_dir(), files_str)
+        """% (self.DC.get_pykurindir(), files_str)
         )
 
     def f_new_level(self):
@@ -538,7 +538,7 @@ Do you want to copy the files to the game tree?
         # Force a new LevelContainer
         basep   = self.DC.get_basepath()
         self.DC = datacontainer.LevelContainer()
-        self.DC.set_base_dir(basep) #Keep the pykurin directory
+        self.DC.set_pykurindir(basep) #Keep the pykurin directory
 
         #Start and end are created automatically
         self.DC.add_item(self.DC.STICKS, 0, 0)

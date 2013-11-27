@@ -48,10 +48,10 @@ class LevelContainer:
         #LEGACY
         self.items_pack = [self.bashers,self.bouncers,self.lives,self.goals,self.sticks,self.bashers_end]
 
-    def set_base_dir(self,path):
+    def set_pykurindir(self,path):
         self.base_pykurin_directory = path
 
-    def get_base_dir(self):
+    def get_pykurindir(self):
         return self.base_pykurin_directory
 
     def set_image(self,imagepath):
@@ -238,7 +238,7 @@ class LevelContainer:
             All the levels must store their data in that directory, if not,
             pykurin won't run correctly.
         """
-        pdir = self.get_base_dir()
+        pdir = self.get_pykurindir()
         isall = True
         data  = []
 
@@ -271,7 +271,7 @@ class LevelContainer:
 
             Will raise the Exceptions up, to be catched and presented.
         """
-        pdir  = self.get_base_dir()
+        pdir  = self.get_pykurindir()
         #Create a filename without special characters from the title
         filen = ''.join(e for e in self.get_title() if e.isalnum())
         operations = []
@@ -322,10 +322,10 @@ class LevelContainer:
         part = full_path.rpartition('/')
         part2 = imagefile.rpartition('/')
 
-        colfilename = self.get_base_dir()+"/"+colfilename
-        self.set_image(os.path.join(self.get_base_dir(), imagefile))
-        self.set_bg_image(os.path.join(self.get_base_dir(), bgfilename))
-        self.set_col_image(os.path.join(self.get_base_dir(), colfilename))
+        colfilename = self.get_pykurindir()+"/"+colfilename
+        self.set_image(os.path.join(self.get_pykurindir(), imagefile))
+        self.set_bg_image(os.path.join(self.get_pykurindir(), bgfilename))
+        self.set_col_image(os.path.join(self.get_pykurindir(), colfilename))
 
 
         #Fill the things
@@ -406,7 +406,7 @@ class LevelContainer:
         """
         if len(self.sticks)!=1: return False, "Need a start Stick Position"
         if len(self.goals)!=1:  return False, "Need a GOAL Position"
-        if not self.get_base_dir(): return False, "There is no base pykurin directory set"
+        if not self.get_pykurindir(): return False, "There is no base pykurin directory set"
 
         f = open(filepath, 'w')
         f.write("[options]\n");
@@ -486,17 +486,11 @@ class LevelPackContainer:
     def get_name(self):
         return self.name
 
-    def get_basedir(self):
+    def set_name(self, name):
+        self.name = name
+
+    def get_dirname(self):
         return self.dirname
-
-    def get_icon(self):
-        return self.icon
-
-    def get_levels2open(self):
-        return self.levels2open
-
-    def set_base_dir(self, directory):
-        self.base_pykurin_directory = directory
 
     def set_dirname(self, dname):
         if not dname.isalnum():
@@ -504,11 +498,26 @@ class LevelPackContainer:
         self.dirname = dname
         return True
 
-    def get_base_dir(self):
+    def get_icon(self):
+        return self.icon
+
+    def set_icon(self, icon):
+        self.icon = icon
+
+    def get_levels2open(self):
+        return self.levels2open
+
+    def set_levels2open(self, num):
+        self.levels2open = num
+
+    def get_pykurindir(self):
         return self.base_pykurin_directory
 
+    def set_pykurindir(self, newdir):
+        self.base_pykurin_directory = newdir
+
     def directoryExists(self):
-        os.path.isdir(os.path.join(self.get_base_dir(), "levels", self.dirname))
+        return os.path.isdir(os.path.join(self.get_pykurindir(), "levels", self.dirname))
 
     #SAVE
     def save(self, filepath):
@@ -561,25 +570,51 @@ class LevelPackList:
             self.lpacks.append(LevelPackContainer(file=fpath,
                                                   pykurindir=self.pykurinpath))
 
+    def get_pykurindir(self):
+        return self.pykurinpath
+
     def sync(self):
         """ Sync the packs to the levelpacks directory. Delete the packs marked
-            for delete
+            for delete.
+
+            Returns True and a Log of what files changed
         """
+        errlog = []
 
         lpacksdir = os.path.abspath(os.path.join(self.pykurinpath,"levelpacks"))
+        levelsdir = os.path.abspath(os.path.join(self.pykurinpath,"levels"))
 
         for idx,lp in enumerate(self.lpacks):
-            fname = os.path.abspath(os.path.join(lpacksdir, self.lpackfiles[idx]))
-            lp.save(fname)
+            try:
+                fname = os.path.abspath(os.path.join(lpacksdir, self.lpackfiles[idx]))
+                dname = os.path.abspath(os.path.join(lpacksdir, self.lpackfiles[idx]))
+                lp.save(fname)
+                errlog.append("SAVED: %s"%fname)
+                if not lp.directoryExists():
+                    newdir = os.path.abspath(os.path.join(levelsdir, lp.get_dirname()))
+                    os.mkdir(newdir)
+                    errlog.append("CREATED: %s"%newdir)
+            except Exception as e:
+                errlog.append("ERROR creating: %s"%e)
+                continue
 
         for fname in self.lpackdelete:
-            fname = os.path.abspath(os.path.join(lpacksdir, fname))
-            os.unlink(fname)
+            try:
+                fname = os.path.abspath(os.path.join(lpacksdir, fname))
+                os.unlink(fname)
+                errlog.append("DELETED: %s"%fname)
+            except Exception as e:
+                errlog.append("ERROR deleting: %s"%e)
+                continue
 
-        return True
+        return True, errlog
 
     def addPack(self, filename=None, name=None, dirname=None,
                       icon=None, levels2open=0):
+        """
+            Creates a new LevelPack, and returns a pointer to that new
+            instance
+        """
 
         if not filename:
             filename = "%s-levelpack.prop"%(len(self.lpackfiles)+1)
@@ -591,7 +626,8 @@ class LevelPackList:
             dirname = "levelpack-%s"%(len(self.lpackfiles)+1)
 
         ncont = LevelPackContainer(name = name, dirname=dirname, icon=icon,
-                                  levels2open=levels2open)
+                                  levels2open=levels2open,
+                                  pykurindir=self.get_pykurindir())
 
         self.lpackfiles.append(filename)
         self.lpacks.append(ncont)
@@ -599,6 +635,8 @@ class LevelPackList:
         pack.sort()
         self.lpackfiles = [f for f,p in pack]
         self.lpacks     = [p for f,p in pack]
+
+        return ncont
 
     def removePackIdx(self, index):
         """ Remove pack from list. Marked for removal on sync"""
@@ -620,3 +658,7 @@ class LevelPackList:
         del self.lpacks[index]
 
         return True
+
+    def get_packs(self):
+        """ Return a list with filename,LevelPackContainer"""
+        return zip(self.lpackfiles, self.lpacks)
