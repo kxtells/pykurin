@@ -562,6 +562,9 @@ class LevelPackList:
 
         lpacksdir = os.path.abspath(os.path.join(pykurinpath,"levelpacks"))
         for lpfile in os.listdir(lpacksdir):
+            name, ext = os.path.splitext(lpfile)
+            if ext != ".lvlpack":continue
+
             self.lpackfiles.append(lpfile)
 
         self.lpackfiles.sort()
@@ -617,7 +620,7 @@ class LevelPackList:
         """
 
         if not filename:
-            filename = "%s-levelpack.prop"%(len(self.lpackfiles)+1)
+            filename = "%s-levelpack.lvlpack"%(len(self.lpackfiles)+1)
 
         if not name:
             name    = "levelpack-%s"%(len(self.lpackfiles)+1)
