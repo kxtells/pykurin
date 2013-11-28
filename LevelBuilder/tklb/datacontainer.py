@@ -38,6 +38,8 @@ class LevelContainer:
     COLIMAGE    = 1
     BGIMAGE     = 2
 
+    KEYWORDS = ["[bouncers]","[bashers]","[recovers]","[options]"]
+
     selecteditem = None
 
 
@@ -566,6 +568,8 @@ class LevelPackContainer:
         return self.name
 
     def set_name(self, name):
+        if name in self.KEYWORDS:
+            return False, "Level Name should not be a keyword:%s"%self.KEYWORDS
         self.name = name
 
     def get_dirname(self):
@@ -574,6 +578,8 @@ class LevelPackContainer:
     def set_dirname(self, dname):
         if not dname.isalnum():
             return False, "Directory should be only letters and numbers"
+        if dname in self.KEYWORDS:
+            return False, "Directory should not be a keyword:%s"%self.KEYWORDS
         self.dirname = dname
         return True
 
