@@ -24,5 +24,8 @@ def icons_from_dir():
     return ICONS
 
 def load_tkimage(filename):
-    image = Image.open(filename)
-    return ImageTk.PhotoImage(image)
+    try:
+        image = Image.open(filename)
+        return ImageTk.PhotoImage(image)
+    except:
+        return None
