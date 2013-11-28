@@ -386,6 +386,7 @@ class LevelContainer:
         self.__init__(pykurindir = self.get_pykurindir())
         parser = SafeConfigParser()
         parser.read(full_path)
+        print full_path
 
         imagefile = parser.get('options','background')
         colfilename = parser.get('options','collision')
@@ -405,11 +406,11 @@ class LevelContainer:
         self.set_col_image(os.path.join(self.get_pykurindir(), colfilename))
 
         #Fill the things
-        self.retrieve_bouncer_list(parser,xpadding,ypadding)
-        self.retrieve_lives_list(parser,xpadding,ypadding)
+        self.retrieve_bouncer_list(full_path,xpadding,ypadding)
+        self.retrieve_lives_list(full_path,xpadding,ypadding)
         self.retrieve_end(parser,xpadding,ypadding)
         self.retrieve_start(parser,xpadding,ypadding)
-        self.retrieve_bashers_list(parser,xpadding,ypadding)
+        self.retrieve_bashers_list(full_path,xpadding,ypadding)
         #try to guess which LevelPack this level belongs to. If not, it will
         #Be set to none
         self.lvlpack =  self._find_levelpack()
@@ -418,41 +419,48 @@ class LevelContainer:
         self.current_level_filename = full_path
 
 
-    def retrieve_bashers_list(self,parser,xp,yp):
+    def retrieve_bashers_list(self,fname,xp,yp):
+        """ Get a bouncer list from a .prop file."""
+        with open(fname) as f:
+            content = f.readlines()
 
-        del self.bashers[:]
-        del self.bashers_end[:]
+        bashers = content[content.index('[bashers]\n')+1:content.index('[flies]\n')]
+        for dat in bashers:
+            bash_n_speed = dat.rstrip("\n").split(";")
+            bl = bash_n_speed[0].split(":")
+            borig = bl[0].split(",")
+            bend  = bl[1].split(",")
+            bx  = borig[0]
+            by  = borig[1]
+            bex = bend[0]
+            bey = bend[1]
 
-        try:
-            for b in parser.items('bashers'):
-                #FORMAT: 490,200:490,350;1
-                basher, basher_end_tmp = b
-                basher_end = basher_end_tmp.partition(";")[0]
-                bx,t,by = basher.partition(",")
-                bex,t,bey = basher_end.partition(",")
+            self.bashers.append(Rect(int(bx)+xp,int(by)+yp,0,0))
+            self.bashers_end.append(Rect(int(bex)+xp,int(bey)+yp,0,0))
 
-                self.bashers.append(Rect(int(bx)+xp,int(by)+yp,0,0))
-                self.bashers_end.append(Rect(int(bex)+xp,int(bey)+yp,0,0))
-        except:
-            pass
+    def retrieve_bouncer_list(self,fname,xp,yp):
+        """ Get a bouncer list from a .prop file."""
+        with open(fname) as f:
+            content = f.readlines()
 
-    def retrieve_bouncer_list(self,parser,xp,yp):
-        del self.bouncers[:]
-        try:
-            for b in parser.items('bouncers'):
-                bx,by = b
-                self.bouncers.append(Rect(int(bx)+xp,int(by)+yp,32,32))
-        except:
-            pass
+        bouncers = content[content.index('[bouncers]\n')+1:content.index('[recovers]\n')]
+        for dat in bouncers:
+            bl = dat.rstrip("\n").split(":")
+            bx = bl[0]
+            by = bl[1]
+            self.bouncers.append(Rect(int(bx)+xp,int(by)+yp,32,32))
 
-    def retrieve_lives_list(self,parser,xp,yp):
-        del self.lives[:]
-        try:
-            for b in parser.items('recovers'):
-                bx,by = b
-                self.lives.append(Rect(int(bx)+xp,int(by)+yp,32,32))
-        except:
-            pass
+    def retrieve_lives_list(self,fname,xp,yp):
+        """ Get a bouncer list from a .prop file."""
+        with open(fname) as f:
+            content = f.readlines()
+
+        bouncers = content[content.index('[recovers]\n')+1:content.index('[bashers]\n')]
+        for dat in bouncers:
+            bl = dat.rstrip("\n").split(":")
+            bx = bl[0]
+            by = bl[1]
+            self.lives.append(Rect(int(bx)+xp,int(by)+yp,32,32))
 
     def retrieve_start(self,parser,xp,yp):
         del self.sticks[:]
