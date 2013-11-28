@@ -21,6 +21,7 @@ from cSettings import cSettings
 from cTransition import cTransition
 from colors import *
 import os
+import functions
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 pygame.init()
@@ -261,6 +262,11 @@ def key_handler(event):
 		elif event.key == pygame.K_LEFT: stick.move_left();
 		elif event.key == pygame.K_RIGHT: stick.move_right();
 		elif event.key == pygame.K_LCTRL: stick.turbo_on();
+		elif event.key == pygame.K_r: stick.rotate(amount=20);
+		elif event.key == pygame.K_x: print stick.path;
+		elif event.key == pygame.K_e:
+			tmask = pygame.mask.from_surface(status.level.imgcol.subsurface(stick.rect))
+			functions.print_mask(tmask)
 
 		#Pause Button
 		elif event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.pause_game()
@@ -551,32 +557,36 @@ pause_menu.event_function = pause_menu_events
 ###################################################
 
 #Collision game handling
-def colision_handler(cx,cy):
-        """
-                All actions triggered by a colision with level boundaries
-                 - add a collision sprite to print
-                 - Change stick rotation direction for a time
-                 - Make the stick jump back
-        """
+def wall_colision(cx,cy):
+	"""
+		All actions triggered by a colision with level boundaries
+			- add a collision sprite to print
+			- Change stick rotation direction for a time
+			- Make the stick jump back
+	"""
 
 	#Create a 'collision' animated sprite
 	tsprite = SPRITE_FAC.get_sprite_by_id(cx,cy,SPRITE_FAC.EXPLOSION)
 	ANIM_SPRITES.append(tsprite)
 
-
-	#Move the Stick back from the collision place
-	#and temporary change the rotation
-	stick.jump_back(cx,cy)
-	stick.flip_rotation_tmp()
+	colision_handler(cx,cy)
 
 	#Add 3 seconds to the total time
 	status.add_seconds(3)
 
 	#Only if not in debug mode or invincible mode
-        if not status._DEBUG_DEATH:
+	if not status._DEBUG_DEATH:
 		if not status.invincible:
 			status.set_invincible()
 			status.decrease_lives()
+
+
+
+def colision_handler(cx,cy):
+	#Move the Stick back from the collision place
+	#and temporary change the rotation
+	stick.jump_back(cx,cy)
+	stick.flip_rotation_tmp()
 
 
 
@@ -603,6 +613,7 @@ def item_colisions():
 	for m in status.level.items:
 		colision,xc,yc = stick.collides(m)
 		if colision:
+			colision_handler(xc,yc)
 			if not status.invincible:
 				handle_item_monster_colision(m,xc,yc,m.BSPRITEFAC)
 
@@ -610,6 +621,7 @@ def monster_colisions():
 	for m in status.level.monsters:
 		colision,xc,yc = stick.collides(m)
 		if colision and not status.invincible:
+			colision_handler(xc,yc)
 			handle_item_monster_colision(m,xc,yc,SPRITE_FAC.OUCH)
 
 def monster_logic():
@@ -1074,8 +1086,15 @@ def draw_menu(menu,sx=200,sy=160):
 def playing_screen():
 	update_scene()
 	update_gui()
+
+	colision,cx,cy = status.level.stick_collides(stick);
+	if colision: wall_colision(cx,cy)
+
 	stick.rotate()
 	stick.movement()
+
+	colision,cx,cy = status.level.stick_collides(stick);
+	if colision: wall_colision(cx,cy)
 
 
 def finish_level():
@@ -1103,7 +1122,7 @@ def gaming_status(debug=False):
 
 		#Level Colision
 		colision,cx,cy = status.level.stick_collides(stick);
-		if colision: colision_handler(cx,cy)
+		if colision: wall_colision(cx,cy)
 
 		#Item colision
 		item_colisions()
@@ -1182,6 +1201,7 @@ def main_debug(filename):
 	load_level_filename(filename)
 	status.set_game_status(cStatus._STAT_GAMING)
 	finish = False
+	status._DEBUG_DEATH = True
 	while not finish:
 		for event in pygame.event.get(): event_handler(event)
 		finish = gaming_status(debug=True)
