@@ -33,10 +33,12 @@ class cPal(pygame.sprite.Sprite):
 		#Movement Flags
 		self.fmove = True
 		self.turbo = False
+		self.path  = []
+		self.directions  = []
 
-        #Loads a new stick Image
+    #Loads a new stick Image
 	def load_stick_image(self,imagepath):
-                self.image      = pygame.image.load(imagepath).convert_alpha()
+		self.image      = pygame.image.load(imagepath).convert_alpha()
 		self.baseImage  = pygame.image.load(imagepath).convert_alpha()
 		self.mask       = pygame.mask.from_surface(self.image);
 		self.rect = self.image.get_rect();
@@ -53,8 +55,11 @@ class cPal(pygame.sprite.Sprite):
 		if self.clockwise: self.clockwise_rotation(amount)
 		else: self.counterclockwise_rotation(amount)
 
+		self.rect = self.image.get_rect(center=self.rect.center)
+		self.mask = pygame.mask.from_surface(self.image)
+
 	def clockwise_rotation(self,amount):
-		if self.tbackwards:             	#Check if temporal backwards rotation is set
+		if self.tbackwards:            	#Check if temporal backwards rotation is set
 			self.rot -= amount + 2  	#When rotating back has to be faster
 			self.tbackwards_ticks -= 1
 		else:
@@ -68,8 +73,6 @@ class cPal(pygame.sprite.Sprite):
 		if self.rot <= 0: self.rot = 360;
 
 		self.image = pygame.transform.rotate(self.baseImage, self.rot)
-		self.rect = self.image.get_rect(center=self.rect.center)
-		self.mask = pygame.mask.from_surface(self.image)
 
 	def counterclockwise_rotation(self,amount):
 		if self.tbackwards:             	#Check if temporal backwards rotation is set
@@ -86,8 +89,6 @@ class cPal(pygame.sprite.Sprite):
 		if self.rot >= 360: self.rot = 0;
 
 		self.image = pygame.transform.rotate(self.baseImage, self.rot)
-		self.rect = self.image.get_rect(center=self.rect.center)
-		self.mask = pygame.mask.from_surface(self.image)
 
 	#
 	# Moving Functions
@@ -101,12 +102,59 @@ class cPal(pygame.sprite.Sprite):
 	def move_down(self):
 		if self.fmove: self.movy += cPal.__MOV_SPEED;
 
+	def movement_record(self):
+		self.path.append(self.rect)
+
+	def direction_record(self):
+		self.directions.append((self.movx*cPal.__TURBO_MULTIPLIER,self.movy*cPal.__TURBO_MULTIPLIER))
+
+	def previous_direction(self, pused=10):
+		if len(self.path) < pused:
+			return 0,0
+		else:
+			maximum = pused*self.__MOV_SPEED*self.__TURBO_MULTIPLIER
+			lastxy  = [(movx,movy) for movx,movy in self.directions[-pused:]]
+			lastxy.reverse()
+
+			cx = lastxy[0][0]
+			cy = lastxy[0][1]
+			cumx = 0
+			cumy = 0
+			for x,y in lastxy:
+				cumx += x
+				cumy += y
+
+			cumx = (cumx / maximum) * 10
+			cumy = (cumy / maximum) * 10
+			print cumx, cumy, lastxy
+			return cumx, cumy
+
+	def previous_movement(self, pused=5):
+		if len(self.path) < pused:
+			return 0,0
+		else:
+			lastxy = [(rect.x,rect.y) for rect in self.path[-pused:]]
+			lastxy.reverse()
+			cx = lastxy[0][0]
+			cy = lastxy[0][1]
+			cumx = 0
+			cumy = 0
+			for x,y in lastxy:
+				cumx += cx - x
+				cumy += cy - y
+				cx    = x
+				cy    = y
+
+			return cumx, cumy
 
 	def movement(self):
 		"""Move the Stick Rectangle"""
 		if self.fmove:
 			if self.turbo: self.rect = self.rect.move(self.movx*cPal.__TURBO_MULTIPLIER,self.movy*cPal.__TURBO_MULTIPLIER);
 			else: self.rect = self.rect.move(self.movx,self.movy);
+
+		self.movement_record()
+		self.direction_record()
 
 	def enable_disable_movement(self):
 		"""sets the movement flag"""
@@ -138,9 +186,19 @@ class cPal(pygame.sprite.Sprite):
 		if self.clockwise: self.clockwise = False
 		else: self.clockwise = True
 
+	def rotate_back(self):
+		self.rotate(amount=-10)
+
 	#
 	# @TODO: This function NEEDS REVISION.. Seems that some cases don't work properly
-	def jump_back(self,cx=0,cy=0,multiplier=1):
+	def jump_back(self, cx=0, cy=0, multiplier=1):
+		dx,dy = self.previous_direction()
+		if dx==0 and dy==0:
+			self.jump_back_static(cx, cy, multiplier)
+		else:
+			self.rect = self.rect.move(-dx*multiplier,-dy*multiplier);
+
+	def jump_back_static(self,cx=0,cy=0,multiplier=1):
 		"""
 			The stick Jumps Back to avoid further colisions
 			cx and xy are the MAP points of collision.
@@ -166,16 +224,16 @@ class cPal(pygame.sprite.Sprite):
 		ay = abs(sy - syc)
 		#print str(ax)+".."+str(ay)
 
-		if sx < sxc and sy < syc :     #Q1
+		if sx < sxc and sy < syc :     #Q1 Top Left
 			jx += cPal._JUMP_LENGTH
 			jy += cPal._JUMP_LENGTH
-		elif sx < sxc and sy > syc:     #Q2
+		elif sx < sxc and sy > syc:     #Q2 Bottom Left
 			jx += cPal._JUMP_LENGTH
 			jy += -cPal._JUMP_LENGTH
-		elif sx > sxc and sy < syc:     #Q3
+		elif sx > sxc and sy < syc:     #Q3 Top Right
 			jx += -cPal._JUMP_LENGTH
 			jy += cPal._JUMP_LENGTH
-		else:                           #Q4
+		else:                           #Q4 Bottom Right
 			jx += -cPal._JUMP_LENGTH
 			jy += -cPal._JUMP_LENGTH
 
