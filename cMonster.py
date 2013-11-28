@@ -1,7 +1,8 @@
 from pygame import time
 from pygame import mask
+import pygame
 
-class cMonster:
+class cMonster(pygame.sprite.Sprite):
 	"""
 		Superclass for monsters and items. Controlling basic
 	"""
@@ -22,7 +23,7 @@ class cMonster:
 		self.y = y
 		self.rot = rot
 
-		
+
 	def onCollision(self,stick,status):
 		"""
 			Default on colision handling.
@@ -33,9 +34,9 @@ class cMonster:
 
 	#Function to call on draw update
 	def draw_update(self):
-                if self.col_anim.draw == False: 
+                if self.col_anim.draw == False:
 			return self.anim.update(time.get_ticks())
-		else: 
+		else:
 			return self.col_anim.update(time.get_ticks())
 
 
@@ -53,16 +54,16 @@ class cMonster:
 		"""
 			Checks if the monster collides with a specific monster
 		"""
-		if self.rect.colliderect(monster.rect): 
+		if self.rect.colliderect(monster.rect):
 			#Here need to pix perfect collision
  			trectmonst = self.rect.clip(monster.rect).move(-monster.rect.x,-monster.rect.y)
  			trectstick = self.rect.clip(monster.rect).move(-self.rect.x,-self.rect.y)
-			
+
 			tmonstmask = mask.from_surface(monster.image.subsurface(trectmonst))
  			tcurrentmask = mask.from_surface(self.image.subsurface(trectstick))
-                	
+
 			col = tcurrentmask.overlap(tmonstmask,(0,0))
                 	if col == None: return False,0,0
                 	else: return True,col[0]+self.rect.x,col[1]+self.rect.y
-		
+
 		else: return False,0,0
