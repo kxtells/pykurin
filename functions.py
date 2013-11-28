@@ -1,6 +1,7 @@
 import pygame
 import os
 import glob
+import sys
 
 
 
@@ -21,3 +22,11 @@ def load_and_slice_sprite(w,h,filename):
 
 	return images
 
+def print_mask(mask):
+	w,h = mask.get_size()
+	for y in range(h):
+		for x in range(w):
+			sys.stdout.write(str(mask.get_at((x,y))))
+
+		sys.stdout.write("\n")
+	sys.stdout.write("---------------------------\n")
