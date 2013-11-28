@@ -1,28 +1,29 @@
 import pygame
 
-class cPal:
+class cPal(pygame.sprite.Sprite):
 	"""The 'stick' class.. the player"""
 	__MOV_SPEED = 3;
-	__ROT_SPEED = 2;
+	__ROT_SPEED = 1.5;
 	__BACK_TICKS = 12;
 	_JUMP_LENGTH = 5;
 	__TURBO_MULTIPLIER = 2;
-	
+
 	def __init__(self,x,y,rot,stickpath="sticks/stick.png"):
-		
+		pygame.sprite.Sprite.__init__(self)
+
 		self.image      = pygame.image.load(stickpath).convert_alpha()
 		self.baseImage  = pygame.image.load(stickpath).convert_alpha()
 		self.mask       = pygame.mask.from_surface(self.image);
-		
+
 		self.rect = self.image.get_rect();
-		
+
 		self.movx = 0;
 		self.movy = 0;
 
 		#Rotation Direction
 		self.rot = rot;
 		self.clockwise = False
-		
+
 		#Backwards move
 		self.tbackwards = False
 		self.tbackwards_ticks = self.__BACK_TICKS
@@ -40,7 +41,7 @@ class cPal:
 		self.mask       = pygame.mask.from_surface(self.image);
 		self.rect = self.image.get_rect();
 
-                
+
 	#Rotate function. Called continuously
 	def rotate(self,amount=__ROT_SPEED):
 		"""
@@ -51,7 +52,7 @@ class cPal:
 		"""
 		if self.clockwise: self.clockwise_rotation(amount)
 		else: self.counterclockwise_rotation(amount)
-		
+
 	def clockwise_rotation(self,amount):
 		if self.tbackwards:             	#Check if temporal backwards rotation is set
 			self.rot -= amount + 2  	#When rotating back has to be faster
@@ -99,7 +100,7 @@ class cPal:
 		if self.fmove: self.movy -= cPal.__MOV_SPEED;
 	def move_down(self):
 		if self.fmove: self.movy += cPal.__MOV_SPEED;
-	
+
 
 	def movement(self):
 		"""Move the Stick Rectangle"""
@@ -122,7 +123,7 @@ class cPal:
 		"""
 		if self.clockwise: self.clockwise = False
 		else: self.clockwise = True
-		
+
 		if self.tbackwards: self.tbackwards = False
 		else: self.tbackwards = True
 
@@ -149,7 +150,7 @@ class cPal:
 			Q1|Q3
 			------
 			Q2|Q4
-			
+
 		"""
 		#JUMP directions
 		#jx = 0
@@ -164,7 +165,7 @@ class cPal:
 		ax = abs(sx - sxc)
 		ay = abs(sy - syc)
 		#print str(ax)+".."+str(ay)
-		
+
 		if sx < sxc and sy < syc :     #Q1
 			jx += cPal._JUMP_LENGTH
 			jy += cPal._JUMP_LENGTH
@@ -177,15 +178,15 @@ class cPal:
 		else:                           #Q4
 			jx += -cPal._JUMP_LENGTH
 			jy += -cPal._JUMP_LENGTH
-			
+
 		#New easy jumpbacj
 		# @TODO: If you move counter direction when bashing a wall you can get past it
-		# The idea is that with the time penalty, even with that situation there's no 
+		# The idea is that with the time penalty, even with that situation there's no
 		# clear wining
 		#
-		
 
-		
+
+
 		self.rect = self.rect.move(jx*multiplier,jy*multiplier);
 
 	#Movement to reproduce when death
@@ -201,11 +202,11 @@ class cPal:
 		"""
 			ox,oy is the position to reach
 		"""
-		
+
 		if (self.rect.x <= ox+5 and self.rect.x >= ox-5) \
 		   and (self.rect.y <= oy+5 and self.rect.y >= oy-5):
 			return True
-		
+
 		if self.rect.x > ox:
 			self.movx = -1
 		else:
@@ -224,21 +225,17 @@ class cPal:
 
 	def turbo_off(self):
 		self.turbo = False
-	
+
 	def collides(self,monster):
 		"""
 			Checks if the stick collides with a specific monster
 		"""
-		if self.rect.colliderect(monster.rect): 
+		if self.rect.colliderect(monster.rect):
 			#Here need to pix perfect collision
- 			trectmonst = self.rect.clip(monster.rect).move(-monster.rect.x,-monster.rect.y)
- 			trectstick = self.rect.clip(monster.rect).move(-self.rect.x,-self.rect.y)
-			
-			tmonstmask = pygame.mask.from_surface(monster.image.subsurface(trectmonst))
- 			tstickmask = pygame.mask.from_surface(self.image.subsurface(trectstick))
-                	
-			col = tstickmask.overlap(tmonstmask,(0,0))
-                	if col == None: return False,0,0
-                	else: return True,col[0]+self.rect.x,col[1]+self.rect.y
-		
+
+			col = pygame.sprite.collide_mask(self,monster)
+			if col == None: return False,0,0
+			else:
+				return True,col[0]+self.rect.x,col[1]+self.rect.y
+
 		else: return False,0,0
