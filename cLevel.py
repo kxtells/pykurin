@@ -7,8 +7,9 @@ import cItemRecoverLives
 import cMonsterBasher
 import cMonsterFlie
 import shelve
+import pygame
 
-class cLevel:
+class cLevel(pygame.sprite.Sprite):
 	_MAX_SAVED_RECORDS = 5
 
 	def __init__(self,file):
@@ -34,16 +35,17 @@ class cLevel:
 		self.goal_sprite.move(gx + 50,gy + 50) #need the +50 not sure why [TODO]
 
 		#ITEMS LOADING
-		bouncers	=  self.retrieve_bouncer_list(parser)
-		recovers	=  self.retrieve_recover_list(parser)
+		bouncers	=  self.retrieve_bouncer_list(file)
+		recovers	=  self.retrieve_recover_list(file)
 		self.items	=  []
 		self.items += bouncers
 		self.items += recovers
 
 
 		#MONSTERS LOADING
-		bashers = self.retrieve_basher_list(parser)
-		flies = self.retrieve_flies_list(parser)
+		bashers = self.retrieve_basher_list(file)
+		#flies = self.retrieve_flies_list(parser)
+		flies = []
 		self.monsters = []
 		self.monsters += bashers
 		self.monsters += flies
@@ -75,33 +77,34 @@ class cLevel:
                         level walls
                         Returns Boolean + x,y of colision point
                 """
-		i,j = 0,0
 		try:
 			tmask = pygame.mask.from_surface(self.imgcol.subsurface(stick.rect))
 
-                	col = stick.mask.overlap(tmask,(0,0))
-
-                	if col == None: return False,0,0
-                	else: return True,col[0]+stick.rect.x,col[1]+stick.rect.y
+			col = pygame.sprite.collide_mask(stick,self)
+			#dx = self.rect.x - stick.rect.x
+			#dy = self.rect.y - stick.rect.y
+			#col = stick.mask.overlap(self.mask,(dx,dy))
+			if col == None: return False,0,0
+			else: return True,col[0]+stick.rect.x,col[1]+stick.rect.y
 
 		except:
 			pass
 
-		return False,i,j
+		return False,0,0
 
 	def stick_collides_mask(self,stick):
-                """
-                        Check if a given stick collides with one of the
-                        level walls
-                """
+		"""
+		        Check if a given stick collides with one of the
+		        level walls
+		"""
 		i,j = 0,0
 		try:
 			tmask = pygame.mask.from_surface(self.imgcol.subsurface(stick.rect))
 
-                	col = stick.mask.overlap(tmask,(0,0))
+			col = stick.mask.overlap(tmask,(0,0))
 
-                	if col == None: return False,0,0
-                	else: return True,col[0]+stick.rect.x,col[1]+stick.rect.y
+			if col == None: return False,0,0
+			else: return True,col[0]+stick.rect.x,col[1]+stick.rect.y
 
 		except:
 			pass
@@ -122,29 +125,36 @@ class cLevel:
 	# Retrieve specific data
 	#
 	############################
-	def retrieve_bouncer_list(self,parser):
+	def retrieve_bouncer_list(self,fname):
+		""" Get a bouncer list from a .prop file."""
+		with open(fname) as f:
+			content = f.readlines()
+
+		bouncers = content[content.index('[bouncers]\n')+1:content.index('[recovers]\n')]
 		bouncer_list = []
-		try:
-			for b in parser.items('bouncers'):
-				bx,by = b
-				rot = 0
-				newbouncer = cItemBouncer.cItemBouncer(int(bx),int(by),rot)
-				bouncer_list.append(newbouncer)
-		except:
-			pass
+		for dat in bouncers:
+			bl	= dat.rstrip("\n").split(":")
+			bx	= bl[0]
+			by	= bl[1]
+			rot = 0
+			newbouncer = cItemBouncer.cItemBouncer(int(bx),int(by),rot)
+			bouncer_list.append(newbouncer)
 
 		return bouncer_list
 
-	def retrieve_recover_list(self,parser):
-		recover_list = []
-		try:
-			for r in parser.items('recovers'):
-				rx,ry = r
-				newrecover = cItemRecoverLives.cItemRecoverLives(int(rx),int(ry))
-				recover_list.append(newrecover)
+	def retrieve_recover_list(self,fname):
+		""" Get a bouncer list from a .prop file."""
+		with open(fname) as f:
+			content = f.readlines()
 
-		except:
-			pass
+		bouncers = content[content.index('[recovers]\n')+1:content.index('[bashers]\n')]
+		recover_list = []
+		for dat in bouncers:
+			rl = dat.rstrip("\n").split(":")
+			rx = rl[0]
+			ry = rl[1]
+			newrecover = cItemRecoverLives.cItemRecoverLives(int(rx),int(ry))
+			recover_list.append(newrecover)
 
 		return recover_list
 
@@ -163,6 +173,29 @@ class cLevel:
 				basher_list.append(newbasher)
 		except:
 			pass
+
+		return basher_list
+
+	def retrieve_basher_list(self,fname):
+		""" Get a bouncer list from a .prop file."""
+		with open(fname) as f:
+			content = f.readlines()
+
+		bashers = content[content.index('[bashers]\n')+1:content.index('[flies]\n')]
+		basher_list = []
+		for dat in bashers:
+			bash_n_speed = dat.rstrip("\n").split(";")
+			bl = bash_n_speed[0].split(":")
+			borig = bl[0].split(",")
+			bend  = bl[1].split(",")
+			speed = int(bash_n_speed[1])
+			sx= borig[0]
+			sy= borig[1]
+			ex = bend[0]
+			ey = bend[1]
+
+			newbasher = cMonsterBasher.cMonsterBasher(int(sx),int(sy),int(ex),int(ey),int(speed))
+			basher_list.append(newbasher)
 
 		return basher_list
 
