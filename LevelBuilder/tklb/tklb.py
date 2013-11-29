@@ -653,12 +653,14 @@ Do you want to copy the files to the game levelpack tree?
     def _create_bouncer(self, x, y, dcid=None, new=False):
         canvas = self.canvas
         dc     = self.DC
-        if new:
-            dcid = dc.add_item(self.DC.BOUNCER, x, y)
 
         id = canvas.create_image((x, y),
                             image=self.ICONS["bouncer"], anchor=NW,
                             tags=("select", "move", "bouncer", "delete", "pan"))
+
+        if new:
+            bbox = self.unpan_bbox(canvas.bbox(id))
+            dcid = dc.add_item(self.DC.BOUNCER, bbox[0], bbox[1])
 
         self.dataids[id] = (dc.BOUNCER, dcid)
 
@@ -666,13 +668,13 @@ Do you want to copy the files to the game levelpack tree?
         canvas = self.canvas
         dc     = self.DC
 
-        if new:
-            dcid = dc.add_item(self.DC.LIVES, x, y)
-
-
         id = canvas.create_image((x, y),
                             image=self.ICONS["live"], anchor=NW,
                             tags=("select", "move", "delete", "lives", "pan"))
+
+        if new:
+            bbox = self.unpan_bbox(canvas.bbox(id))
+            dcid = dc.add_item(self.DC.LIVES, bbox[0], bbox[1])
 
         self.dataids[id] = (dc.LIVES, dcid)
 
@@ -691,11 +693,6 @@ Do you want to copy the files to the game levelpack tree?
         if not ry:
             ry = y
 
-        #If its new, it can't have an dcid. Create and get the dcid first
-        if new:
-            dcid = dc.add_item(self.DC.BASHER, x, y)
-            dc.add_item(self.DC.BASHER_END, rx, ry)
-
 
         idl = canvas.create_line(0,0,0,0,tags = ("pan", "basher"))
 
@@ -706,6 +703,13 @@ Do you want to copy the files to the game levelpack tree?
         idb = canvas.create_image((x, y),
                             image=self.ICONS["basher"], anchor=NW,
                             tags=("select", "move", "pan", "basher"))
+
+        #If its new, it can't have an dcid. Create and get the dcid first
+        if new:
+            bboxb = self.unpan_bbox(canvas.bbox(idb))
+            bboxe = self.unpan_bbox(canvas.bbox(ids))
+            dcid = dc.add_item(self.DC.BASHER, bboxb[0], bboxb[1])
+            dc.add_item(self.DC.BASHER_END, bboxe[0], bboxe[1])
 
 
         self.dataids[idb] = (dc.BASHER, dcid, ids, idl)
