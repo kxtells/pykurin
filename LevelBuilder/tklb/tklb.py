@@ -253,6 +253,16 @@ class PykurinLevelEditorUI(Frame):
         if not self.isButtonPressed():
             self.buttons[0].config(relief=SUNKEN)
 
+        if code != self.SELECT_BUTTON:
+            self.unselect_everything()
+
+
+    def unselect_everything(self):
+        """Removes all selections"""
+        #Delete all selections
+        self.canvas.delete("selection")
+        self.sitem = None
+
     #
     # Running a level
     #
@@ -325,7 +335,7 @@ class PykurinLevelEditorUI(Frame):
         y = event.y
 
         #Delete all selections
-        self.canvas.delete("selection")
+        self.unselect_everything()
 
         #Create a new selection
         self.select_item(x,y)
@@ -462,7 +472,7 @@ class PykurinLevelEditorUI(Frame):
             self.canvas.delete(self.sitem)
 
         self.__update_dataids_after_remove(itype, dcid)
-        self.canvas.delete("selection")
+        self.unselect_everything()
 
 
     #
