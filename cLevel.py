@@ -8,6 +8,7 @@ import cMonsterBasher
 import cMonsterFlie
 import shelve
 import pygame
+import pymunk
 
 class cLevel(pygame.sprite.Sprite):
 	_MAX_SAVED_RECORDS = 5
@@ -65,6 +66,10 @@ class cLevel(pygame.sprite.Sprite):
 		except:
 			self.start_lives = 3 #cannot include cStatus
 			pass
+
+		#PYMUNK SEGMENT
+		self.level_segments = []
+		self.generate_pymunk_vectors()
 
 	############################
 	#
@@ -275,9 +280,53 @@ class cLevel(pygame.sprite.Sprite):
 
 		return dbrecords
 
-
-
 	def get_uuid(self):
 		return self.uuid
 
+	def generate_pymunk_vectors(self):
+		""" This function generates a list of pymunk vectors representing the
+			Collisions of the Level. It does so with the following algorithm.
+
+			VERY CRUDE APPROACH, JUST FOR TESTING
+			This is a classic edge detection problem, Right now I generate
+			a crude list of horizontal and vertical vectors. Create lines
+		"""
+		mask = self.mask
+		w,h = mask.get_size()
+
+		#Two list of start,end values
+		#horizontal = [[(0,0),(0,0)] for i in range(h)]
+		#vertical   = [[(0,0),(0,0)] for i in range(h)]
+		horizontal = []
+
+		inline= False
+		start = None
+		end   = None
+		for r in range(w):
+			for c in range(h):
+				val = mask.get_at((r,c))
+				if inline:
+					#We found a line and we are following it
+					if val:
+						continue
+					else:
+						#Line finished
+						end = (r,c)
+						horizontal.append([start,end])
+						inline = False
+				else:
+					#We are searching for a start of a line
+					if val:
+						start = (r,c)
+						inline = True
+					else:
+						continue
+
+		#Generate the pymunk lines
+		static_body = pymunk.Body()
+		self.level_segments = []
+		for f in horizontal:
+			nseg = pymunk.Segment(static_body, f[0], f[1], 0.0)
+			nseg.friction = 0.5
+			self.level_segments.append(nseg)
 
