@@ -127,8 +127,8 @@ class tkLevelDialog(Toplevel):
         #self.bapply.grid(row=0, column=1)
         self.bcancel.grid(row=0, column=2)
 
-        if modal:
-            self.wait_window(self)
+        self.grab_set()
+        self.wait_window(self)
 
     def apply(self):
         if self.e1.get() != "None":
@@ -252,10 +252,8 @@ class tkTextViewer(Toplevel):
         self.TW.pack()
         self.bok.pack()
 
-
-
-        if modal:
-            self.wait_window(self)
+        self.grab_set()
+        self.wait_window(self)
 
     def finish(self):
         self.destroy()
@@ -350,6 +348,9 @@ class tkLevelPacksList(Toplevel):
         self.bdel.grid(row=3, column=1)
 
         self.__load_listbox()
+
+        self.grab_set()
+        self.wait_window(self)
 
 
     def finish(self):
@@ -466,8 +467,8 @@ class tkLevelPackEdit(Toplevel):
 
         self._fill_listbox()
 
-        if modal:
-            self.wait_window(self)
+        self.grab_set()
+        self.wait_window(self)
 
     def _fill_listbox(self):
         #FILL THE LISTBOX
