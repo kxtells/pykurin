@@ -61,19 +61,19 @@ pygame.display.set_icon(icon)
 
 ### Create the pymunk space
 space = pymunk.Space()
-space.gravity = Vec2d(0.0, 0.0)
+#space.gravity = Vec2d(0.0, 0.0)
 
 #EXAMPLE STATIC LINES
 ### Static line
-static_body = pymunk.Body()
-static_lines = [pymunk.Segment(static_body, (11.0, 080.0), (407.0, 246.0), 0.0)
-                ,pymunk.Segment(static_body, (407.0, 246.0), (407.0, 343.0), 0.0)
-                ]
+#static_body = pymunk.Body()
+#static_lines = [pymunk.Segment(static_body, (11.0, 080.0), (407.0, 246.0), 0.0)
+#                ,pymunk.Segment(static_body, (407.0, 246.0), (407.0, 343.0), 0.0)
+#                ]
 
-for l in static_lines:
-    l.friction = 0.5
+#for l in static_lines:
+#    l.friction = 0.5
 
-space.add(static_lines)
+#space.add(static_lines)
 
 
 INPUT_KEYS = cInputKeys.cInputKeys()
@@ -431,6 +431,8 @@ def load_level(level_num):
 
 def load_level_filename(level_fname):
 	"""Load level from a filename. For debug purposes"""
+	global space
+
 	status.level = cLevel(level_fname)
 	stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
 	#stick.load_stick_image(status.level.stick)
@@ -441,6 +443,13 @@ def load_level_filename(level_fname):
 	status.current_level = -1
 	status.reset_timer()
 	status.clear_penalty_seconds()
+
+
+	space = pymunk.Space()
+	space.gravity = Vec2d(0.0, 0.0)
+	space.add(stick.body, stick.shape)
+	space.add(status.level.level_segments)
+
 
 def load_levellist_with_pack(pack_num):
 	"""
@@ -771,9 +780,9 @@ def update_scene():
 
 	window.blit(status.level.bg,status.level.bg.get_rect())
 
-	#dx = -(stick.rect.center[0]-width/2)
-	#dy = -(stick.rect.center[1]-height/2)
-	dx = dy = 0
+	dx = -(stick.rect.center[0]-width/2)
+	dy = -(stick.rect.center[1]-height/2)
+	#dx = dy = 0
 
 	window.blit(status.level.image,status.level.rect.move(dx,dy))
 
@@ -815,20 +824,23 @@ def update_pymunk_debug():
 	# debug draw
 
 
+	dx = -(stick.rect.center[0]-width/2)
+	dy = -(stick.rect.center[1]-height/2)
+
 	# debug draw
 	ps = stick.shape.get_vertices()
-	print ps
-	ps = [(p.x, BF.flipy(p.y)) for p in ps]
+	ps = [(p.x + dx, p.y +dy) for p in ps]
 	ps += [ps[0]]
 	pygame.draw.lines(window, black, False, ps, 1)
 
-	for line in static_lines:
-		body = line.body
-		pv1 = body.position + line.a.rotated(body.angle)
-		pv2 = body.position + line.b.rotated(body.angle)
-		p1 = pv1.x, BF.flipy(pv1.y)
-		p2 = pv2.x, BF.flipy(pv2.y)
-		pygame.draw.lines(window, black, False, [p1,p2], 2)
+	#print len(status.level.level_segments)
+	#for line in status.level.level_segments:
+	#	body = line.body
+	#	pv1 = body.position + line.a.rotated(body.angle)
+	#	pv2 = body.position + line.b.rotated(body.angle)
+	#	p1 = pv1.x, pv1.y
+	#	p2 = pv2.x, pv2.y
+	#	pygame.draw.lines(window, red, False, [p1,p2], 2)
 
 
 def update_gui_timer_CF():
@@ -1198,7 +1210,7 @@ def gaming_status(debug=False):
 		fancy_stick_death_animation()
 
 	#Game Over
-	space.step(0.5)
+	space.step(1)
 
 
 def main_game():
@@ -1255,7 +1267,7 @@ def main_debug(filename):
 	status.set_game_status(cStatus._STAT_GAMING)
 	finish = False
 	status._DEBUG_DEATH = True
-	space.add(stick.body, stick.shape)
+	#space.add(stick.body, stick.shape)
 	while not finish:
 		for event in pygame.event.get(): event_handler(event)
 		finish = gaming_status(debug=True)
