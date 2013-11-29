@@ -6,6 +6,8 @@ import os
 import shutil
 import time
 
+KEYWORDS = ["[bouncers]","[bashers]","[recovers]","[options]"]
+
 def isPykurinDirectory(dirpath):
     """Returns True if dirpath is a pykurin directory. (contains
     all what is expected from it). If not, returns False
@@ -39,7 +41,6 @@ class LevelContainer:
     COLIMAGE    = 1
     BGIMAGE     = 2
 
-    KEYWORDS = ["[bouncers]","[bashers]","[recovers]","[options]"]
 
     selecteditem = None
 
@@ -579,7 +580,7 @@ class LevelPackContainer:
         return self.name
 
     def set_name(self, name):
-        if name in self.KEYWORDS:
+        if name in KEYWORDS:
             return False, "Level Name should not be a keyword:%s"%self.KEYWORDS
         self.name = name
 
@@ -589,10 +590,10 @@ class LevelPackContainer:
     def set_dirname(self, dname):
         if not dname.isalnum():
             return False, "Directory should be only letters and numbers"
-        if dname in self.KEYWORDS:
+        if dname in KEYWORDS:
             return False, "Directory should not be a keyword:%s"%self.KEYWORDS
         self.dirname = dname
-        return True
+        return True, "ok"
 
     def get_icon(self):
         return self.icon
@@ -750,10 +751,10 @@ class LevelPackList:
             filename = "%slpack.lvlpack"%(cdate)
 
         if not name:
-            name    = "levelpack-%s"%(cdate)
+            name    = "levelpack%s"%(cdate)
 
         if not dirname:
-            dirname = "levelpack-%s"%(cdate)
+            dirname = "levelpack%s"%(cdate)
 
         ncont = LevelPackContainer(name = name, dirname=dirname, icon=icon,
                                   levels2open=levels2open,

@@ -310,7 +310,7 @@ class tkLevelPacksList(Toplevel):
 
         self.levelpacks = []
         for fname,lpc in self.LPL.get_packs():
-            self.LB.insert(END,"%s\t%s"%(fname,lpc.get_name()))
+            self.LB.insert(END,"%s\t%s"%(lpc.get_name(), fname))
             self.levelpacks.append(lpc)
 
     def deletepack(self):
@@ -369,7 +369,7 @@ class tkLevelPackEdit(Toplevel):
         Label(self, text="Directory Name:").grid(row=1)
         Label(self, text="Icon:").grid(row=2)
         Label(self, text="Levels to open:").grid(row=3)
-        Label(self, text="Levels Assigned:").grid(row=5)
+        Label(self, text="Levels Assigned:").grid(row=4)
 
         self.packtitle = StringVar()
         self.packtitle.set(self.LP.get_name())
@@ -417,14 +417,17 @@ class tkLevelPackEdit(Toplevel):
             fpath = os.path.join(self.LP.get_directory_fullpath(), file)
             lc = datacontainer.LevelContainer(pykurindir=self.LP.get_pykurindir())
             lc.load_from_file(fpath)
-            self.lb.insert(END,"%s\t%s"%(file,lc.get_title()))
+            self.lb.insert(END,"%s\t%s"%(lc.get_title(),file))
 
 
     def apply(self):
         if self.e0.get() != "None":
             self.LP.set_name(self.e0.get())
-        if self.e1.get() != "None":
-            self.LP.set_dirname(self.e1.get())
+        dirname = self.e1.get()
+        if dirname != "None":
+            ok,err = self.LP.set_dirname(dirname)
+            if not ok:
+                error_message("ERROR","Set directory name %s: %s"%(dirname,err))
         if self.e2.get() != "None":
             self.LP.set_icon(self.e2.get())
         if self.e3.get() != "None":
