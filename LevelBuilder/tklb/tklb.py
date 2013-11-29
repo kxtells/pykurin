@@ -720,22 +720,27 @@ Do you want to copy the files to the game levelpack tree?
 
         canvas.delete("backgrounds")
 
-        self.bgimage  = icons.load_tkimage(dc.get_background_fname())
-        self.colimg   = icons.load_tkimage(dc.get_colision_fname())
-        self.frontimg = icons.load_tkimage(dc.get_image_fname())
-
-
-        canvas.create_image((0,0),
+        imgpath = dc.get_background_fname()
+        if imgpath:
+            self.bgimage  = icons.load_tkimage(imgpath)
+            canvas.create_image((0,0),
                                 image=self.bgimage, anchor=NW,
                                 tags = ("backgrounds", "bgBG")
                                 )
 
-        canvas.create_image((0 + self.panx,0 + self.pany),
+        imgpath = dc.get_colision_fname()
+        if imgpath:
+            self.colimg   = icons.load_tkimage(imgpath)
+            canvas.create_image((0 + self.panx,0 + self.pany),
                                 image=self.colimg, anchor=NW,
                                 tags = ("pan", "backgrounds", "colBG")
                                 )
 
-        canvas.create_image((0 + self.panx ,0 + self.pany),
+
+        imgpath = dc.get_image_fname()
+        if imgpath:
+            self.frontimg = icons.load_tkimage(imgpath)
+            canvas.create_image((0 + self.panx ,0 + self.pany),
                             image=self.frontimg, anchor=NW,
                             tags = ("pan", "backgrounds", "playBG"))
 
