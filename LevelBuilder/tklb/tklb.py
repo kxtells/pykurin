@@ -526,7 +526,7 @@ class PykurinLevelEditorUI(Frame):
                     return False
 
                 tkTextViewer(self.master, title="COPY LOG",
-                        textdata="COPIED\n%s"%"\n".join(cplist))
+                        textdata="COPIED\n%s"%"\n".join(cplist), islog=True)
                 return True
             else:
                 return False
@@ -635,7 +635,7 @@ Do you want to copy the files to the game levelpack tree?
             data += ["ERROR SAVING %s: %s"%(fname, msg)]
 
         tkTextViewer(self.master, title="DEPLOY LOG",
-                textdata="\n".join(data))
+                textdata="\n".join(data), islog=True)
 
 
 

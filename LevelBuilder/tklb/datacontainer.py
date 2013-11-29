@@ -736,7 +736,31 @@ class LevelPackList:
                 errlog.append("ERROR deleting: %s"%e)
                 continue
 
+        errlog += self.clean_levels_directory()
+
         return True, errlog
+
+    def clean_levels_directory(self):
+        """ Scans the levels directory according to what the levelpacks point to,
+            Delete all directories not pointed by any levelpack
+        """
+        errlog = []
+
+        def handle_error(function, path, execinfo):
+            errlog.append("ERROR:%s %s" %(path, execinfo))
+
+        dirs = [lp.get_dirname() for lp in self.lpacks]
+
+        dirpath = os.path.join(self.get_pykurindir(),"levels")
+        dirlist = os.listdir(dirpath)
+
+        delete = list(set(dirlist) - set(dirs))
+        for file in delete:
+            errlog.append("DELETE: %s"%os.path.join(dirpath,file))
+            shutil.rmtree(os.path.join(dirpath,file), ignore_errors=False,
+                            onerror=handle_error)
+
+        return errlog
 
     def addPack(self, filename=None, name=None, dirname=None,
                       icon=None, levels2open=0):
@@ -745,7 +769,7 @@ class LevelPackList:
             instance
         """
         # Create a current date identifier, to avoid problems
-        cdate = int(time.time())
+        cdate = str(time.time()).replace(".","")
 
         if not filename:
             filename = "%slpack.lvlpack"%(cdate)

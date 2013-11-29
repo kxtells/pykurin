@@ -205,7 +205,7 @@ class tkLevelDialog(Toplevel):
 """
 class tkTextViewer(Toplevel):
     def __init__(self, parent, title = None, modal=True, textdata="",
-                filename=None, isdiff=False):
+                filename=None, isdiff=False, islog=False):
         Toplevel.__init__(self, parent)
         self.transient(parent)
         self.ICONS = icons.icons_from_dir()
@@ -239,6 +239,8 @@ class tkTextViewer(Toplevel):
 
         if isdiff:
             self._colorize_diff()
+        elif islog:
+            self._colorize_log()
 
         self.bok = Button(self, text="OK", image=self.ICONS["tick24"], compound=BUTTON_COMPOUND,
                           width=BUTTON_SIZE, command=lambda: self.finish())
@@ -278,6 +280,32 @@ class tkTextViewer(Toplevel):
         self.TW.tag_config("rem",   background="#fdf6e3", foreground="#d33682")
         self.TW.tag_config("add",   background="#fdf6e3", foreground="#859900")
         self.TW.tag_config("info",  background="#fdf6e3", foreground="#b58900")
+
+    def _colorize_log(self):
+        """
+            Colorizes a UNIFIED DIFF.
+        """
+        for linenum, line in enumerate(self.text.split("\n")):
+            cline = linenum+1
+
+            if len(line) == 0 :
+                continue
+
+            if line.startswith("ERROR"):
+                self.TW.tag_add("ERROR","%s.0" % cline, "%s.%s" %(cline, len(line)))
+            elif line.startswith("DELETE"):
+                self.TW.tag_add("DELETE","%s.0" % cline, "%s.%s" %(cline, len(line)))
+            elif line.startswith("SAVE"):
+                self.TW.tag_add("SAVE","%s.0" % cline, "%s.%s" %(cline, len(line)))
+            elif line.startswith("COPY"):
+                self.TW.tag_add("COPY","%s.0" % cline, "%s.%s" %(cline, len(line)))
+
+        self.TW.tag_config("ERROR",  background="#fdf6e3", foreground="#d33682")
+        self.TW.tag_config("SAVE",   background="#fdf6e3", foreground="#859900")
+        self.TW.tag_config("DELETE", background="#fdf6e3", foreground="#b58900")
+        self.TW.tag_config("COPY",   background="#fdf6e3", foreground="#b58900")
+
+
 
 
 """
@@ -328,7 +356,7 @@ class tkLevelPacksList(Toplevel):
         stat,errlog = self.LPL.sync()
 
         tkTextViewer(self.parent, title="LevelPack Changes",
-                textdata="\n".join(errlog))
+                textdata="\n".join(errlog), islog=True)
 
         self.destroy()
         return
