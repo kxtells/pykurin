@@ -228,8 +228,14 @@ class tkTextViewer(Toplevel):
                                   parent.winfo_rooty()+50))
 
 
-        self.TW = Text(self)
+        self.textframe = Frame(self)
+        self.TW = Text(self.textframe)
         self.TW.insert(INSERT, self.text)
+        scrollbar = Scrollbar(self.textframe)
+        self.TW.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.TW.yview)
+
+
 
         if isdiff:
             self._colorize_diff()
@@ -239,6 +245,8 @@ class tkTextViewer(Toplevel):
 
         #self.TW.grid(row=0, column=0)
         #self.bok.grid(row=1, column=0)
+        self.textframe.pack()
+        scrollbar.pack(side=RIGHT, fill=Y)
         self.TW.pack()
         self.bok.pack()
 
