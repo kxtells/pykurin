@@ -780,9 +780,21 @@ def update_scene():
 
 	window.blit(status.level.bg,status.level.bg.get_rect())
 
-	dx = -(stick.rect.center[0]-width/2)
-	dy = -(stick.rect.center[1]-height/2)
+	#Scroll Follows Rect
+	#dx = -(stick.rect.center[0]-width/2)
+	#dy = -(stick.rect.center[1]-height/2)
+
+	#Scroll Follows Nothing
 	#dx = dy = 0
+
+	#scroll follows pymunk shape
+	bb = stick.shape.bb
+	rect = pygame.Rect(bb.right,bb.top,bb.top-bb.bottom,bb.right - bb.left,)
+	dx = -(rect.center[0]-width/2)
+	dy = -(rect.center[1]-height/2)
+	#print dx,dy
+	#print bb,"--",stick.rect,"(",bb.top,bb.left,bb.right - bb.left,bb.top-bb.bottom,")"
+
 
 	window.blit(status.level.image,status.level.rect.move(dx,dy))
 
@@ -1145,15 +1157,8 @@ def draw_menu(menu,sx=200,sy=160):
 def playing_screen():
 	update_scene()
 	update_gui()
-
-	colision,cx,cy = status.level.stick_collides(stick);
-	if colision: wall_colision(cx,cy)
-
 	stick.rotate()
 	stick.movement()
-
-	colision,cx,cy = status.level.stick_collides(stick);
-	if colision: wall_colision(cx,cy)
 
 	#DEBUG PYMUNK
 	update_pymunk_debug()
@@ -1267,6 +1272,7 @@ def main_debug(filename):
 	status.set_game_status(cStatus._STAT_GAMING)
 	finish = False
 	status._DEBUG_DEATH = True
+	status._DEBUG_COLLISION = True
 	#space.add(stick.body, stick.shape)
 	while not finish:
 		for event in pygame.event.get(): event_handler(event)
