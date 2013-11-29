@@ -69,6 +69,7 @@ class cPal(pygame.sprite.Sprite):
 
 		self.rect = self.image.get_rect(center=self.rect.center)
 		self.mask = pygame.mask.from_surface(self.image)
+		#ROTATING ANGLE... TODO
 		#self.body.angle += float(amount)/100
 
 	def clockwise_rotation(self,amount):

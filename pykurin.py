@@ -830,14 +830,20 @@ def update_scene():
 		else:
 			ANIM_SPRITES.pop(i) #If draw is false, delete the reference
 
-	window.blit(stick.image,stick.rect.move(dx,dy))
+	window.blit(stick.image,rect.move(dx,dy))
 
 def update_pymunk_debug():
 	# debug draw
 
+	#scroll follows pymunk shape
+	bb = stick.shape.bb
+	rect = pygame.Rect(bb.right,bb.top,bb.top-bb.bottom,bb.right - bb.left,)
+	dx = -(rect.center[0]-width/2)
+	dy = -(rect.center[1]-height/2)
 
-	dx = -(stick.rect.center[0]-width/2)
-	dy = -(stick.rect.center[1]-height/2)
+	#Scroll follows RECT
+	#dx = -(stick.rect.center[0]-width/2)
+	#dy = -(stick.rect.center[1]-height/2)
 
 	# debug draw
 	ps = stick.shape.get_vertices()
