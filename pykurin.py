@@ -6,7 +6,15 @@
 #
 #######################
 
-import sys, pygame
+import os,sys
+#Change directory
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+#Add libraries to the path
+libp = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),"lib"))
+sys.path.append(libp)
+
+#pykurin libraries
 import functions as BF
 import cAnimSpriteFactory
 import cCustomFont
@@ -20,14 +28,17 @@ from cLevelList import cLevelList
 from cSettings import cSettings
 from cTransition import cTransition
 from colors import *
-import os
-import functions
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+#3rd party libraries
+import pymunk
+from pymunk import Vec2d
+import pygame
+
 pygame.init()
 
 size = width, height = 640, 480
 FPS = 45
+
 
 
 ###########################################################################################
@@ -48,6 +59,23 @@ icon   = pygame.image.load("icon.png").convert_alpha()
 pygame.display.set_caption("PYKURIN Beta")
 pygame.display.set_icon(icon)
 
+### Create the pymunk space
+space = pymunk.Space()
+space.gravity = Vec2d(0.0, 0.0)
+
+#EXAMPLE STATIC LINES
+### Static line
+static_body = pymunk.Body()
+static_lines = [pymunk.Segment(static_body, (11.0, 080.0), (407.0, 246.0), 0.0)
+                ,pymunk.Segment(static_body, (407.0, 246.0), (407.0, 343.0), 0.0)
+                ]
+
+for l in static_lines:
+    l.friction = 0.5
+
+space.add(static_lines)
+
+
 INPUT_KEYS = cInputKeys.cInputKeys()
 TRANSITION = cTransition(window)
 
@@ -67,8 +95,6 @@ TIMERFONT = pygame.font.Font("ttf/NATWR.ttf", 55)
 #sprite factory
 SPRITE_FAC = cAnimSpriteFactory.cAnimSpriteFactory()
 
-
-
 #Goal Text
 imgset = BF.load_and_slice_sprite(300,150,'goal_text.png');
 gtext_sprite = cAnimSprite(imgset)
@@ -85,7 +111,6 @@ newrecord_sprite.move(450,150)
 
 #Lives sprite
 imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
-
 
 #Custom Numbers
 imgset_numbers = BF.load_and_slice_sprite(50,50,'numbers.png');
@@ -109,7 +134,9 @@ status = cStatus(imgsetlives,width,height)
 settings = cSettings()
 
 #First Base Load
-stick = cPal(0,0,0)
+stick = cPal(0,0,20)
+#Add stick to the physics simulator
+space.add(stick.body, stick.shape)
 
 #General arrays with Sprites
 BASIC_SPRITES=[]
@@ -266,7 +293,7 @@ def key_handler(event):
 		elif event.key == pygame.K_x: print stick.path;
 		elif event.key == pygame.K_e:
 			tmask = pygame.mask.from_surface(status.level.imgcol.subsurface(stick.rect))
-			functions.print_mask(tmask)
+			BF.print_mask(tmask)
 
 		#Pause Button
 		elif event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.pause_game()
@@ -742,15 +769,16 @@ def update_scene():
 	"""
 	window.fill(white)
 
-        window.blit(status.level.bg,status.level.bg.get_rect())
+	window.blit(status.level.bg,status.level.bg.get_rect())
 
-        dx = -(stick.rect.center[0]-width/2)
-        dy = -(stick.rect.center[1]-height/2)
+	#dx = -(stick.rect.center[0]-width/2)
+	#dy = -(stick.rect.center[1]-height/2)
+	dx = dy = 0
 
-        window.blit(status.level.image,status.level.rect.move(dx,dy))
+	window.blit(status.level.image,status.level.rect.move(dx,dy))
 
-        window.blit(status.level.goal_sprite.image,status.level.goal_sprite.rect.move(dx,dy))
-        status.level.goal_sprite.update(pygame.time.get_ticks())
+	window.blit(status.level.goal_sprite.image,status.level.goal_sprite.rect.move(dx,dy))
+	status.level.goal_sprite.update(pygame.time.get_ticks())
 
 
 	#Items InGame
@@ -782,6 +810,25 @@ def update_scene():
 			ANIM_SPRITES.pop(i) #If draw is false, delete the reference
 
 	window.blit(stick.image,stick.rect.move(dx,dy))
+
+def update_pymunk_debug():
+	# debug draw
+
+
+	# debug draw
+	ps = stick.shape.get_vertices()
+	print ps
+	ps = [(p.x, BF.flipy(p.y)) for p in ps]
+	ps += [ps[0]]
+	pygame.draw.lines(window, black, False, ps, 1)
+
+	for line in static_lines:
+		body = line.body
+		pv1 = body.position + line.a.rotated(body.angle)
+		pv2 = body.position + line.b.rotated(body.angle)
+		p1 = pv1.x, BF.flipy(pv1.y)
+		p2 = pv2.x, BF.flipy(pv2.y)
+		pygame.draw.lines(window, black, False, [p1,p2], 2)
 
 
 def update_gui_timer_CF():
@@ -1096,6 +1143,10 @@ def playing_screen():
 	colision,cx,cy = status.level.stick_collides(stick);
 	if colision: wall_colision(cx,cy)
 
+	#DEBUG PYMUNK
+	update_pymunk_debug()
+
+
 
 def finish_level():
 	settings.add_cleared_level(status.level.get_uuid())
@@ -1147,6 +1198,8 @@ def gaming_status(debug=False):
 		fancy_stick_death_animation()
 
 	#Game Over
+	space.step(0.5)
+
 
 def main_game():
         #Main Game Function
@@ -1202,6 +1255,7 @@ def main_debug(filename):
 	status.set_game_status(cStatus._STAT_GAMING)
 	finish = False
 	status._DEBUG_DEATH = True
+	space.add(stick.body, stick.shape)
 	while not finish:
 		for event in pygame.event.get(): event_handler(event)
 		finish = gaming_status(debug=True)

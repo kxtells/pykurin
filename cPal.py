@@ -1,4 +1,5 @@
 import pygame
+import pymunk
 
 class cPal(pygame.sprite.Sprite):
 	"""The 'stick' class.. the player"""
@@ -36,6 +37,17 @@ class cPal(pygame.sprite.Sprite):
 		self.path  = []
 		self.directions  = []
 
+		#PYMUNK
+		#Fixed vecspace for the default stick
+		self.mass      = 10
+		self.VecSpace  = [(-31,-4), (31,-4), (31,4), (-31,4)]
+		self.moment    = pymunk.moment_for_poly(self.mass, self.VecSpace)
+		self.body      = pymunk.Body(self.mass, self.moment)
+		self.shape     = pymunk.Poly(self.body, self.VecSpace)
+		self.shape.friction = 0.5
+		self.body.position  = self.rect.x, self.rect.y
+		self.body.angle = self.rot
+
     #Loads a new stick Image
 	def load_stick_image(self,imagepath):
 		self.image      = pygame.image.load(imagepath).convert_alpha()
@@ -57,6 +69,7 @@ class cPal(pygame.sprite.Sprite):
 
 		self.rect = self.image.get_rect(center=self.rect.center)
 		self.mask = pygame.mask.from_surface(self.image)
+		#self.body.angle += float(amount)/100
 
 	def clockwise_rotation(self,amount):
 		if self.tbackwards:            	#Check if temporal backwards rotation is set
@@ -126,7 +139,6 @@ class cPal(pygame.sprite.Sprite):
 
 			cumx = (cumx / maximum) * 10
 			cumy = (cumy / maximum) * 10
-			print cumx, cumy, lastxy
 			return cumx, cumy
 
 	def previous_movement(self, pused=5):
@@ -150,8 +162,16 @@ class cPal(pygame.sprite.Sprite):
 	def movement(self):
 		"""Move the Stick Rectangle"""
 		if self.fmove:
-			if self.turbo: self.rect = self.rect.move(self.movx*cPal.__TURBO_MULTIPLIER,self.movy*cPal.__TURBO_MULTIPLIER);
-			else: self.rect = self.rect.move(self.movx,self.movy);
+			if self.turbo:
+				movx = self.movx*cPal.__TURBO_MULTIPLIER
+				movy = self.movy*cPal.__TURBO_MULTIPLIER
+				self.rect = self.rect.move(movx,movy);
+				#Move stick
+				self.body.position += (movx, movy)
+			else:
+				self.rect = self.rect.move(self.movx,self.movy);
+				#Move stick
+				self.body.position += (self.movx, self.movy)
 
 		self.movement_record()
 		self.direction_record()

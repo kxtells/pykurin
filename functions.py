@@ -30,3 +30,9 @@ def print_mask(mask):
 
 		sys.stdout.write("\n")
 	sys.stdout.write("---------------------------\n")
+
+def flipy(y):
+    """Small hack to convert chipmunk physics to pygame coordinates"""
+    return -y+480
+
+
