@@ -14,6 +14,8 @@ import datacontainer
 import os
 import difflib
 import tempfile
+import icons
+
 
 class tkLevelDialog(Toplevel):
     C_IMAGE         = 0
@@ -29,6 +31,7 @@ class tkLevelDialog(Toplevel):
         self.parent = parent
         self.DC = levelcontainer
         self.LPL = datacontainer.LevelPackList(self.DC.get_pykurindir())
+        self.ICONS = icons.icons_from_dir()
 
 
         self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
@@ -84,9 +87,11 @@ class tkLevelDialog(Toplevel):
 
         ICONS = icons.icons_from_dir()
         self.bframe  = Frame(self)
-        self.bok     = Button(self.bframe, text="OK", width=6, command=lambda: self.finish())
+        self.bok     = Button(self.bframe, image=self.ICONS["tick24"], compound=LEFT,
+                              text="OK", width=70, command=lambda: self.finish())
         #self.bapply  = Button(self.bframe, text="Apply", width=6, command=lambda: self.apply())
-        self.bcancel = Button(self.bframe, text="Cancel", width=6, command=lambda: self.cancel())
+        self.bcancel = Button(self.bframe, image=self.ICONS["cross24"], compound=LEFT,
+                              text="CANCEL", width=70, command=lambda: self.cancel())
 
         self.fchooser1 = Button(self, image=ICONS["edit16"],
                                 command=lambda: self.fchooser(self.C_IMAGE))
@@ -200,6 +205,7 @@ class tkTextViewer(Toplevel):
                 filename=None, isdiff=False):
         Toplevel.__init__(self, parent)
         self.transient(parent)
+        self.ICONS = icons.icons_from_dir()
 
         if title:
             self.title(title)
@@ -225,7 +231,8 @@ class tkTextViewer(Toplevel):
         if isdiff:
             self._colorize_diff()
 
-        self.bok = Button(self, text="OK", width=6, command=lambda: self.finish())
+        self.bok = Button(self, text="OK", image=self.ICONS["tick24"], compound=LEFT,
+                          width=70, command=lambda: self.finish())
 
         #self.TW.grid(row=0, column=0)
         #self.bok.grid(row=1, column=0)
@@ -269,19 +276,29 @@ class tkLevelPacksList(Toplevel):
     def __init__(self, parent, modal=True, pykurindir=None):
         Toplevel.__init__(self, parent)
         self.transient(parent)
-        self.LPL = datacontainer.LevelPackList(pykurindir)
+        self.LPL   = datacontainer.LevelPackList(pykurindir)
+        self.ICONS = icons.icons_from_dir()
 
         self.title("Level Pack Manager")
 
         self.parent = parent
         self.LB = Listbox(self, width=50)
 
-        self.bframe  = Frame(self)
-        self.bok  = Button(self.bframe, text="OK",     width=6, command=lambda: self.finish())
-        self.bcancel  = Button(self.bframe, text="CANCEL",     width=6, command=lambda: self.cancel())
-        self.bdel = Button(self, text="DELETE", width=6, command=lambda: self.deletepack())
-        self.bnew = Button(self, text="NEW",    width=6, command=lambda: self.addpack())
-        self.bmod = Button(self, text="MODIFY", width=6, command=lambda: self.modify())
+        self.bframe   = Frame(self)
+        self.bok      = Button(self.bframe, text="OK", image=self.ICONS["tick24"],
+                                compound=LEFT,  width=70, command=lambda: self.finish())
+
+        self.bcancel  = Button(self.bframe, text="CANCEL",image=self.ICONS["cross24"],
+                                compound=LEFT, width=70, command=lambda: self.cancel())
+
+        self.bdel = Button(self, text="DELETE", width=70, image=self.ICONS["trash24"],
+                                compound=LEFT, command=lambda: self.deletepack())
+
+        self.bnew = Button(self, text="ADDPACK", width=70, image=self.ICONS["new24"],
+                                compound=LEFT, command=lambda: self.addpack())
+
+        self.bmod = Button(self, text="MODIFY", width=70, image=self.ICONS["edit24"],
+                                compound=LEFT, command=lambda: self.modify())
 
         self.LB.grid(row=0, column=0, rowspan=5)
 
@@ -351,6 +368,7 @@ class tkLevelPackEdit(Toplevel):
 
         self.parent = parent
         self.LP = levelpack
+        self.ICONS = icons.icons_from_dir()
 
 
         self.listframe  = Frame(self)
@@ -394,8 +412,10 @@ class tkLevelPackEdit(Toplevel):
 
 
         self.bframe  = Frame(self)
-        self.bok     = Button(self.bframe, text="OK", width=6, command=lambda: self.ok())
-        self.bcancel = Button(self.bframe, text="Cancel", width=6, command=lambda: self.cancel())
+        self.bok     = Button(self.bframe, text="OK", width=70, image=self.ICONS["tick24"],
+                                compound=LEFT, command=lambda: self.ok())
+        self.bcancel = Button(self.bframe, text="Cancel", image=self.ICONS["tick24"],
+                                compound=LEFT, width=70, command=lambda: self.cancel())
 
         #self.lb.grid(row=4, column=1)
         self.listframe.grid(row=4, column=1)
