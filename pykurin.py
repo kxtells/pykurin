@@ -28,6 +28,7 @@ from cLevelList import cLevelList
 from cSettings import cSettings
 from cTransition import cTransition
 from colors import *
+import math
 
 #3rd party libraries
 import pymunk
@@ -66,14 +67,6 @@ space = pymunk.Space()
 #EXAMPLE STATIC LINES
 ### Static line
 #static_body = pymunk.Body()
-#static_lines = [pymunk.Segment(static_body, (11.0, 080.0), (407.0, 246.0), 0.0)
-#                ,pymunk.Segment(static_body, (407.0, 246.0), (407.0, 343.0), 0.0)
-#                ]
-
-#for l in static_lines:
-#    l.friction = 0.5
-
-#space.add(static_lines)
 
 
 INPUT_KEYS = cInputKeys.cInputKeys()
@@ -294,6 +287,8 @@ def key_handler(event):
 		elif event.key == pygame.K_e:
 			tmask = pygame.mask.from_surface(status.level.imgcol.subsurface(stick.rect))
 			BF.print_mask(tmask)
+		elif event.key == pygame.K_y:
+			stick.body.reset_forces()
 
 		#Pause Button
 		elif event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.pause_game()
@@ -429,10 +424,48 @@ def load_level(level_num):
 	status.reset_timer()
 	status.clear_penalty_seconds()
 
-def load_level_filename(level_fname):
-	"""Load level from a filename. For debug purposes"""
+def create_space(level):
+	"""Modify the global space, to be updated according to the levels.
+		Right now, the levels do not have space configurations, but it might
+		have it in the future
+	"""
 	global space
 
+	space = pymunk.Space(iterations=10)
+	#Stop the movement each step
+	space.damping = 0.9
+	#Use no gravity
+	space.gravity = Vec2d(0.0, 0.0)
+
+	#Add the level collision vectors
+	space.add(stick.body, stick.shape) 		#Stick
+	space.add(status.level.level_segments) 	#Level
+
+	#Items
+	for item in level.items:
+		if item.shape:
+			#Items are always static
+			space.add(item.shape)
+
+	#Monsters
+
+	#Collision Handlers
+
+	space.add_collision_handler(0, 1,
+			begin=None,
+			pre_solve=None,
+			post_solve=col_stick_level,
+			separate=None)
+
+	space.add_collision_handler(0, 2,
+			begin=None,
+			pre_solve=None,
+			post_solve=col_stick_item,
+			separate=None)
+
+
+def load_level_filename(level_fname):
+	"""Load level from a filename. For debug purposes"""
 	status.level = cLevel(level_fname)
 	stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
 	#stick.load_stick_image(status.level.stick)
@@ -444,11 +477,7 @@ def load_level_filename(level_fname):
 	status.reset_timer()
 	status.clear_penalty_seconds()
 
-
-	space = pymunk.Space()
-	space.gravity = Vec2d(0.0, 0.0)
-	space.add(stick.body, stick.shape)
-	space.add(status.level.level_segments)
+	create_space(status.level)
 
 
 def load_levellist_with_pack(pack_num):
@@ -592,6 +621,29 @@ pause_menu.event_function = pause_menu_events
 
 ###################################################
 
+#PYMUNK COLLISION HANDLING
+def col_stick_level(who, arbiter):
+	cpos = arbiter.contacts[0].position
+	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x,cpos.y,SPRITE_FAC.EXPLOSION)
+	ANIM_SPRITES.append(tsprite)
+
+
+	if not status.invincible:
+		#Add 3 seconds to the total time
+		status.add_seconds(3)
+		status.set_invincible()
+		#status.decrease_lives()
+
+
+def col_stick_item(who, arbiter):
+	ishape = arbiter.shapes[1] #shape of the item
+	item = status.level.get_item_by_shape(ishape)
+	item.onCollision(stick, status)
+
+	cpos = arbiter.contacts[0].position
+	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x,cpos.y,SPRITE_FAC.BOING)
+	ANIM_SPRITES.append(tsprite)
+
 #Collision game handling
 def wall_colision(cx,cy):
 	"""
@@ -615,7 +667,6 @@ def wall_colision(cx,cy):
 		if not status.invincible:
 			status.set_invincible()
 			status.decrease_lives()
-
 
 
 def colision_handler(cx,cy):
@@ -804,7 +855,7 @@ def update_scene():
 
 	#Items InGame
 	for i,m in enumerate(status.level.items):
-                if m.col_anim.draw == False:
+		if m.col_anim.draw == False:
 			window.blit(m.anim.image,m.rect.move(dx,dy))
 			m.draw_update()
 		else:
@@ -814,7 +865,7 @@ def update_scene():
 
      	#Monsters
 	for i,m in enumerate(status.level.monsters):
-                if m.col_anim.draw == False:
+		if m.col_anim.draw == False:
 			window.blit(m.anim.image,m.rect.move(dx,dy))
 			m.draw_update()
 		else:
@@ -824,16 +875,27 @@ def update_scene():
 
 
 	for i,s in enumerate(ANIM_SPRITES):
-                if s.draw:
-                        window.blit(s.image,s.rect.move(dx,dy))
-                        s.update(pygame.time.get_ticks())
+		if s.draw:
+			window.blit(s.image,s.rect.move(dx,dy))
+			s.update(pygame.time.get_ticks())
 		else:
 			ANIM_SPRITES.pop(i) #If draw is false, delete the reference
 
-	window.blit(stick.image,rect.move(dx,dy))
+	#Paint Stick according to pymunk's body position
+	#Looks a little bit hacky
+	angle_degrees 	 = -math.degrees(stick.body.angle) + 180
+	rotated_logo_img = pygame.transform.rotate(stick.baseImage, angle_degrees)
+	offset = Vec2d(rotated_logo_img.get_size()) / 2.
+	offset += (-dx, -dy)
+	p = stick.body.position - offset
+	window.blit(rotated_logo_img, p)
+
+	#window.blit(stick.image,rect.move(dx,dy))
 
 def update_pymunk_debug():
 	# debug draw
+
+	#print "Vel:",stick.body.velocity
 
 	#scroll follows pymunk shape
 	bb = stick.shape.bb
@@ -851,14 +913,19 @@ def update_pymunk_debug():
 	ps += [ps[0]]
 	pygame.draw.lines(window, black, False, ps, 1)
 
-	#print len(status.level.level_segments)
-	#for line in status.level.level_segments:
-	#	body = line.body
-	#	pv1 = body.position + line.a.rotated(body.angle)
-	#	pv2 = body.position + line.b.rotated(body.angle)
-	#	p1 = pv1.x, pv1.y
-	#	p2 = pv2.x, pv2.y
-	#	pygame.draw.lines(window, red, False, [p1,p2], 2)
+	for item in status.level.items:
+		if item.shape:
+			ps = item.body.position + (dx,dy)
+			p = (int(ps.x), int(ps.y))
+			pygame.draw.circle(window, red, p, int(item.radius), 2)
+
+#	for line in status.level.level_segments:
+#		body = line.body
+#		pv1 = body.position + line.a.rotated(body.angle)
+#		pv2 = body.position + line.b.rotated(body.angle)
+#		p1 = pv1.x + dx, pv1.y +dy
+#		p2 = pv2.x + dx, pv2.y +dy
+#		pygame.draw.lines(window, red, False, [p1,p2], 2)
 
 
 def update_gui_timer_CF():

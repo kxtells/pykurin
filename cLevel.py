@@ -163,7 +163,6 @@ class cLevel(pygame.sprite.Sprite):
 
 		return recover_list
 
-
 	def retrieve_basher_list(self,parser):
 		basher_list = []
 		try:
@@ -283,6 +282,26 @@ class cLevel(pygame.sprite.Sprite):
 	def get_uuid(self):
 		return self.uuid
 
+
+	############################
+	#
+	# Search objects
+	#
+	############################
+	def get_item_by_shape(self, shape):
+		"""Returns a specific item instance by its shape definition"""
+		for item in self.items:
+			if item.shape == shape:
+				return item
+
+		return None
+
+	############################
+	#
+	# Pymunk collisions map
+	#
+	############################
+
 	def generate_pymunk_vectors(self):
 		""" This function generates a list of pymunk vectors representing the
 			Collisions of the Level. It does so with the following algorithm.
@@ -323,10 +342,10 @@ class cLevel(pygame.sprite.Sprite):
 						continue
 
 		#Generate the pymunk lines
-		static_body = pymunk.Body()
 		self.level_segments = []
+		static_body = pymunk.Body()
 		for f in horizontal:
 			nseg = pymunk.Segment(static_body, f[0], f[1], 0.0)
-			nseg.friction = 0.5
+			nseg.collision_type = 1
+			nseg.elasticity = 0.95
 			self.level_segments.append(nseg)
-

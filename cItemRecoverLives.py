@@ -12,10 +12,10 @@ class cItemRecoverLives(cMonster.cMonster):
 		self.baseImage  = pygame.image.load("sprites/circle_col.png").convert_alpha()
 		self.rect	    = self.image.get_rect().move(x,y)
 		self.mask       = pygame.mask.from_surface(self.image);
-		
+
 		anim_images     = BF.load_and_slice_sprite(32,32,'recover_lives_anim.png');
 		col_anim_images = BF.load_and_slice_sprite(32,32,'recover_lives_anim.png');
-                
+
 		self.anim     	= cAnimSprite(anim_images,10)
 		self.col_anim  	= cAnimSprite(col_anim_images,20)
 		self.anim.rect  = self.rect
@@ -27,7 +27,8 @@ class cItemRecoverLives(cMonster.cMonster):
     		self.delete_on_colision = True
 
 	def onCollision(self,stick,status):
+		super(cItemBouncer,self).onCollision(stick,status)
 		status.reset_lives()
-	
+
 	def isMonster(self):
 		return False

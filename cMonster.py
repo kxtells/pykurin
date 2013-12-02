@@ -1,6 +1,7 @@
 from pygame import time
 from pygame import mask
 import pygame
+import pymunk
 
 class cMonster(pygame.sprite.Sprite):
 	"""
@@ -18,6 +19,12 @@ class cMonster(pygame.sprite.Sprite):
 	col_anim = None
 	delete_on_colision = False
 
+	#pymunk shape
+	#Each subclass should define a shape that fits with its image to process
+	#collisions
+	shape = None
+	body  = None
+
 	def __init__(self,x=0,y=0,rot=0):
 		self.x = x
 		self.y = y
@@ -26,15 +33,14 @@ class cMonster(pygame.sprite.Sprite):
 
 	def onCollision(self,stick,status):
 		"""
-			Default on colision handling.
-			Decreases the player lives
+			Default on colision handling. Simply activate the collision
+			animation
 		"""
-		if not status._DEBUG_DEATH: status.decrease_lives()
-
+		self.col_anim.draw = True
 
 	#Function to call on draw update
 	def draw_update(self):
-                if self.col_anim.draw == False:
+		if self.col_anim.draw == False:
 			return self.anim.update(time.get_ticks())
 		else:
 			return self.col_anim.update(time.get_ticks())

@@ -3,7 +3,7 @@ import pymunk
 
 class cPal(pygame.sprite.Sprite):
 	"""The 'stick' class.. the player"""
-	__MOV_SPEED = 3;
+	__MOV_SPEED = 6;
 	__ROT_SPEED = 1;
 	__BACK_TICKS = 12;
 	_JUMP_LENGTH = 5;
@@ -39,14 +39,16 @@ class cPal(pygame.sprite.Sprite):
 
 		#PYMUNK
 		#Fixed vecspace for the default stick
-		self.mass      = 10
-		self.VecSpace  = [(-31,-4), (31,-4), (31,4), (-31,4)]
-		self.moment    = pymunk.moment_for_poly(self.mass, self.VecSpace)
-		self.body      = pymunk.Body(self.mass, self.moment)
-		self.shape     = pymunk.Poly(self.body, self.VecSpace)
-		self.shape.friction = 0.5
+		self.mass      		= 10
+		self.VecSpace  		= [(-31,-4), (31,-4), (31,4), (-31,4)]
+		self.moment    		= pymunk.moment_for_poly(self.mass, self.VecSpace)
+		self.body      		= pymunk.Body(self.mass, self.moment)
+		self.body.elasticity= 0.95
+		self.shape     		= pymunk.Poly(self.body, self.VecSpace)
 		self.body.position  = self.rect.x, self.rect.y
-		self.body.angle = self.rot
+		self.body.angle 	= self.rot
+
+		self.shape.collision_type = 0 #stick collision type
 
     #Loads a new stick Image
 	def load_stick_image(self,imagepath):
@@ -64,13 +66,16 @@ class cPal(pygame.sprite.Sprite):
 
 			self.tbackwards defines a temporal inverse rotation
 		"""
-		if self.clockwise: self.clockwise_rotation(amount)
-		else: self.counterclockwise_rotation(amount)
+		#if self.clockwise: self.clockwise_rotation(amount)
+		#else: self.counterclockwise_rotation(amount)
 
-		self.rect = self.image.get_rect(center=self.rect.center)
-		self.mask = pygame.mask.from_surface(self.image)
-		#ROTATING ANGLE... TODO
-		#self.body.angle += float(amount)/100
+		#self.rect = self.image.get_rect(center=self.rect.center)
+		#self.mask = pygame.mask.from_surface(self.image)
+		##ROTATING ANGLE... TODO
+		if self.clockwise:
+			self.body.angle += float(amount)/50
+		else:
+			self.body.angle += float(-amount)/50
 
 	def clockwise_rotation(self,amount):
 		if self.tbackwards:            	#Check if temporal backwards rotation is set
@@ -168,11 +173,24 @@ class cPal(pygame.sprite.Sprite):
 				movy = self.movy*cPal.__TURBO_MULTIPLIER
 				self.rect = self.rect.move(movx,movy);
 				#Move stick
-				self.body.position += (movx, movy)
+				#self.body.position += (movx, movy)
+
+				#With Impulses, body does not stop
+				self.body.apply_impulse((movx/2, movy/2),(0,0))
+
+				#With forces. Not working as I would like
+				#self.body.apply_force((self.movx/20, self.movy/20),(0,0))
 			else:
 				self.rect = self.rect.move(self.movx,self.movy);
 				#Move stick
-				self.body.position += (self.movx, self.movy)
+				#self.body.position += (self.movx, self.movy)
+
+				#With Impulses, body does not stop
+				self.body.apply_impulse((self.movx/2, self.movy/2),(0,0))
+
+				#With forces. Not working as I would like
+				#self.body.apply_force((movx/20, movy/20),(0,0))
+				#print pymunk.Vec2d(self.movx,self.movy)
 
 		self.movement_record()
 		self.direction_record()
