@@ -17,7 +17,7 @@ class cTransition:
 
 	#Transition t2
 	radius = 0
-	step = 10
+	step = 20
 
 	#Trans Types
 	SQUARES = 1
@@ -125,8 +125,6 @@ class cTransition:
 				self.setInactive()
 				self.setGrowing(True)
 				self.setDrawBackground(True)
-
-
 
 	def draw_transition(self):
 		if self.isActive():
