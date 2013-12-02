@@ -15,21 +15,21 @@ class cStatus:
 	_STAT_GOAL = 3
 	_STAT_PAUSE = 4
 	_STAT_LEVELRECORD = 5
-	_STAT_TITLESCREEN = 6 
+	_STAT_TITLESCREEN = 6
 	_STAT_GAMEMENU = 7
 	_STAT_MAINMENU = 8
 	_STAT_SETTINGS = 9
-	_STAT_NEWNAME =10 
-	_STAT_PACKSEL = 11 
+	_STAT_NEWNAME =10
+	_STAT_PACKSEL = 11
 
 	"""Debug shit"""
 	_DEBUG_COLLISION=False
 	_DEBUG_DEATH=False
-	
-
+	_DEBUG_PYMUNK=False
+	_DEBUG_PYMUNKLEVEL=False
 
 	level = None
-	
+
 	def __init__(self,lives_images,width,height,fps=60):
 		self.lives=cStatus._MAX_LIVES
 		self.lifebar_img_arr = lives_images
@@ -55,13 +55,13 @@ class cStatus:
                 #
                 # This has to be managed by outer functions
 		self.SUBSTAT = 0
-	
+
 		#
 		# Level Information
 		#
 		self.level;
 		self.current_level = 1
-		
+
 		#
 		# Stick Information
 		#
@@ -84,23 +84,23 @@ class cStatus:
 
 
 	def decrease_lives(self):
-		""" 
+		"""
 			decreases the number of lives left
 			changes the sprite of current lives
 			and setting the GAME OVER status if necessary
-	
+
 			returns True/False representing a Gameover to
 			trigger possible animations
 		"""
 		self.lives -= 1
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
-	
-		if self.lives <= 0: 
+
+		if self.lives <= 0:
 			self.GAME_STAT = 1
 			return True
 
 		return False
-	
+
 	def reset_lives(self):
 		self.lives = cStatus._MAX_LIVES
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
@@ -117,7 +117,7 @@ class cStatus:
 		self.pause_stime = time.time()
 		self.pause_time_diff = 0
 		self.penalty_seconds = 0
-	
+
 	def enable_disable_keyboard(self):
 		if self.LISTEN_KEYS: self.LISTEN_KEYS = False
 		else: self.LISTEN_KEYS = True
@@ -135,14 +135,14 @@ class cStatus:
 		elapsed = time.time() - self.invincible_start_time
 		if elapsed >= cStatus._INVINCIBLE_TIME: self.invincible = False
 
-	
+
 	def pause_game(self):
 		"""
 			HouseKeeping when paused
 		"""
 		self.GAME_STAT = cStatus._STAT_PAUSE
 		self.pause_stime = time.time()
-	
+
 	def unpause_game(self):
 		"""
 			HouseKeeping unpausing the game
@@ -154,7 +154,7 @@ class cStatus:
 	def add_seconds(self,num):
 		self.penalty_seconds += num
 
-	
+
 	def clear_penalty_seconds(self):
 		self.penalty_seconds = 0
 

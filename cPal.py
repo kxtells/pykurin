@@ -45,7 +45,7 @@ class cPal(pygame.sprite.Sprite):
 		self.body      		= pymunk.Body(self.mass, self.moment)
 		self.body.elasticity= 0.95
 		self.shape     		= pymunk.Poly(self.body, self.VecSpace)
-		self.body.position  = self.rect.x, self.rect.y
+		self.body.position  = (self.rect.x + self.rect.width/2, self.rect.y + self.rect.width/2)
 		self.body.angle 	= self.rot
 
 		self.shape.collision_type = 0 #stick collision type
@@ -171,7 +171,7 @@ class cPal(pygame.sprite.Sprite):
 			if self.turbo:
 				movx = self.movx*cPal.__TURBO_MULTIPLIER
 				movy = self.movy*cPal.__TURBO_MULTIPLIER
-				self.rect = self.rect.move(movx,movy);
+				#self.rect = self.rect.move(movx,movy);
 				#Move stick
 				#self.body.position += (movx, movy)
 
@@ -181,7 +181,7 @@ class cPal(pygame.sprite.Sprite):
 				#With forces. Not working as I would like
 				#self.body.apply_force((self.movx/20, self.movy/20),(0,0))
 			else:
-				self.rect = self.rect.move(self.movx,self.movy);
+				#self.rect = self.rect.move(self.movx,self.movy);
 				#Move stick
 				#self.body.position += (self.movx, self.movy)
 

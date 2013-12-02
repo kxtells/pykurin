@@ -37,7 +37,7 @@ import pygame
 
 pygame.init()
 
-size = width, height = 640, 480
+size = WIDTH, HEIGHT = 640, 480
 FPS = 45
 
 
@@ -123,13 +123,13 @@ tick_sprite = pygame.image.load('sprites/tick.png')
 #
 #######################################
 #Status load
-status = cStatus(imgsetlives,width,height)
+status = cStatus(imgsetlives,WIDTH,HEIGHT)
 settings = cSettings()
 
 #First Base Load
 stick = cPal(0,0,20)
 #Add stick to the physics simulator
-space.add(stick.body, stick.shape)
+#space.add(stick.body, stick.shape)
 
 #General arrays with Sprites
 BASIC_SPRITES=[]
@@ -219,7 +219,7 @@ def set_fullscreen():
 	"""
 		Set a fullscreen
 	"""
-	pygame.display.set_mode((width,height),pygame.FULLSCREEN)
+	pygame.display.set_mode((WIDTH,HEIGHT),pygame.FULLSCREEN)
 
 def toggle_fullscreen():
 	"""
@@ -262,11 +262,9 @@ if settings.get_fullscreen(): set_fullscreen()
 def key_debug_actions(event):
 #the global var collision may be modified
 	if event.key == pygame.K_F1:
-		if status._DEBUG_COLLISION: status._DEBUG_COLLISION = False
-		else: status._DEBUG_COLLISION = True
+		status._DEBUG_PYMUNK = not status._DEBUG_PYMUNK
 	elif event.key == pygame.K_F2:
-		if status._DEBUG_DEATH: status._DEBUG_DEATH = False
-		else: status._DEBUG_DEATH = True
+		status._DEBUG_PYMUNKLEVEL = not status._DEBUG_PYMUNKLEVEL
 	elif event.key == pygame.K_f:
 		stick.flip_rotation()
 	elif event.key == pygame.K_F12:
@@ -282,13 +280,6 @@ def key_handler(event):
 		elif event.key == pygame.K_LEFT: stick.move_left();
 		elif event.key == pygame.K_RIGHT: stick.move_right();
 		elif event.key == pygame.K_LCTRL: stick.turbo_on();
-		elif event.key == pygame.K_r: stick.rotate(amount=20);
-		elif event.key == pygame.K_x: print stick.path;
-		elif event.key == pygame.K_e:
-			tmask = pygame.mask.from_surface(status.level.imgcol.subsurface(stick.rect))
-			BF.print_mask(tmask)
-		elif event.key == pygame.K_y:
-			stick.body.reset_forces()
 
 		#Pause Button
 		elif event.key == pygame.K_ESCAPE or event.key == pygame.K_p: status.pause_game()
@@ -410,19 +401,6 @@ def event_handler(event):
 
 ######################################################
 
-#Load a Specific Level (needed for level menu function)
-# @TODO : Maybe better in another place or python file
-def load_level(level_num):
-	status.level = cLevel(level_list.levelfiles[level_num])
-	stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
-	#stick.load_stick_image(status.level.stick)
-
-	status.reset_lives()
-	status.set_game_status(cStatus._STAT_GAMING)
-	status.SUBSTAT = 0
-	status.current_level = level_num
-	status.reset_timer()
-	status.clear_penalty_seconds()
 
 def create_space(level):
 	"""Modify the global space, to be updated according to the levels.
@@ -492,6 +470,10 @@ def load_level_filename(level_fname):
 
 	create_space(status.level)
 
+#Load a Specific Level (needed for level menu function)
+# @TODO : Maybe better in another place or python file
+def load_level(level_num):
+	load_level_filename(level_list.levelfiles[level_num])
 
 def load_levellist_with_pack(pack_num):
 	"""
@@ -636,19 +618,20 @@ pause_menu.event_function = pause_menu_events
 
 #PYMUNK COLLISION HANDLING
 def col_stick_level(who, arbiter):
+	print "COLSTICKLEVEL"
 	cpos = arbiter.contacts[0].position
 	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x,cpos.y,SPRITE_FAC.EXPLOSION)
 	ANIM_SPRITES.append(tsprite)
-
 
 	if not status.invincible:
 		#Add 3 seconds to the total time
 		status.add_seconds(3)
 		status.set_invincible()
-		#status.decrease_lives()
+		status.decrease_lives()
 
 
 def col_stick_item(who, arbiter):
+	print "COLSTICKITEM"
 	ishape = arbiter.shapes[1] #shape of the item
 	item = status.level.get_item_by_shape(ishape)
 	item.onCollision(stick, status)
@@ -658,6 +641,7 @@ def col_stick_item(who, arbiter):
 	ANIM_SPRITES.append(tsprite)
 
 def col_stick_monster(who, arbiter):
+	print "COLSTICKMONSTER"
 	ishape = arbiter.shapes[1] #shape of the item
 	monster= status.level.get_monster_by_shape(ishape)
 	monster.onCollision(stick, status)
@@ -798,7 +782,7 @@ def draw_transition():
 			for r in TRANSITION.getRects():
 				pygame.draw.rect(window,black,r)
 		elif TRANSITION.getType() == TRANSITION.CIRCLE:
-			pygame.draw.circle(window, black, (width/2,height/2), TRANSITION.getRadius())
+			pygame.draw.circle(window, black, (WIDTH/2,HEIGHT/2), TRANSITION.getRadius())
 		TRANSITION.logic_update()
 
 #Updates all the needed images/sprites for goal Screen
@@ -841,6 +825,14 @@ def update_scene_records():
                 newrecord_sprite.update(pygame.time.get_ticks())
 
 
+def get_window_offset():
+	"""Get the offset to apply"""
+	pos = stick.body.position
+	dx = -(pos.x-WIDTH/2)
+	dy = -(pos.y-HEIGHT/2)
+	return int(dx),int(dy)
+
+
 #updates all the needed images/sprites
 def update_scene():
 	"""
@@ -855,21 +847,19 @@ def update_scene():
 	window.blit(status.level.bg,status.level.bg.get_rect())
 
 	#Scroll Follows Rect
-	#dx = -(stick.rect.center[0]-width/2)
-	#dy = -(stick.rect.center[1]-height/2)
+	#dx = -(stick.rect.center[0]-WIDTH/2)
+	#dy = -(stick.rect.center[1]-HEIGHT/2)
 
 	#Scroll Follows Nothing
 	#dx = dy = 0
 
 	#scroll follows pymunk shape
-	bb = stick.shape.bb
-	rect = pygame.Rect(bb.right,bb.top,bb.top-bb.bottom,bb.right - bb.left,)
-	dx = -(rect.center[0]-width/2)
-	dy = -(rect.center[1]-height/2)
-	#print dx,dy
+	dx,dy = get_window_offset()
+
 	#print bb,"--",stick.rect,"(",bb.top,bb.left,bb.right - bb.left,bb.top-bb.bottom,")"
 
 
+	rect = BF.pymunkBB_to_rect(stick.shape.bb)
 	window.blit(status.level.image,status.level.rect.move(dx,dy))
 
 	window.blit(status.level.goal_sprite.image,status.level.goal_sprite.rect.move(dx,dy))
@@ -921,27 +911,24 @@ def update_pymunk_debug():
 	#print "Vel:",stick.body.velocity
 
 	#scroll follows pymunk shape
-	bb = stick.shape.bb
-	rect = BF.pymunkBB_to_rect(bb)
-	dx = -(rect.center[0]-width/2)
-	dy = -(rect.center[1]-height/2)
+	dx,dy = get_window_offset()
 
-	#Scroll follows RECT
-	#dx = -(stick.rect.center[0]-width/2)
-	#dy = -(stick.rect.center[1]-height/2)
-
-	# debug draw
+	#DRAW THE STICK
 	ps = stick.shape.get_vertices()
 	ps = [(p.x + dx, p.y +dy) for p in ps]
 	ps += [ps[0]]
-	pygame.draw.lines(window, black, False, ps, 1)
+	pygame.draw.lines(window, yellow, False, ps, 2)
+	pos = stick.body.position
+	pygame.draw.circle(window, red, (int(pos.x)+dx,int(pos.y)+dy), 5, 2)
 
+	#Draw the Items collision shape
 	for item in status.level.items:
 		if item.shape:
 			ps = item.body.position + (dx,dy)
 			p = (int(ps.x), int(ps.y))
 			pygame.draw.circle(window, red, p, int(item.radius), 2)
 
+	#Draw the monsters collision shape
 	for monster in status.level.monsters:
 		pos = monster.body.position
 		#pygame.draw.rect(window, red, BF.pymunkBB_to_rect(monster.shape).move(dx + pos.x, dy + pos.y), 2)
@@ -951,14 +938,25 @@ def update_pymunk_debug():
 
 		pygame.draw.lines(window, red , False, ps, 2)
 
+	#TEXT
+	# Display some text
+	font = pygame.font.Font(None, 36)
+	text = font.render("COLLISIONS", 2, (10, 10, 10))
+	textpos = text.get_rect()
+	textpos.centerx = window.get_rect().centerx
+	window.blit(text, textpos)
 
-#	for line in status.level.level_segments:
-#		body = line.body
-#		pv1 = body.position + line.a.rotated(body.angle)
-#		pv2 = body.position + line.b.rotated(body.angle)
-#		p1 = pv1.x + dx, pv1.y +dy
-#		p2 = pv2.x + dx, pv2.y +dy
-#		pygame.draw.lines(window, red, False, [p1,p2], 2)
+
+	#If asked, draw the level collisions. HEAVY
+	if status._DEBUG_PYMUNKLEVEL:
+		#LOTS of lines, affects FPS
+		for line in status.level.level_segments:
+			body = line.body
+			pv1 = body.position + line.a.rotated(body.angle)
+			pv2 = body.position + line.b.rotated(body.angle)
+			p1 = pv1.x + dx, pv1.y +dy
+			p2 = pv2.x + dx, pv2.y +dy
+			pygame.draw.lines(window, red, False, [p1,p2], 2)
 
 
 def update_gui_timer_CF():
@@ -981,7 +979,7 @@ def update_gui_timer_CF():
 
 	#Bg Zeros (avoid a flickr)
 	zero = number_gen.parse_number(0)[0]
-	window.blit(pygame.transform.rotate(zero,-10),zero.get_rect().move((1+4)*nw,height-zero.get_rect().height - 15))
+	window.blit(pygame.transform.rotate(zero,-10),zero.get_rect().move((1+4)*nw,HEIGHT-zero.get_rect().height - 15))
 
 	#Trailing zeros
 	while len(seconds_images) < 3:
@@ -990,13 +988,13 @@ def update_gui_timer_CF():
 
 
 	ddimg = number_gen.get_doubledots()
-	window.blit(pygame.transform.rotate(ddimg,-10),ddimg.get_rect().move(len(seconds_images)*nw,height-ddimg.get_rect().height - 15))
+	window.blit(pygame.transform.rotate(ddimg,-10),ddimg.get_rect().move(len(seconds_images)*nw,HEIGHT-ddimg.get_rect().height - 15))
 
 	for i,s in enumerate(seconds_images):
-		window.blit(pygame.transform.rotate(s,-10),s.get_rect().move(i*nw,height-s.get_rect().height - 15))
+		window.blit(pygame.transform.rotate(s,-10),s.get_rect().move(i*nw,HEIGHT-s.get_rect().height - 15))
 
 	for i,s in enumerate(millis_images):
-		window.blit(pygame.transform.rotate(s,-10),s.get_rect().move((i+4)*nw,height-s.get_rect().height - 15))
+		window.blit(pygame.transform.rotate(s,-10),s.get_rect().move((i+4)*nw,HEIGHT-s.get_rect().height - 15))
 
 def update_gui_timer_TTF():
 	"""
@@ -1021,10 +1019,10 @@ def update_gui_timer_TTF():
 
 		for zero in range(t):
 			timertxt = TIMERFONT.render(str("0"), 1, black)
-			window.blit(timertxt, (10+zero*xpad, height-ypad))
+			window.blit(timertxt, (10+zero*xpad, HEIGHT-ypad))
 
 	timertxt = TIMERFONT.render(str(time), 1, black)
-	window.blit(timertxt, (10+t*xpad, height-ypad))
+	window.blit(timertxt, (10+t*xpad, HEIGHT-ypad))
 
 #Updates all the gui sprites
 def update_gui():
@@ -1147,11 +1145,11 @@ def records_screen():
 	"""
 
 	#Some Entering animation would be nice
-        #if status.SUBSTAT == 0:
+	#if status.SUBSTAT == 0:
 	status.SUBSTAT = 1 #Skip the first stat (saved for further animation)
 
 	if status.SUBSTAT == 1:
-		draw_menu(records_menu,width-200,height-210)
+		draw_menu(records_menu,WIDTH-200,HEIGHT-210)
 		update_scene_records()
 
 #
@@ -1267,7 +1265,8 @@ def playing_screen():
 	stick.movement()
 
 	#DEBUG PYMUNK
-	update_pymunk_debug()
+	if status._DEBUG_PYMUNK:
+		update_pymunk_debug()
 
 
 
@@ -1291,19 +1290,6 @@ def finish_level():
 
 ###############################################
 def gaming_status(debug=False):
-	#Debug Purposes
-	if not status._DEBUG_COLLISION:
-
-		#Level Colision
-		colision,cx,cy = status.level.stick_collides(stick);
-		if colision: wall_colision(cx,cy)
-
-		#Item colision
-		item_colisions()
-
-		#Monster Colisions
-		monster_colisions()
-
 	monster_logic()
 	playing_screen()
 	#debug_onscreen(colision)
