@@ -5,8 +5,8 @@ background:levels/base/lvlX.png
 background2:backgrounds/wood.jpg
 startx:112
 starty:203
-endx:1882
-endy:200
+endx:1834
+endy:171
 stick:sticks/stick.png
 uuid:1db5cf49-02e1-468c-a24c-0853778a53cc
 [bouncers]
