@@ -1,8 +1,9 @@
 import cMonster
 import pygame
 from cAnimSprite import cAnimSprite
-import functions as BF
 from cAnimSpriteFactory import cAnimSpriteFactory as SF
+import functions as BF
+import pymunk
 
 class cItemRecoverLives(cMonster.cMonster):
 	BSPRITEFAC = 3 #this is a little dirty. References the value assigned in cAnimSpriteFactory
@@ -38,7 +39,7 @@ class cItemRecoverLives(cMonster.cMonster):
 		self.shape.collision_type = 2
 
 	def onCollision(self,stick,status):
-		super(cItemBouncer,self).onCollision(stick,status)
+		super(cItemRecoverLives, self).onCollision(stick,status)
 		status.reset_lives()
 
 	def isMonster(self):

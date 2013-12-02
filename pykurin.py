@@ -626,8 +626,14 @@ def col_stick_level(who, arbiter):
 		status.set_invincible()
 		status.decrease_lives()
 
-
+#Colision of item and moster are.. the same should be wrapped into same
+#function
 def col_stick_item(who, arbiter):
+	""" Handling a collision stick-item
+		- call the oncollision of the item (with stick and status)
+		- Add a collision sprite to be drawn
+		- Remove the item if defined as delete_on_colision
+	"""
 	ishape = arbiter.shapes[1] #shape of the item
 	item = status.level.get_item_by_shape(ishape)
 	item.onCollision(stick, status)
@@ -636,14 +642,25 @@ def col_stick_item(who, arbiter):
 	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x, cpos.y, item.col_sprite)
 	ANIM_SPRITES.append(tsprite)
 
+	if item.delete_on_colision:
+		status.level.items.remove(item)
+		space.remove(item.shape)
+
 def col_stick_monster(who, arbiter):
 	ishape = arbiter.shapes[1] #shape of the item
 	monster= status.level.get_monster_by_shape(ishape)
 	monster.onCollision(stick, status)
 
 	cpos = arbiter.contacts[0].position
-	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x, cpos.y, item.col_sprite)
+	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x, cpos.y, monster.col_sprite)
 	ANIM_SPRITES.append(tsprite)
+
+	if monster.delete_on_colision:
+		status.level.monsters.remove(monster)
+		space.remove(monster.shape)
+
+	#Finally set invincible for some time
+	status.set_invincible()
 
 def monster_logic():
 	for m in status.level.monsters:

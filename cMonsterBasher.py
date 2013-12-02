@@ -64,6 +64,12 @@ class cMonsterBasher(cMonster.cMonster):
 		self.shape.collision_type = 3 #MONSTER
 
 
+	def onCollision(self, stick, status):
+		super(cMonsterBasher, self).onCollision(stick,status)
+		if not status.invincible:
+			status.add_seconds(3)
+			status.decrease_lives()
+
 	def logic_update_with_interpolated_points(self):
 		currpos = self.mov_points[self.curr_point]
 		if self.going_to_end:

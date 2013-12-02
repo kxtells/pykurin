@@ -1,6 +1,7 @@
 import cMonster
 import pygame
 from cAnimSprite import cAnimSprite
+from cAnimSpriteFactory import cAnimSpriteFactory as SF
 import functions as BF
 import pymunk
 
