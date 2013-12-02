@@ -799,9 +799,6 @@ def update_scene():
 	#scroll follows pymunk shape
 	dx,dy = get_window_offset()
 
-	#print bb,"--",stick.rect,"(",bb.top,bb.left,bb.right - bb.left,bb.top-bb.bottom,")"
-
-
 	rect = BF.pymunkBB_to_rect(stick.shape.bb)
 	window.blit(status.level.image,status.level.rect.move(dx,dy))
 
@@ -840,11 +837,11 @@ def update_scene():
 	#Paint Stick according to pymunk's body position
 	#Looks a little bit hacky
 	angle_degrees 	 = -math.degrees(stick.body.angle) + 180
-	rotated_logo_img = pygame.transform.rotate(stick.baseImage, angle_degrees)
-	offset = Vec2d(rotated_logo_img.get_size()) / 2.
+	sticksurface = pygame.transform.rotate(stick.baseImage, angle_degrees)
+	offset = Vec2d(sticksurface.get_size()) / 2.
 	offset += (-dx, -dy)
 	p = stick.body.position - offset
-	window.blit(rotated_logo_img, p)
+	window.blit(sticksurface, p)
 
 	#window.blit(stick.image,rect.move(dx,dy))
 
