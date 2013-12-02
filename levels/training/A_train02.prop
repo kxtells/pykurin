@@ -1,5 +1,5 @@
 [options]
-name:0- Training Curves
+name:1 - Training Curves
 collision:levels/training/learn2col.png
 background:levels/training/learn2.png
 background2:backgrounds/wood.jpg

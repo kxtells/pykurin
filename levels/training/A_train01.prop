@@ -1,5 +1,5 @@
 [options]
-name:0- Training One
+name:0 - Training One
 collision:levels/training/learn1col.png
 background:levels/training/learn1.png
 background2:backgrounds/wood.jpg
