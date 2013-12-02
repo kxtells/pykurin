@@ -633,7 +633,7 @@ def col_stick_item(who, arbiter):
 	item.onCollision(stick, status)
 
 	cpos = arbiter.contacts[0].position
-	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x,cpos.y,SPRITE_FAC.BOING)
+	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x, cpos.y, item.col_sprite)
 	ANIM_SPRITES.append(tsprite)
 
 def col_stick_monster(who, arbiter):
@@ -642,7 +642,7 @@ def col_stick_monster(who, arbiter):
 	monster.onCollision(stick, status)
 
 	cpos = arbiter.contacts[0].position
-	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x,cpos.y,SPRITE_FAC.OUCH)
+	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x, cpos.y, item.col_sprite)
 	ANIM_SPRITES.append(tsprite)
 
 def monster_logic():

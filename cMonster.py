@@ -2,34 +2,39 @@ from pygame import time
 from pygame import mask
 import pygame
 import pymunk
+from cAnimSpriteFactory import cAnimSpriteFactory as SF
 
 class cMonster(pygame.sprite.Sprite):
 	"""
 		Superclass for monsters and items. Controlling basic
 	"""
-	damages_on_touch = True
-	x = 0
-	y = 0
-	rot = 0
-	image = None
-	rect = None
-	baseImage = None
-	mask = None
-	anim = None
-	col_anim = None
-	delete_on_colision = False
-
-	#pymunk shape
-	#Each subclass should define a shape that fits with its image to process
-	#collisions
-	shape = None
-	body  = None
-
 	def __init__(self,x=0,y=0,rot=0):
 		self.x = x
 		self.y = y
 		self.rot = rot
 
+		self.damages_on_touch = True
+		self.x = 0
+		self.y = 0
+		self.rot = 0
+		self.image = None
+		self.rect = None
+		self.baseImage = None
+		self.mask = None
+		self.anim = None
+		self.col_anim = None
+		self.delete_on_colision = False
+
+		#
+		# This is the sprite that will be created on collision
+		# It is identified by an ID from cAnimSpriteFactory
+		self.col_sprite = SF.OUCH
+	
+		#pymunk shape
+		#Each subclass should define a shape that fits with its image to process
+		#collisions
+		self.shape = None
+		self.body  = None
 
 	def onCollision(self,stick,status):
 		"""

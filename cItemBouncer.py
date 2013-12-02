@@ -19,6 +19,7 @@ class cItemBouncer(cMonster.cMonster):
 		self.col_anim  	= cAnimSprite(col_anim_images,20)
 		self.anim.rect  = self.rect
 		self.col_anim.rect  = self.rect
+		self.col_sprite 	= SF.BOING
 
 		#Status sets
 		self.col_anim.draw = False
