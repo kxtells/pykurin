@@ -714,7 +714,6 @@ def debug_onscreen(colides):
                 deathOnOff      = myfont.render("DEATH OFF",1,red)
                 window.blit(deathOnOff, (400, 20))
 
-
 def draw_transition():
 	TRANSITION.draw_transition()
 	return
@@ -979,13 +978,13 @@ def update_gui():
 
 #A fancy rotozoom for the stick death
 def fancy_stick_death_animation():
-        scale = 1
-        while scale < 10:
-                update_scene()
-                stick.fancy_rotation_death(5,scale)
-                scale+=0.2
-                pygame.display.update()
-                clock.tick(FPS)
+		scale = 1
+		while scale < 10:
+			update_scene()
+			stick.fancy_rotation_death(5,scale)
+			scale+=0.2
+			pygame.display.update()
+			clock.tick(FPS)
 
 
 ##################################################################
@@ -1213,8 +1212,6 @@ def playing_screen():
 	if status._DEBUG_PYMUNK:
 		update_pymunk_debug()
 
-
-
 def finish_level():
 	settings.add_cleared_level(status.level.get_uuid())
 	time = status.get_elapsed_time()
@@ -1250,6 +1247,7 @@ def gaming_status(debug=False):
 	if status.lives <= 0:
 		if debug: return True
 		fancy_stick_death_animation()
+		status.set_game_status(status._STAT_GAMEOVER)
 
 	#Game Over
 	space.step(1)
@@ -1266,7 +1264,7 @@ def main_game():
 			gaming_status()
 
 		elif status.GAME_STAT == cStatus._STAT_GAMEOVER:
-			stick.fancy_rotation_death(0,10)
+			#stick.fancy_rotation_death(0,10)
 			ingame_menu_screen(gover_menu,y=175)
 
 			#Level Selection

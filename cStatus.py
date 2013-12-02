@@ -95,9 +95,9 @@ class cStatus:
 		self.lives -= 1
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
 
-		if self.lives <= 0:
-			self.GAME_STAT = 1
-			return True
+		#if self.lives <= 0:
+		#	self.set_game_status(self._STAT_GAMEOVER)
+		#	return True
 
 		return False
 

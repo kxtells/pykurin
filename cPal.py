@@ -292,8 +292,8 @@ class cPal(pygame.sprite.Sprite):
 
 		if self.rot >= 360: self.rot = 0;
 
-		self.image = pygame.transform.rotozoom(self.baseImage, self.rot,scale)
-		self.rect = self.image.get_rect(center=self.rect.center)
+		self.baseImage = pygame.transform.rotozoom(self.image, self.rot,scale)
+		self.rect  	   = self.image.get_rect(center=self.rect.center)
 
 	def move_towards_position(self,ox,oy):
 		"""
