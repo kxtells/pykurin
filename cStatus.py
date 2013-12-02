@@ -47,13 +47,13 @@ class cStatus:
 		#self.GAME_STAT = cStatus._STAT_LEVELSEL
 		self.GAME_STAT = cStatus._STAT_MAINMENU
 
-                # Substatus is used on different screens to move to different sub status
-                # (for example, goal screen has 3 status:
-                #       - Move to center
-                #       - Show screen with results
-                #       - Show Options
-                #
-                # This has to be managed by outer functions
+		# Substatus is used on different screens to move to different sub status
+		# (for example, goal screen has 3 status:
+		#       - Move to center
+		#       - Show screen with results
+		#       - Show Options
+		#
+		# This has to be managed by outer functions
 		self.SUBSTAT = 0
 
 		#
@@ -112,7 +112,6 @@ class cStatus:
 			return time.time() - self.start_time - self.pause_time_diff + self.penalty_seconds
 
 	def reset_timer(self):
-		print "reset"
 		self.start_time = time.time()
 		self.pause_stime = time.time()
 		self.pause_time_diff = 0

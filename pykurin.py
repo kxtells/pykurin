@@ -453,10 +453,8 @@ def create_space(level):
 			post_solve=col_stick_monster,
 			separate=None)
 
-
-
 def load_level_filename(level_fname):
-	"""Load level from a filename. For debug purposes"""
+	"""Load level from a filename."""
 	status.level = cLevel(level_fname)
 	stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
 	#stick.load_stick_image(status.level.stick)
@@ -464,7 +462,6 @@ def load_level_filename(level_fname):
 	status.reset_lives()
 	status.set_game_status(cStatus._STAT_GAMING)
 	status.SUBSTAT = 0
-	status.current_level = -1
 	status.reset_timer()
 	status.clear_penalty_seconds()
 
@@ -474,6 +471,7 @@ def load_level_filename(level_fname):
 # @TODO : Maybe better in another place or python file
 def load_level(level_num):
 	load_level_filename(level_list.levelfiles[level_num])
+	status.current_level = level_num
 
 def load_levellist_with_pack(pack_num):
 	"""

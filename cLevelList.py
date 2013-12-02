@@ -66,7 +66,6 @@ class cLevelList:
 		parser.read(path)
 		return parser.get('options',option)
 
-
 	def get_levelnames(self):
 		return self.levelnames
 
@@ -80,7 +79,7 @@ class cLevelList:
 		return self.packscoretoopen[id] <= total
 
 	def level_exists(self,lnum):
-		return lnum>0 and lnum < len(self.levelfiles)
+		return lnum>-1 and lnum < len(self.levelfiles)
 
 	def level_uuid(self,lnum):
 		return self.levelsuuid[lnum]
