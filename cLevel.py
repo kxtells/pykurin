@@ -76,46 +76,6 @@ class cLevel(pygame.sprite.Sprite):
 	# Stick Positioning
 	#
 	############################
-	def stick_collides(self,stick):
-                """
-                        Check if a given stick collides with one of the
-                        level walls
-                        Returns Boolean + x,y of colision point
-                """
-		try:
-			tmask = pygame.mask.from_surface(self.imgcol.subsurface(stick.rect))
-
-			col = pygame.sprite.collide_mask(stick,self)
-			#dx = self.rect.x - stick.rect.x
-			#dy = self.rect.y - stick.rect.y
-			#col = stick.mask.overlap(self.mask,(dx,dy))
-			if col == None: return False,0,0
-			else: return True,col[0]+stick.rect.x,col[1]+stick.rect.y
-
-		except:
-			pass
-
-		return False,0,0
-
-	def stick_collides_mask(self,stick):
-		"""
-		        Check if a given stick collides with one of the
-		        level walls
-		"""
-		i,j = 0,0
-		try:
-			tmask = pygame.mask.from_surface(self.imgcol.subsurface(stick.rect))
-
-			col = stick.mask.overlap(tmask,(0,0))
-
-			if col == None: return False,0,0
-			else: return True,col[0]+stick.rect.x,col[1]+stick.rect.y
-
-		except:
-			pass
-
-		return False,i,j
-
 	def stick_in_goal(self,stick):
                 """
                     Check if the stick center is within the level goal
@@ -201,7 +161,6 @@ class cLevel(pygame.sprite.Sprite):
 			basher_list.append(newbasher)
 
 		return basher_list
-
 
 	def retrieve_flies_list(self,parser):
 		flies_list = []
