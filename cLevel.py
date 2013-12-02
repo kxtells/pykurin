@@ -120,8 +120,7 @@ class cLevel(pygame.sprite.Sprite):
                 """
                     Check if the stick center is within the level goal
                 """
-		scx = stick.rect.center[0]
-		scy = stick.rect.center[1]
+		scx,scy = stick.body.position
 		stick_center_rect = (scx-10,scy-10,10,10)
 		return self.goal_sprite.rect.contains(stick_center_rect)
 

@@ -1046,11 +1046,12 @@ def goal_screen():
 
 	if status.SUBSTAT == 0:
 		#Move Stick to Goal center
-		ox = status.level.goal_sprite.rect.x;
-		oy = status.level.goal_sprite.rect.y;
+		ox = status.level.goal_sprite.rect.center[0];
+		oy = status.level.goal_sprite.rect.center[1];
 
 		if not stick.move_towards_position(ox,oy):
 			stick.movement()
+			space.step(1)
 		else:
 			stick.enable_disable_movement()
 			status.SUBSTAT = 1

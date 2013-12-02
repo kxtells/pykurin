@@ -297,22 +297,23 @@ class cPal(pygame.sprite.Sprite):
 
 	def move_towards_position(self,ox,oy):
 		"""
-			ox,oy is the position to reach
+			Set movx and movy to move the stick towards the position ox,oy
 		"""
+		px, py = self.body.position
 
-		if (self.rect.x <= ox+5 and self.rect.x >= ox-5) \
-		   and (self.rect.y <= oy+5 and self.rect.y >= oy-5):
+		if (px <= ox+5 and px >= ox-5) \
+		   and (py <= oy+5 and py >= oy-5):
 			return True
 
-		if self.rect.x > ox:
-			self.movx = -1
+		if px > ox:
+			self.movx = -self.__MOV_SPEED
 		else:
-			self.movx = 1
+			self.movx = self.__MOV_SPEED
 
-		if self.rect.y > oy:
-			self.movy = -1
+		if py > oy:
+			self.movy = -self.__MOV_SPEED
 		else:
-			self.movy = 1
+			self.movy = self.__MOV_SPEED
 
 
 		return False
