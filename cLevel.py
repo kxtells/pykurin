@@ -296,6 +296,16 @@ class cLevel(pygame.sprite.Sprite):
 
 		return None
 
+	def get_monster_by_shape(self, shape):
+		"""Returns a specific monster instance by its shape definition"""
+		for monster in self.monsters:
+			if monster.shape == shape:
+				return monster
+
+		return None
+
+
+
 	############################
 	#
 	# Pymunk collisions map

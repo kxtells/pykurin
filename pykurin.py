@@ -448,6 +448,12 @@ def create_space(level):
 			space.add(item.shape)
 
 	#Monsters
+	for monster in level.monsters:
+		if monster.shape:
+			#Items are always static
+			space.add(monster.shape)
+
+	#Monsters
 
 	#Collision Handlers
 
@@ -462,6 +468,13 @@ def create_space(level):
 			pre_solve=None,
 			post_solve=col_stick_item,
 			separate=None)
+
+	space.add_collision_handler(0, 3,
+			begin=None,
+			pre_solve=None,
+			post_solve=col_stick_monster,
+			separate=None)
+
 
 
 def load_level_filename(level_fname):
@@ -643,6 +656,16 @@ def col_stick_item(who, arbiter):
 	cpos = arbiter.contacts[0].position
 	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x,cpos.y,SPRITE_FAC.BOING)
 	ANIM_SPRITES.append(tsprite)
+
+def col_stick_monster(who, arbiter):
+	ishape = arbiter.shapes[1] #shape of the item
+	monster= status.level.get_monster_by_shape(ishape)
+	monster.onCollision(stick, status)
+
+	cpos = arbiter.contacts[0].position
+	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x,cpos.y,SPRITE_FAC.OUCH)
+	ANIM_SPRITES.append(tsprite)
+
 
 #Collision game handling
 def wall_colision(cx,cy):
@@ -899,7 +922,7 @@ def update_pymunk_debug():
 
 	#scroll follows pymunk shape
 	bb = stick.shape.bb
-	rect = pygame.Rect(bb.right,bb.top,bb.top-bb.bottom,bb.right - bb.left,)
+	rect = BF.pymunkBB_to_rect(bb)
 	dx = -(rect.center[0]-width/2)
 	dy = -(rect.center[1]-height/2)
 
@@ -918,6 +941,16 @@ def update_pymunk_debug():
 			ps = item.body.position + (dx,dy)
 			p = (int(ps.x), int(ps.y))
 			pygame.draw.circle(window, red, p, int(item.radius), 2)
+
+	for monster in status.level.monsters:
+		pos = monster.body.position
+		#pygame.draw.rect(window, red, BF.pymunkBB_to_rect(monster.shape).move(dx + pos.x, dy + pos.y), 2)
+		ps = monster.shape.get_vertices()
+		ps = [(p.x + dx, p.y +dy) for p in ps]
+		ps += [ps[0]]
+
+		pygame.draw.lines(window, red , False, ps, 2)
+
 
 #	for line in status.level.level_segments:
 #		body = line.body

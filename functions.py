@@ -1,4 +1,5 @@
 import pygame
+import pymunk
 import os
 import glob
 import sys
@@ -35,4 +36,19 @@ def flipy(y):
     """Small hack to convert chipmunk physics to pygame coordinates"""
     return -y+480
 
+def rect_to_pymunkBB(rect):
+	return pymunk.BB(rect.left, rect.bottom, rect.right, rect.top)
 
+def pymunkBB_to_rect(bb):
+	return pygame.Rect(bb.right,bb.top,bb.top-bb.bottom,bb.right - bb.left,)
+
+def vertices_from_BB(bb, shrink=0):
+	""" Get vertices from Bounding Box. Shrink gives the ability to reduce the
+	size of the vertices to adjust collision
+	"""
+	l = bb.left
+	r = bb.right
+	t = bb.top
+	b = bb.bottom
+	s = shrink
+	return [(t+s,l+s),(t+s,r-s),(b-s,r-s),(b-s,l+s)]

@@ -24,7 +24,7 @@ class cItemRecoverLives(cMonster.cMonster):
 		#Status sets
 		self.col_anim.draw = False
 		#Only Usable once
-    		self.delete_on_colision = True
+		self.delete_on_colision = True
 
 	def onCollision(self,stick,status):
 		super(cItemBouncer,self).onCollision(stick,status)
