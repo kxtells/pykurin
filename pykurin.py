@@ -1210,6 +1210,7 @@ def playing_screen():
 		update_pymunk_debug()
 
 def finish_level():
+	status.set_invincible()
 	settings.add_cleared_level(status.level.get_uuid())
 	time = status.get_elapsed_time()
 	status.set_game_status(cStatus._STAT_GOAL)
