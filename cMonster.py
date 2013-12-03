@@ -37,7 +37,7 @@ class cMonster(pygame.sprite.Sprite):
 		self.body  = None
 
 		#Impulse force
-		self.impforce = 30
+		self.impforce = 10
 
 	def onCollision(self, stick, status, cpos):
 		"""OnCollision function gets three parameters:
