@@ -453,7 +453,7 @@ class tkLevelPackEdit(Toplevel):
         self.bframe  = Frame(self)
         self.bok     = Button(self.bframe, text="OK", width=BUTTON_SIZE, image=self.ICONS["tick24"],
                                 compound=BUTTON_COMPOUND, command=lambda: self.ok())
-        self.bcancel = Button(self.bframe, text="Cancel", image=self.ICONS["tick24"],
+        self.bcancel = Button(self.bframe, text="Cancel", image=self.ICONS["cross24"],
                                 compound=BUTTON_COMPOUND, width=BUTTON_SIZE, command=lambda: self.cancel())
 
         #self.lb.grid(row=4, column=1)
@@ -477,7 +477,6 @@ class tkLevelPackEdit(Toplevel):
             lc = datacontainer.LevelContainer(pykurindir=self.LP.get_pykurindir())
             lc.load_from_file(fpath)
             self.lb.insert(END,"%s\t%s"%(lc.get_title(),file))
-
 
     def apply(self):
         if self.e0.get() != "None":
