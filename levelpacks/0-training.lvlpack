@@ -1,5 +1,5 @@
 [options]
 name:Training
-basedir:levels/training/
+basedir:levels/training
 icon:None
 levels2open:0
