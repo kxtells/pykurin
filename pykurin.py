@@ -37,7 +37,7 @@ import pygame
 
 pygame.init()
 
-size = WIDTH, HEIGHT = 640, 480
+size = WIDTH, HEIGHT = 480, 320
 FPS = 45
 
 
@@ -939,11 +939,8 @@ def update_gui_timer_CF():
 def update_gui_timer_TTF():
 	"""
 		updates the timer using a TTF font
-		@TODO::Check another font than the dafault font for menus,
-		this font here, generates bouncing numbers not good
-		for my eye
 	"""
-	window.blit(bg_timer_image,bg_timer_image.get_rect().move(0,400))
+	window.blit(bg_timer_image,bg_timer_image.get_rect().move(0,HEIGHT-75))
 	time = round(status.get_elapsed_time(),2)
 	ypad = 55
 	xpad = 26
