@@ -36,6 +36,9 @@ class cMonster(pygame.sprite.Sprite):
 		self.shape = None
 		self.body  = None
 
+		#Impulse force
+		self.impforce = 30
+
 	def onCollision(self, stick, status, cpos):
 		"""OnCollision function gets three parameters:
 			stick: Instance of cPal
@@ -53,14 +56,14 @@ class cMonster(pygame.sprite.Sprite):
 
 		impx = impy = 0
 		if cxi < 0:
-			impx = -10
+			impx = -self.impforce
 		else:
-			impx = 10
+			impx = self.impforce
 
 		if cyi < 0:
-			impy = -10
+			impy = -self.impforce
 		else:
-			impy = 10
+			impy = self.impforce
 
 		stick.body.apply_impulse((impx, impy),(0,0))
 
