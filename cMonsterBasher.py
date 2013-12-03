@@ -65,7 +65,10 @@ class cMonsterBasher(cMonster.cMonster):
 
 
 	def onCollision(self, stick, status, cpos):
-		super(cMonsterBasher, self).onCollision(stick,status)
+		super(cMonsterBasher, self).onCollision(stick, status, cpos)
+
+		self.onCollisionImpulseStickAway(stick, status, cpos)
+
 		if not status.invincible:
 			status.add_seconds(3)
 			status.decrease_lives()

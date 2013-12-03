@@ -35,26 +35,10 @@ class cItemBouncer(cMonster.cMonster):
 		self.shape.collision_type = 2
 
 	def onCollision(self, stick, status, cpos):
-		super(cItemBouncer,self).onCollision(stick,status)
+		super(cItemBouncer,self).onCollision(stick, status, cpos)
 		stick.flip_rotation()
 
-
-		#Impulse the stick away from the bouncer
-		cxi = cpos.x - self.body.position.x
-		cyi = cpos.y - self.body.position.y
-
-		impx = impy = 0
-		if cxi < 0:
-			impx = -10
-		else:
-			impx = 10
-
-		if cyi < 0:
-			impy = -10
-		else:
-			impy = 10
-
-		stick.body.apply_impulse((impx, impy),(0,0))
+		self.onCollisionImpulseStickAway(stick, status, cpos)
 
 	def isMonster(self):
 		return False

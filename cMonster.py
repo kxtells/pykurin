@@ -36,13 +36,33 @@ class cMonster(pygame.sprite.Sprite):
 		self.shape = None
 		self.body  = None
 
-	def onCollision(self,stick,status):
+	def onCollision(self, stick, status, cpos):
 		"""OnCollision function gets three parameters:
 			stick: Instance of cPal
 			status: Instances of cStatus
 			cpos: Pymunk world coordinate position of the collision
 		"""
 		self.col_anim.draw = True
+
+	def onCollisionImpulseStickAway(self, stick, status, cpos):
+		"""Generic function to impulse the stick away from the monster"""
+
+		#Impulse the stick away from the bouncer
+		cxi = cpos.x - self.body.position.x
+		cyi = cpos.y - self.body.position.y
+
+		impx = impy = 0
+		if cxi < 0:
+			impx = -10
+		else:
+			impx = 10
+
+		if cyi < 0:
+			impy = -10
+		else:
+			impy = 10
+
+		stick.body.apply_impulse((impx, impy),(0,0))
 
 	#Function to call on draw update
 	def draw_update(self):
