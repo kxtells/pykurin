@@ -9,47 +9,68 @@ import cMonsterFlie
 import shelve
 import pygame
 import pymunk
+import os
 
 class cLevel(pygame.sprite.Sprite):
 	_MAX_SAVED_RECORDS = 5
 
-	def __init__(self,file):
+	def __init__(self, file, load=True):
+		"""Creates an instance of a Level to be run. By default it will load
+			everything to be used as the playing level.
+
+			if load is set to false, only the records and metadata is loaded,
+			but no image is processed.
+		"""
 		parser = SafeConfigParser()
 		parser.read(file)
 
 		self.name 	= parser.get('options','name')
 		self.startx = int(parser.get('options','startx'))
 		self.starty = int(parser.get('options','starty'))
-		self.imgcol	= pygame.image.load(parser.get('options','collision')).convert_alpha();
-		self.image 	= pygame.image.load(parser.get('options','background')).convert_alpha();
-		self.bg 	= pygame.image.load(parser.get('options','background2')).convert_alpha();
-		self.mask   = pygame.mask.from_surface(self.imgcol);
-		self.rect	= self.image.get_rect();
 		self.stick  = parser.get('options','stick')
 		self.uuid	= parser.get('options','uuid')
-
-		#Load the Goal sprite
-		gx = int(parser.get('options','endx'))
-		gy = int(parser.get('options','endy'))
-		goal_images     =  BF.load_and_slice_sprite(100,100,'goal.png');
-		self.goal_sprite=  cAnimSprite(goal_images,5)
-		self.goal_sprite.move(gx + 50,gy + 50) #need the +50 not sure why [TODO]
-
-		#ITEMS LOADING
-		bouncers	=  self.retrieve_bouncer_list(file)
-		recovers	=  self.retrieve_recover_list(file)
-		self.items	=  []
-		self.items += bouncers
-		self.items += recovers
-
-
-		#MONSTERS LOADING
-		bashers = self.retrieve_basher_list(file)
-		#flies = self.retrieve_flies_list(parser)
-		flies = []
+		self.imgcol = None
+		self.image  = None
+		self.bg     = None
+		self.mask   = None
+		self.rect	= None
+		self.goal_sprite = None
+		self.items  = []
 		self.monsters = []
-		self.monsters += bashers
-		self.monsters += flies
+
+		if load:
+			self.imgcol	= pygame.image.load(parser.get('options','collision')).convert_alpha();
+			self.image 	= pygame.image.load(parser.get('options','background')).convert_alpha();
+			self.bg 	= pygame.image.load(parser.get('options','background2')).convert_alpha();
+			self.mask   = pygame.mask.from_surface(self.imgcol);
+			self.rect	= self.image.get_rect();
+
+			#Load the Goal sprite
+			gx = int(parser.get('options','endx'))
+			gy = int(parser.get('options','endy'))
+			goal_images     =  BF.load_and_slice_sprite(100,100,'goal.png');
+			self.goal_sprite=  cAnimSprite(goal_images,5)
+			self.goal_sprite.move(gx + 50,gy + 50) #need the +50 not sure why [TODO]
+
+			#ITEMS LOADING
+			bouncers	=  self.retrieve_bouncer_list(file)
+			recovers	=  self.retrieve_recover_list(file)
+			self.items	=  []
+			self.items += bouncers
+			self.items += recovers
+
+
+			#MONSTERS LOADING
+			bashers = self.retrieve_basher_list(file)
+			#flies = self.retrieve_flies_list(parser)
+			flies = []
+			self.monsters = []
+			self.monsters += bashers
+			self.monsters += flies
+
+			#PYMUNK SEGMENT
+			self.level_segments = []
+			self.generate_pymunk_vectors()
 
 		#
 		# Record Storage between status
@@ -67,9 +88,6 @@ class cLevel(pygame.sprite.Sprite):
 			self.start_lives = 3 #cannot include cStatus
 			pass
 
-		#PYMUNK SEGMENT
-		self.level_segments = []
-		self.generate_pymunk_vectors()
 
 	############################
 	#
@@ -181,7 +199,7 @@ class cLevel(pygame.sprite.Sprite):
 	#
 	############################
 
-	def save_record(self,username,newtime):
+	def save_record(self, username, newtime, isperfect):
 		"""
 			Saves the new record into the proper shelve
 			loads the records into the class attributes self.records and self.player_record_index
@@ -190,7 +208,7 @@ class cLevel(pygame.sprite.Sprite):
 		#data pack
 		newdata = (newtime,username)
 
-		db = shelve.open("db/"+self.uuid)
+		db = shelve.open(os.path.join("db", self.uuid))
 
 		dbrecords = []
 		#recover data if exists
@@ -226,7 +244,7 @@ class cLevel(pygame.sprite.Sprite):
 		"""
 			Return a tuple (record,name) for a level
 		"""
-		db = shelve.open("db/"+self.uuid)
+		db = shelve.open(os.path.join("db/",self.uuid))
 
 		dbrecords = []
 		#recover data if exists

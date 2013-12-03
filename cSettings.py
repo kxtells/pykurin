@@ -9,7 +9,7 @@ class cSettings:
 	cleared_levels_uuid_list = []
 
 	#def __init__(self,file):
-		
+
 
 	def get_username(self):
 		if self.username == None:
@@ -35,15 +35,27 @@ class cSettings:
 		return len(self.cleared_levels_uuid_list)
 
 	def isLevelCompleted(self,uuid):
-		return uuid in self.cleared_levels_uuid_list
+		return uuid in [u for u,p in self.cleared_levels_uuid_list]
 
-	def add_cleared_level(self,uuid):
+	def isLevelPerfect(self,uuid):
+		if uuid in [u for u,p in self.cleared_levels_uuid_list]:
+			idx = [u for u,p in self.cleared_levels_uuid_list].index(uuid)
+			return self.cleared_levels_uuid_list[idx][1] == True
+		return False
+
+	def add_cleared_level(self, uuid, isperfect):
 		"""
 			Adds a levels to the cleared list if is not already there
 		"""
-		if not uuid in self.cleared_levels_uuid_list:
-			self.cleared_levels_uuid_list.append(uuid)
-			self.save_settings_file()
+		if not uuid in [u for u,p in self.cleared_levels_uuid_list]:
+			self.cleared_levels_uuid_list.append([uuid, isperfect])
+		elif isperfect:
+			#Maybe the isperfect changed
+			idx = [u for u,p in self.cleared_levels_uuid_list].index(uuid)
+			if not self.cleared_levels_uuid_list[idx][1]:
+				self.cleared_levels_uuid_list[idx][1] = isperfect
+
+		self.save_settings_file()
 
 	def load_settings_file(self):
 		"""
@@ -84,4 +96,4 @@ class cSettings:
 		self.fullscreen = False
 		self.username = "DummyName"
 		self.save_settings_file()
-	
+

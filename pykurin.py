@@ -115,6 +115,7 @@ openlock_sprite = pygame.image.load('sprites/openlock.png')
 
 #LevelDone
 tick_sprite = pygame.image.load('sprites/tick.png')
+star_sprite = pygame.image.load('sprites/star.png')
 
 
 #######################################
@@ -745,11 +746,11 @@ def update_scene_records():
 
 	for i,r in enumerate(records):
 		player = r[1]
-		time = r[0]
+		time   = r[0]
 
 		seconds         = int(time)
-        	millis          = str(seconds - time).partition(".")[2]
-        	timestr         = str(seconds)+":"+millis[0:3]
+		millis          = str(seconds - time).partition(".")[2]
+		timestr         = str(seconds)+":"+millis[0:3]
 
 		if player_index == i:
 			timefont	= FONT.render(timestr, 1, black,yellow)
@@ -1118,6 +1119,8 @@ def level_select_menu():
 
 			if settings.isLevelCompleted(level_list.level_uuid(index)):
 				window.blit(tick_sprite,tick_sprite.get_rect().move(x-20,y))
+				if settings.isLevelPerfect(level_list.level_uuid(index)):
+					window.blit(star_sprite,tick_sprite.get_rect().move(x-45,y))
 
 			render_font = FONT.render(me, 1, color)
 			window.blit(render_font, (x, y))
@@ -1208,10 +1211,12 @@ def playing_screen():
 
 def finish_level():
 	status.set_invincible()
-	settings.add_cleared_level(status.level.get_uuid())
+	settings.add_cleared_level(status.level.get_uuid(), status.isperfect)
 	time = status.get_elapsed_time()
 	status.set_game_status(cStatus._STAT_GOAL)
-	records = status.level.save_record(settings.get_username(),time)
+	records = status.level.save_record(settings.get_username(),
+			time,
+			status.isperfect)
 
 
 

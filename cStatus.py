@@ -32,6 +32,7 @@ class cStatus:
 
 	def __init__(self,lives_images,width,height,fps=60):
 		self.lives=cStatus._MAX_LIVES
+		self.isperfect=True
 		self.lifebar_img_arr = lives_images
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
 		self.lifebar_rect = self.lifebar_image.get_rect()
@@ -94,6 +95,7 @@ class cStatus:
 		"""
 		self.lives -= 1
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
+		self.isperfect = False
 
 		#if self.lives <= 0:
 		#	self.set_game_status(self._STAT_GAMEOVER)
@@ -102,6 +104,14 @@ class cStatus:
 		return False
 
 	def reset_lives(self):
+		"""Reset lives at the loading of a new level. It sets the isperfect
+		value to True
+		"""
+		self.recover_lives()
+		self.isperfect = True
+
+	def recover_lives(self):
+		"""Recover lives,"""
 		self.lives = cStatus._MAX_LIVES
 		self.lifebar_image = self.lifebar_img_arr[self.lives]
 

@@ -40,7 +40,7 @@ class cItemRecoverLives(cMonster.cMonster):
 
 	def onCollision(self, stick, status, cpos):
 		super(cItemRecoverLives, self).onCollision(stick, status, cpos)
-		status.reset_lives()
+		status.recover_lives()
 
 	def isMonster(self):
 		return False
