@@ -29,7 +29,7 @@ class cMonster(pygame.sprite.Sprite):
 		# This is the sprite that will be created on collision
 		# It is identified by an ID from cAnimSpriteFactory
 		self.col_sprite = SF.OUCH
-	
+
 		#pymunk shape
 		#Each subclass should define a shape that fits with its image to process
 		#collisions
@@ -37,9 +37,10 @@ class cMonster(pygame.sprite.Sprite):
 		self.body  = None
 
 	def onCollision(self,stick,status):
-		"""
-			Default on colision handling. Simply activate the collision
-			animation
+		"""OnCollision function gets three parameters:
+			stick: Instance of cPal
+			status: Instances of cStatus
+			cpos: Pymunk world coordinate position of the collision
 		"""
 		self.col_anim.draw = True
 

@@ -634,11 +634,12 @@ def col_stick_item(who, arbiter):
 		- Add a collision sprite to be drawn
 		- Remove the item if defined as delete_on_colision
 	"""
+	cpos   = arbiter.contacts[0].position
 	ishape = arbiter.shapes[1] #shape of the item
-	item = status.level.get_item_by_shape(ishape)
-	item.onCollision(stick, status)
+	item   = status.level.get_item_by_shape(ishape)
 
-	cpos = arbiter.contacts[0].position
+	item.onCollision(stick, status, cpos)
+
 	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x, cpos.y, item.col_sprite)
 	ANIM_SPRITES.append(tsprite)
 
@@ -647,11 +648,12 @@ def col_stick_item(who, arbiter):
 		space.remove(item.shape)
 
 def col_stick_monster(who, arbiter):
+	cpos   = arbiter.contacts[0].position
 	ishape = arbiter.shapes[1] #shape of the item
 	monster= status.level.get_monster_by_shape(ishape)
-	monster.onCollision(stick, status)
 
-	cpos = arbiter.contacts[0].position
+	monster.onCollision(stick, status, cpos)
+
 	tsprite = SPRITE_FAC.get_sprite_by_id(cpos.x, cpos.y, monster.col_sprite)
 	ANIM_SPRITES.append(tsprite)
 
@@ -665,8 +667,6 @@ def col_stick_monster(who, arbiter):
 def monster_logic():
 	for m in status.level.monsters:
 		m.logic_update()
-		if status.level.stick_collides(m)[0]:
-			m.onWallCollision()
 
 ###################################################################
 

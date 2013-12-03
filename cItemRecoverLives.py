@@ -38,7 +38,7 @@ class cItemRecoverLives(cMonster.cMonster):
 
 		self.shape.collision_type = 2
 
-	def onCollision(self,stick,status):
+	def onCollision(self, stick, status, cpos):
 		super(cItemRecoverLives, self).onCollision(stick,status)
 		status.reset_lives()
 

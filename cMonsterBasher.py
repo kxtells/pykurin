@@ -64,7 +64,7 @@ class cMonsterBasher(cMonster.cMonster):
 		self.shape.collision_type = 3 #MONSTER
 
 
-	def onCollision(self, stick, status):
+	def onCollision(self, stick, status, cpos):
 		super(cMonsterBasher, self).onCollision(stick,status)
 		if not status.invincible:
 			status.add_seconds(3)
