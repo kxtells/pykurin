@@ -1,0 +1,15 @@
+[options]
+name:0 - Very High
+collision:levels/skypack/0VeryHighCOL.png
+background:levels/skypack/0VeryHigh.png
+background2:backgrounds/cloudsbackground.jpg
+startx:83
+starty:222
+endx:647
+endy:108
+stick:sticks/stick.png
+uuid:d2f1494b-2197-47de-8380-d338ce831972
+[bouncers]
+[recovers]
+[bashers]
+[flies]
