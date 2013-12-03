@@ -206,7 +206,7 @@ class cLevel(pygame.sprite.Sprite):
 			returns a tuple with the results
 		"""
 		#data pack
-		newdata = (newtime,username)
+		newdata = (newtime, username, isperfect)
 
 		db = shelve.open(os.path.join("db", self.uuid))
 
