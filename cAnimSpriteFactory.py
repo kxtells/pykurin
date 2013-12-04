@@ -40,7 +40,7 @@ class cAnimSpriteFactory():
 			imgset = BF.load_and_slice_sprite(100,50,'livesup'+str(x)+'.png');
 			self.livesup.append(imgset)
 
-		for x in range(1):
+		for x in range(4):
 			imgset = BF.load_and_slice_sprite(75,75,'firework'+str(x)+'.png');
 			self.fireworks.append(imgset)
 
