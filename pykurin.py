@@ -27,6 +27,7 @@ from cMenu import cMenu
 from cLevelList import cLevelList
 from cSettings import cSettings
 from cTransition import cTransition
+from cTimer import cTimerBlink
 from colors import *
 import math
 
@@ -626,6 +627,10 @@ def col_stick_level(who, arbiter):
 		status.add_seconds(3)
 		status.set_invincible()
 		status.decrease_lives()
+		status.addTimer(cTimerBlink(status._INVINCIBLE_TIME,
+									2,
+									onchange=stick.set_blink,
+									onfinish=stick.reset_blink))
 
 #Colision of item and moster are.. the same should be wrapped into same
 #function
@@ -664,6 +669,10 @@ def col_stick_monster(who, arbiter):
 
 	#Finally set invincible for some time
 	status.set_invincible()
+	status.addTimer(cTimerBlink(status._INVINCIBLE_TIME,
+								2,
+								onchange=stick.set_blink,
+								onfinish=stick.reset_blink))
 
 def monster_logic():
 	for m in status.level.monsters:
@@ -837,23 +846,25 @@ def update_scene():
 		else:
 			ANIM_SPRITES.pop(i) #If draw is false, delete the reference
 
-	#Paint Stick according to pymunk's body position
-	#Looks a little bit hacky
-	angle_degrees 	 = -math.degrees(stick.body.angle) + 180
-	sticksurface = pygame.transform.rotate(stick.baseImage, angle_degrees)
-	offset = Vec2d(sticksurface.get_size()) / 2.
-	offset += (-dx, -dy)
-	p = stick.body.position - offset
-	window.blit(sticksurface, p)
-
-	if status.invincible:
+	#
+	# Stick painting. Could be blinking.
+	# The blinking is handled by the status timers
+	#
+	if stick.blink:
 		ps = stick.shape.get_vertices()
 		ps = [(p.x + dx, p.y +dy) for p in ps]
 		ps += [ps[0]]
-		pygame.draw.polygon(window, yellow, ps, 0)
+		pygame.draw.polygon(window, white, ps, 0)
+	else:
+		#Paint Stick according to pymunk's body position
+		#Looks a little bit hacky
+		angle_degrees 	 = -math.degrees(stick.body.angle) + 180
+		sticksurface = pygame.transform.rotate(stick.baseImage, angle_degrees)
+		offset = Vec2d(sticksurface.get_size()) / 2.
+		offset += (-dx, -dy)
+		p = stick.body.position - offset
+		window.blit(sticksurface, p)
 
-
-	#window.blit(stick.image,rect.move(dx,dy))
 
 def update_pymunk_debug():
 	# debug draw

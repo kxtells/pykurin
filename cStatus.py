@@ -68,7 +68,6 @@ class cStatus:
 		# Stick Information
 		#
 		self.invincible = False
-		self.invincibletimer = None
 
 		#
 		# Elapsed Time Information
@@ -82,6 +81,11 @@ class cStatus:
 		# Listen KeyStrokes
 		#
 		self.LISTEN_KEYS = True
+
+		#
+		# TIMERS
+		#
+		self.timers = []
 
 	def decrease_lives(self):
 		"""
@@ -137,15 +141,25 @@ class cStatus:
 		"""Sets the invincible flag and the start invincibility time if is not already set"""
 		if not self.invincible:
 			self.invincible = True
-			self.invincibletimer = cTimer(cStatus._INVINCIBLE_TIME, self.unset_invincible)
+			invincibletimer = cTimer(cStatus._INVINCIBLE_TIME, self.unset_invincible)
+			self.addTimer(invincibletimer)
+
+	def addTimer(self, timer):
+		"""Add a timer to update"""
+		self.timers.append(timer)
 
 	def unset_invincible(self):
 		self.invincible = False
-		self.invincibletimer = None
 
 	def update_timers(self):
-		if self.invincibletimer:
-			self.invincibletimer.update()
+		delete = []
+		for timer in self.timers:
+			if timer:
+				todelete = timer.update()
+				if todelete: delete.append(timer)
+
+		for timer in delete:
+			self.timers.remove(timer)
 
 	def pause_game(self):
 		"""

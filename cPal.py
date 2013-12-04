@@ -52,6 +52,20 @@ class cPal(pygame.sprite.Sprite):
 
 		self.shape.collision_type = 0 #stick collision type
 
+
+		#blink
+		#Keep track of the blinking of the cPal
+		self.blink = False
+
+	def toggle_blink(self):
+		self.blink = not self.blink
+
+	def set_blink(self, boolval):
+		self.blink = boolval
+
+	def reset_blink(self):
+		self.blink = False
+
     #Loads a new stick Image
 	def load_stick_image(self,imagepath):
 		self.image      = pygame.image.load(imagepath).convert_alpha()
