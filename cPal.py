@@ -43,10 +43,12 @@ class cPal(pygame.sprite.Sprite):
 		self.VecSpace  		= [(-31,-4), (31,-4), (31,4), (-31,4)]
 		self.moment    		= pymunk.moment_for_poly(self.mass, self.VecSpace)
 		self.body      		= pymunk.Body(self.mass, self.moment)
-		self.body.elasticity= 0.95
 		self.shape     		= pymunk.Poly(self.body, self.VecSpace)
 		self.body.position  = (self.rect.x + self.rect.width/2, self.rect.y + self.rect.width/2)
 		self.body.angle 	= self.rot
+
+		#Should work with bouncing.. It doesn't so far
+		self.body.elasticity= 0.95
 
 		self.shape.collision_type = 0 #stick collision type
 
@@ -189,7 +191,7 @@ class cPal(pygame.sprite.Sprite):
 				self.body.apply_impulse((self.movx/2, self.movy/2),(0,0))
 
 				#With forces. Not working as I would like
-				#self.body.apply_force((movx/20, movy/20),(0,0))
+				#self.body.apply_force((self.movx/20, self.movy/20),(0,0))
 				#print pymunk.Vec2d(self.movx,self.movy)
 
 		self.movement_record()

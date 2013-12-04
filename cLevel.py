@@ -333,5 +333,6 @@ class cLevel(pygame.sprite.Sprite):
 		for f in horizontal:
 			nseg = pymunk.Segment(static_body, f[0], f[1], 0.0)
 			nseg.collision_type = 1
+			#Segment elasticity, to create bounce... so far no good
 			nseg.elasticity = 0.95
 			self.level_segments.append(nseg)

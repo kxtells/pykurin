@@ -34,6 +34,9 @@ class cItemBouncer(cMonster.cMonster):
 
 		self.shape.collision_type = 2
 
+		#Impulse when collision
+		self.impforce = 5
+
 	def onCollision(self, stick, status, cpos):
 		super(cItemBouncer,self).onCollision(stick, status, cpos)
 		stick.flip_rotation()

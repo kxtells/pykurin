@@ -37,7 +37,7 @@ import pygame
 
 pygame.init()
 
-size = WIDTH, HEIGHT = 480, 320
+size = WIDTH, HEIGHT = 480, 360
 FPS = 45
 
 
@@ -174,7 +174,7 @@ pause_menu.set_background("backgrounds/piece_paper.png")
 #Records Menu
 records_menu_texts = 'Next Level', 'Repeat' , 'Level Select'
 records_menu = cMenu(records_menu_texts,0,black,red)
-records_menu.set_background("backgrounds/records_screen.png")
+records_menu.set_background("backgrounds/records_screen_480x360.png")
 
 #Records Menu
 main_menu_texts = 'Main Game', 'Settings' , 'Say Goodbye'
@@ -742,7 +742,10 @@ def update_scene_records():
 	player_index = status.level.player_record_index
 
 	# pick a font you have and set its size
-        myfont = pygame.font.SysFont("Arial", 25)
+	myfont = pygame.font.SysFont("Arial", 25)
+
+	starty = 75
+	startx = 10
 
 	for i,r in enumerate(records):
 		player = r[1]
@@ -760,9 +763,8 @@ def update_scene_records():
 			namefont	= FONT.render(player, 1, black)
 
 
-
-		window.blit(namefont, (150, 50*(i+3)))
-		window.blit(timefont, (50, 50*(i+3)))
+		window.blit(namefont, (startx + 100, starty + 40*i))
+		window.blit(timefont, (startx,  starty + 40*i))
 
 	if player_index > -1:
         	window.blit(newrecord_sprite.image,newrecord_sprite.rect)
@@ -1088,7 +1090,7 @@ def records_screen():
 	status.SUBSTAT = 1 #Skip the first stat (saved for further animation)
 
 	if status.SUBSTAT == 1:
-		draw_menu(records_menu,WIDTH-200,HEIGHT-210)
+		draw_menu(records_menu, sx=WIDTH-175, sy=HEIGHT-165, eoffset=35)
 		update_scene_records()
 
 #
@@ -1180,21 +1182,21 @@ def pack_select_menu():
 # Draws a menu on screen
 # - menu (the menu to draw)
 #
-def draw_menu(menu,sx=200,sy=160):
+def draw_menu(menu, sx=200, sy=160, eoffset=40):
 
 	if menu.background != None:
 		window.blit(menu.background,menu.background.get_rect())
 
-        x = sx
-        y = sy
+	x = sx
+	y = sy
 
-        for index,me in enumerate(menu.options):
-                if menu.current == index: color = menu.select_color
-                else: color = menu.color
+	for index,me in enumerate(menu.options):
+		if menu.current == index: color = menu.select_color
+		else: color = menu.color
 
-                render_font = FONT.render(me, 1, color)
-                window.blit(render_font, (x, y))
-                y += 39
+		render_font = FONT.render(me, 1, color)
+		window.blit(render_font, (x, y))
+		y += eoffset #that is, the font height
 
 #
 # Draws everything of the playing level screen
