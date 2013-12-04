@@ -2,6 +2,7 @@ import pygame
 from cLevel import cLevel
 import time
 from colors import *
+from cTimer import cTimer
 
 class cStatus:
 	"""All the status information to control the game"""
@@ -67,7 +68,7 @@ class cStatus:
 		# Stick Information
 		#
 		self.invincible = False
-		self.invincible_start_time = 0
+		self.invincibletimer = None
 
 		#
 		# Elapsed Time Information
@@ -81,8 +82,6 @@ class cStatus:
 		# Listen KeyStrokes
 		#
 		self.LISTEN_KEYS = True
-
-
 
 	def decrease_lives(self):
 		"""
@@ -136,14 +135,17 @@ class cStatus:
 
 	def set_invincible(self):
 		"""Sets the invincible flag and the start invincibility time if is not already set"""
-		if self.invincible == False:
+		if not self.invincible:
 			self.invincible = True
-			self.invincible_start_time = time.time()
+			self.invincibletimer = cTimer(cStatus._INVINCIBLE_TIME, self.unset_invincible)
 
-	def unset_invincible_by_time(self):
-		elapsed = time.time() - self.invincible_start_time
-		if elapsed >= cStatus._INVINCIBLE_TIME: self.invincible = False
+	def unset_invincible(self):
+		self.invincible = False
+		self.invincibletimer = None
 
+	def update_timers(self):
+		if self.invincibletimer:
+			self.invincibletimer.update()
 
 	def pause_game(self):
 		"""

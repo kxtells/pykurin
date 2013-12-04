@@ -846,6 +846,13 @@ def update_scene():
 	p = stick.body.position - offset
 	window.blit(sticksurface, p)
 
+	if status.invincible:
+		ps = stick.shape.get_vertices()
+		ps = [(p.x + dx, p.y +dy) for p in ps]
+		ps += [ps[0]]
+		pygame.draw.polygon(window, yellow, ps, 0)
+
+
 	#window.blit(stick.image,rect.move(dx,dy))
 
 def update_pymunk_debug():
@@ -1237,8 +1244,6 @@ def gaming_status(debug=False):
 	monster_logic()
 	playing_screen()
 	#debug_onscreen(colision)
-	#Unset invincibility when needed
-	status.unset_invincible_by_time()
 
 	#check if goal
 	if status.level.stick_in_goal(stick):
@@ -1250,6 +1255,8 @@ def gaming_status(debug=False):
 		if debug: return True
 		fancy_stick_death_animation()
 		status.set_game_status(status._STAT_GAMEOVER)
+
+	status.update_timers()
 
 	#Game Over
 	space.step(1)
