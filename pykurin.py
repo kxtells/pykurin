@@ -7,6 +7,7 @@
 #######################
 
 import os,sys
+import random
 #Change directory
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -740,8 +741,14 @@ def draw_transition():
 
 #Updates all the needed images/sprites for goal Screen
 def update_scene_goal():
-        window.blit(gtext_sprite.image,gtext_sprite.rect)
-        gtext_sprite.update(pygame.time.get_ticks())
+		window.blit(gtext_sprite.image,gtext_sprite.rect)
+		gtext_sprite.update(pygame.time.get_ticks())
+
+		pos = stick.body.position
+		dx = random.randint(-40,+40)
+		dy = random.randint(-40,+40)
+		tsprite = SPRITE_FAC.get_sprite_by_id(pos.x + dx, pos.y +dy ,SPRITE_FAC.FIREWORK)
+		ANIM_SPRITES.append(tsprite)
 
 #
 #@TODO: THis has to be beautiful
