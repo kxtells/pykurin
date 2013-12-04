@@ -179,14 +179,14 @@ records_menu.set_background("backgrounds/records_screen_480x360.png")
 #Records Menu
 main_menu_texts = 'Main Game', 'Settings' , 'Say Goodbye'
 main_menu = cMenu(main_menu_texts,0,black,red)
-main_menu.set_background("backgrounds/squared_paper_maintitle.png")
+main_menu.set_background("backgrounds/squared_paper_maintitle_480x360.png")
 
 #Settings Menu
 settings_menu_texts = ['Player Name: '+str(settings.get_username()), 'Fullscreen', 'Go Back' ]
 settings_menu = cMenu(settings_menu_texts,0,black,red)
-settings_menu.set_background("backgrounds/squared_paper_settings.png")
+settings_menu.set_background("backgrounds/squared_paper_settings_480x360.png")
 
-INPUT_KEYS_BG = pygame.image.load("backgrounds/squared_paper_wun.png")
+INPUT_KEYS_BG = pygame.image.load("backgrounds/squared_paper_wun_480x360.png")
 
 #
 # Function to update the settings menu
@@ -1009,7 +1009,7 @@ def ingame_menu_screen(menu,rotate=True,x=200,y=200):
 	draw_menu(menu,x,y)
 
 #InGame menu Screen
-def menu_screen(menu,rotate=True,x=200,y=200):
+def menu_screen(menu,rotate=True,x=100,y=150):
 	"""
 	 Paints a menu on screen
 	  - menu (the menu to print)
@@ -1294,7 +1294,7 @@ def main_game():
 
 		#settings Menu
 		elif status.GAME_STAT == cStatus._STAT_SETTINGS:
-			menu_screen(settings_menu,rotate=False)
+			menu_screen(settings_menu,rotate=False,y=200)
 
 		elif status.GAME_STAT == cStatus._STAT_NEWNAME:
 			newname_screen()

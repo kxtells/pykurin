@@ -94,6 +94,6 @@ class cSettings:
 			new settings file
 		"""
 		self.fullscreen = False
-		self.username = "DummyName"
+		self.username = "You"
 		self.save_settings_file()
 

@@ -6,7 +6,7 @@ class cInputKeys():
 		temporary (while the game is on) the last name
 		stored
 	"""
-	MAXCHARS = 15
+	MAXCHARS = 10
 
 	def __init__(self):
 		self.text = ""
@@ -31,7 +31,7 @@ class cInputKeys():
 		if not all(ord(c) < 128 for c in self.text):
 			self.error_texts = ['Invalid characters, sorry for that' , 'But it makes my life easier']
 			return False
-		
+
 		return True
 
 
