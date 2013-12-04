@@ -101,7 +101,7 @@ bg_timer_image = imgset[0]
 #New Record Text
 imgset = BF.load_and_slice_sprite(230,100,'newrecord.png');
 newrecord_sprite = cAnimSprite(imgset,1)
-newrecord_sprite.move(450,150)
+newrecord_sprite.move(350,130)
 
 #Lives sprite
 imgsetlives = BF.load_and_slice_sprite(192,64,'livemeter.png');
