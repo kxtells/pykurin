@@ -1209,7 +1209,33 @@ def main_debug(filename):
 		pygame.display.update()
 		clock.tick(FPS)
 
+def print_message():
+    import time
+    print """
+
+##      ##    ###    ########  ##    ## #### ##    ##  ######
+##  ##  ##   ## ##   ##     ## ###   ##  ##  ###   ## ##    ##
+##  ##  ##  ##   ##  ##     ## ####  ##  ##  ####  ## ##
+##  ##  ## ##     ## ########  ## ## ##  ##  ## ## ## ##   ####
+##  ##  ## ######### ##   ##   ##  ####  ##  ##  #### ##    ##
+##  ##  ## ##     ## ##    ##  ##   ###  ##  ##   ### ##    ##
+ ###  ###  ##     ## ##     ## ##    ## #### ##    ##  ######
+
+pykurin in the master branch uses a specific collision system that
+proved not to be the best.
+
+The main development is being done on the pymunk branch, so you
+may want to pull that branch to playtest what will be the master
+branch in a not so far away future.
+
+git pull origin pymunk
+
+pykurin will be started in 5 seconds
+    """
+    time.sleep(5)
+
 def main():
+	print_message()
 	if len(sys.argv) > 1:
 		main_debug(sys.argv[1])
 	else:
