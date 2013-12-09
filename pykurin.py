@@ -413,7 +413,10 @@ def create_space(level):
 	"""
 	global space
 
-	space = pymunk.Space(iterations=10)
+	space.remove(space.bodies)
+	space.remove(space.shapes)
+
+	#space = pymunk.Space(iterations=10)
 	#Stop the movement each step
 	space.damping = 0.9
 	#Use no gravity
@@ -459,7 +462,15 @@ def create_space(level):
 
 def load_level_filename(level_fname):
 	"""Load level from a filename."""
-	status.level = cLevel(level_fname)
+
+	#Load information from the file, do not load images and big stuff
+	tmplevel = cLevel(level_fname, load=False)
+
+	if not status.level:
+		status.level = cLevel(level_fname)
+	elif (status.level and tmplevel.get_uuid() != status.level.get_uuid()):
+		status.level = cLevel(level_fname)
+
 	stick.__init__(status.level.startx,status.level.starty,0,status.level.stick);
 	#stick.load_stick_image(status.level.stick)
 
@@ -475,12 +486,13 @@ def load_level_filename(level_fname):
 # @TODO : Maybe better in another place or python file
 def load_level(level_num):
 
-	status.set_game_status(cStatus._STAT_LOADING)
-
 	#FORCE UPDATE OF SCREEN BEFORE CALLING TO LOAD A LEVEL
+	status.set_game_status(cStatus._STAT_LOADING)
 	window.blit(loading_bg,(0,0))
 	pygame.display.update()
-
+	#TODO: Load level code of screen ideally should not be here
+	#it should simply let the level start loading stuff and when
+	#finished start the level
 
 	load_level_filename(level_list.levelfiles[level_num])
 	status.current_level = level_num
