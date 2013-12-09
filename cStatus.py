@@ -22,6 +22,7 @@ class cStatus:
 	_STAT_SETTINGS = 9
 	_STAT_NEWNAME =10
 	_STAT_PACKSEL = 11
+	_STAT_LOADING = 12
 
 	"""Debug shit"""
 	_DEBUG_COLLISION=False

@@ -112,8 +112,9 @@ imgset_numbers = BF.load_and_slice_sprite(50,50,'numbers.png');
 number_gen = cCustomFont.cCustomFont(imgset_numbers)
 
 #Locked sprite
-locked_sprite = pygame.image.load('sprites/locked.png')
+locked_sprite   = pygame.image.load('sprites/locked.png')
 openlock_sprite = pygame.image.load('sprites/openlock.png')
+loading_bg      = pygame.image.load('backgrounds/loading.png')
 
 #LevelDone
 tick_sprite = pygame.image.load('sprites/tick.png')
@@ -473,6 +474,14 @@ def load_level_filename(level_fname):
 #Load a Specific Level (needed for level menu function)
 # @TODO : Maybe better in another place or python file
 def load_level(level_num):
+
+	status.set_game_status(cStatus._STAT_LOADING)
+
+	#FORCE UPDATE OF SCREEN BEFORE CALLING TO LOAD A LEVEL
+	window.blit(loading_bg,(0,0))
+	pygame.display.update()
+
+
 	load_level_filename(level_list.levelfiles[level_num])
 	status.current_level = level_num
 
@@ -908,7 +917,7 @@ def update_pymunk_debug():
 
 	#TEXT
 	# Display some text
-	font = pygame.font.Font(None, 36)
+	font = pygame.font.Font(None, 20)
 	text = font.render("COLLISIONS", 2, (10, 10, 10))
 	textpos = text.get_rect()
 	textpos.centerx = window.get_rect().centerx
@@ -917,6 +926,11 @@ def update_pymunk_debug():
 
 	#If asked, draw the level collisions. HEAVY
 	if status._DEBUG_PYMUNKLEVEL:
+		text = font.render("LvlSegments %s"%(len(status.level.level_segments)), 2, (10, 10, 10))
+		textpos = text.get_rect().move(0,10)
+		textpos.centerx = window.get_rect().centerx
+		window.blit(text, textpos)
+
 		#LOTS of lines, affects FPS
 		for line in status.level.level_segments:
 			body = line.body
@@ -1323,6 +1337,9 @@ def main_game():
 
 		elif status.GAME_STAT == cStatus._STAT_NEWNAME:
 			newname_screen()
+
+		elif status.GAME_STAT == cStatus._STAT_LOADING:
+			window.blit(loading_bg,(0,0))
 
 		draw_transition() #transition always on top
 
