@@ -27,6 +27,7 @@ class PykurinLevelEditorUI(Frame):
     LIVES_BUTTON   = 2
     PAN_BUTTON     = 3
     SELECT_BUTTON  = 4
+    COLISION_BUTTON= 5
 
     def __init__(self, master=None):
         Frame.__init__(self, master, relief=SUNKEN, bd=2)
@@ -71,6 +72,10 @@ class PykurinLevelEditorUI(Frame):
 
 		#Window title
         self.changeWindowTitle("TK pykurin Level builder")
+
+        #LINE CREATING
+        self.iswalllinegoing = False
+        self.walllinestart = None
 
 
     #
@@ -172,6 +177,14 @@ class PykurinLevelEditorUI(Frame):
         b.pack(side=LEFT, padx=2, pady=2)
         self.buttons.append(b)
 
+        b = Button(toolbar, text="col",
+                   #compound=LEFT, #COmbine text and icon
+                   padx=8, pady=8,
+                   command=lambda: self.button(self.COLISION_BUTTON, 5))
+        b.pack(side=LEFT, padx=2, pady=2)
+        self.buttons.append(b)
+
+
         #Contains the currently pressed button. Not the index but the type of the item to create
         #DC.BASHER (for example)
         self.buttonpressed = None
@@ -202,6 +215,9 @@ class PykurinLevelEditorUI(Frame):
 
         #Bind clicking to select
         self.canvas.bind("<Delete>", self.delete_item)
+
+        #Bind clicking to select
+        self.canvas.bind("<Escape>", self.escape_pressed)
 
 
     #
@@ -293,6 +309,14 @@ class PykurinLevelEditorUI(Frame):
     # Panning
     #
     def mouse_motion(self, event):
+        canvas = self.canvas
+
+        canvas.delete("tmp")
+
+        if self.iswalllinegoing:
+            tmpline = (self.walllinestart[0], self.walllinestart[1], event.x, event.y)
+            canvas.create_line(tmpline, fill="red", tags = ("pan", "tmp"))
+
         self.statusbar.set("%s : %s" % (event.x - self.panx, event.y - self.pany))
 
     def pan_start(self, event):
@@ -325,7 +349,7 @@ class PykurinLevelEditorUI(Frame):
             or not self.isButtonPressed()):
             self.selecting_items(event)
         else:
-            self.adding_item_to_canvas(event)
+            self.canvas_process_event(event)
 
     def selecting_items(self, event):
         #Once clicked, give keyboard focus to canvas (in case it wasn't set)
@@ -340,7 +364,19 @@ class PykurinLevelEditorUI(Frame):
         #Create a new selection
         self.select_item(x,y)
 
-    def adding_item_to_canvas(self, event):
+    def process_linecreate(self, event):
+        if self.iswalllinegoing:
+            sx = self.walllinestart[0]
+            sy = self.walllinestart[1]
+            self.DC.add_collision_vector((sx, sy, event.x, event.y))
+            #self.canvas.create_line((sx, sy, event.x, event.y))
+            self.walllinestart = (event.x, event.y)
+            self._create_pymunk_collisions()
+        else:
+            self.walllinestart = (event.x, event.y)
+            self.iswalllinegoing = True
+
+    def canvas_process_event(self, event):
         if self.buttonpressed == self.BASHER_BUTTON:
             self._create_basher(event.x, event.y, new=True)
         elif self.buttonpressed == self.BOUNCER_BUTTON:
@@ -349,6 +385,8 @@ class PykurinLevelEditorUI(Frame):
             self._create_lives(event.x, event.y, new=True)
         elif self.buttonpressed == self.PAN_BUTTON:
             self.pan_start(event)
+        elif self.buttonpressed == self.COLISION_BUTTON:
+            self.process_linecreate(event)
 
     def select_item(self, x, y):
         """Selects an item, setting the sitem attribute"""
@@ -439,6 +477,16 @@ class PykurinLevelEditorUI(Frame):
                         )
 
         self.canvas.coords(basher_line, lbbox)
+
+    def escape_pressed(self, event):
+        canvas = self.canvas
+
+        #delete all tmp
+        canvas.delete("tmp")
+
+        #return to a known status
+        self.iswalllinegoing = False
+        self.walllinestart = None
 
     #
     # Remove items
@@ -761,6 +809,18 @@ Do you want to copy the files to the game levelpack tree?
         canvas.tag_lower("backgrounds")
 
 
+    def _create_pymunk_collisions(self):
+        canvas = self.canvas
+        dc = self.DC
+        px = self.panx
+        py = self.pany
+
+        canvas.delete("pymunkcol");
+
+        for line in self.DC.pymunkwalls:
+            panline = (line[0] + px, line[1]+py , line[2]+px, line[3]+py)
+            canvas.create_line(line, fill="red", tags = ("pan", "pymunkcol"))
+
     def _create_canvas_with_DC(self):
         """
             Create a canvas from the DC.
@@ -799,6 +859,8 @@ Do you want to copy the files to the game levelpack tree?
             r1 = r
             r2 = dc.bashers_end[idx]
             self._create_basher(r1.x, r1.y, rx=r2.x, ry=r2.y, dcid=idx)
+
+        self.create_pymunk_collisions()
 
         # Draw the 0,0 cross
         canvas.create_line(10, 0, -10, 0, fill="red", tags=("pan"))

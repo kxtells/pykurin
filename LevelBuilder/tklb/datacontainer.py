@@ -66,6 +66,7 @@ class LevelContainer:
         self.goals = []
         self.sticks = []
         self.bashers_end = []
+        self.pymunkwalls = []
         self.title = None
 
         self.lvlpack = None
@@ -75,6 +76,10 @@ class LevelContainer:
 
         #LEGACY
         self.items_pack = [self.bashers,self.bouncers,self.lives,self.goals,self.sticks,self.bashers_end]
+
+    def add_collision_vector(self, vector):
+        """Adds a collision vector to the collision vector list for pymunk"""
+        self.pymunkwalls.append(vector)
 
     def _find_levelpack(self):
         """
