@@ -312,6 +312,8 @@ class PykurinLevelEditorUI(Frame):
         canvas = self.canvas
 
         canvas.delete("tmp")
+        px = self.panx
+        py = self.pany
 
         if self.iswalllinegoing:
             tmpline = (self.walllinestart[0], self.walllinestart[1], event.x, event.y)
@@ -365,10 +367,12 @@ class PykurinLevelEditorUI(Frame):
         self.select_item(x,y)
 
     def process_linecreate(self, event):
+        px = self.panx
+        py = self.pany
         if self.iswalllinegoing:
             sx = self.walllinestart[0]
             sy = self.walllinestart[1]
-            self.DC.add_collision_vector((sx, sy, event.x, event.y))
+            self.DC.add_collision_vector((sx -px, sy -py, event.x -px, event.y -py))
             #self.canvas.create_line((sx, sy, event.x, event.y))
             self.walllinestart = (event.x, event.y)
             self._create_pymunk_collisions()
@@ -494,7 +498,6 @@ class PykurinLevelEditorUI(Frame):
     def delete_item(self, event):
         """Deletes the current selected item"""
         if not self.sitem:
-            print "No item selected"
             return
 
         itype = self.dataids[self.sitem][0]
@@ -605,8 +608,6 @@ Do you want to copy the files to the game levelpack tree?
 
     def f_new_level(self):
         """ Creates a new level with no file associated to it """
-        print "NEW LEVEL"
-
         # Force a new LevelContainer
         basep   = self.DC.get_basepath()
         self.DC = datacontainer.LevelContainer()
@@ -817,9 +818,9 @@ Do you want to copy the files to the game levelpack tree?
 
         canvas.delete("pymunkcol");
 
-        for line in self.DC.pymunkwalls:
-            panline = (line[0] + px, line[1]+py , line[2]+px, line[3]+py)
-            canvas.create_line(line, fill="red", tags = ("pan", "pymunkcol"))
+        for l in self.DC.pymunkwalls:
+            panline = (l[0] + px, l[1] + py, l[2] + px, l[3] +py)
+            canvas.create_line(panline , fill="red", tags = ("pan", "pymunkcol"))
 
     def _create_canvas_with_DC(self):
         """
@@ -860,7 +861,7 @@ Do you want to copy the files to the game levelpack tree?
             r2 = dc.bashers_end[idx]
             self._create_basher(r1.x, r1.y, rx=r2.x, ry=r2.y, dcid=idx)
 
-        self.create_pymunk_collisions()
+        self._create_pymunk_collisions()
 
         # Draw the 0,0 cross
         canvas.create_line(10, 0, -10, 0, fill="red", tags=("pan"))

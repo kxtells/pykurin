@@ -551,6 +551,10 @@ class LevelContainer:
 
             f.write(str(bx)+","+str(by)+":"+str(bex)+","+str(bey)+";1\n")
         f.write("[flies]\n")
+
+
+        f.write("[pymunk]\n")
+        f.write(":".join([str(wall) for wall in self.pymunkwalls]))
         f.close()
 
         return True,""
